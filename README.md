@@ -33,7 +33,7 @@ V1 covers Scholar 201 Records and Administrative Records only. Financial Ledger 
 
 ## Documentation
 
-See `planning/` for current project docs, task board, and team workflow.
+See `planning/` for current project docs, task board, team workflow, and MCP server registry.
 
 ## Local setup
 
