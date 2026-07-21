@@ -17,6 +17,9 @@
 /.vscode
 /.zed
 .php-cs-fixer.cache
+.env
+.env.bak
+/public/build
 
 /testing
 /database/database.sqlite
