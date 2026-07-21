@@ -1,0 +1,17 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Phase,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Miguel - PM / UI-UX,PM-01,"Bootstrap 5, user flows, accessibility + low-fi prototype",0,12,Learning,12,12,Low-fi prototype + acceptance criteria,Done,Miguel,Learning phase
+Burndown,Miguel - PM / UI-UX,PM-02,"Design system tokens, final wireframes",12,20,Learning,8,8,Design tokens doc + finalized wireframes,Done,Miguel,Learning phase
+Burndown,Miguel - PM / UI-UX,PM-03,"Responsive design, breakpoints, accessibility testing",20,27,Learning,7,7,Responsive QA checklist,Done,Miguel,Learning phase
+Burndown,Miguel - PM / UI-UX,PM-04,"Client demo preparation, handoff documentation",27,33,Learning,6,6,Demo script draft,Done,Miguel,Learning phase
+Burndown,Miguel - PM / UI-UX,PM-05,"Test plan creation, bug triage, regression planning",33,40,Learning,7,7,Test plan + regression checklist,Done,Miguel,Learning phase
+Burndown,Miguel - PM / UI-UX,PM-06,"Finalize wireframes, Bootstrap theme, component list",40,48,Implementation,8,20,Design package approved,In Progress,Miguel,DTR-backed: KPI review + style guide + feature checklist
+Burndown,Miguel - PM / UI-UX,PM-07,"Review frontend layout shell, nav, login view",48,56,Implementation,8,0,Layout approved,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-08,"Review upload UI, drag-drop flow, metadata flags",56,64,Implementation,8,0,Upload UI approved,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-09,"Review permission matrix, role behavior review",64,70,Implementation,6,0,Regression plan,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-10,"Handoff pack: screenshots, flowcharts, client demo assets",70,76,Implementation,6,0,Handoff pack complete,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-11,"Client alignment sessions, feedback capture, questions to IT",76,85,Implementation,9,0,Client alignment recorded,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-12,"Demo script finalization, script + timing review",85,94,Implementation,9,0,Demo script final,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-13,"Final design review, accessibility audit, polish pass",94,103,Implementation,9,0,Accessibility audit passed,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-14,"Regression testing oversight, bug triage, retest coordination",103,112,Implementation,9,0,Regression review complete,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-15,"Final handoff, sign-off docs, retrospective prep",112,121,Implementation,9,0,Sign-off docs ready,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,PM-16,Buffer / client follow-up / polish,121,162,Implementation,41,0,Buffer kept intact,Pending,Miguel,Buffer

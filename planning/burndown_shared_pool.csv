@@ -1,0 +1,5 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Shared Pool,PHASE-SPLIT,Learning cutoff enforced at 40 hours per member,0,40,1,40,Core rules validated,Done,Fullstack,Fast-tracked learning complete
+Burndown,Shared Pool,DAY-01,Daily snapshot: bible keeper run + burn update,0,40,1,40,Burndown entry updated,Done,Fullstack,Current state at hour 60 per member
+Burndown,Shared Pool,DAY-02,Daily snapshot: bible keeper run + burn update,40,162,1,0,Burndown entry updated,Pending,Fullstack,Remaining implementation tracking
+Burndown,Shared Pool,HOURS-60-VERIFY,Verify all 4 members at 60 actual hours,40,80,8,8,CSV backfill complete,Done,Fullstack,Equalization check passed

@@ -1,0 +1,17 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Phase,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Backend & DB,BD-01,"PHP/Laravel fundamentals, Eloquent, migrations, validation + mirror backend",0,12,Learning,12,12,Mirror project backend + seeders,Done,Backend & DB,Learning phase
+Burndown,Backend & DB,BD-02,"Spatie permissions, testing, Livewire backend + V1 migration drafts",12,20,Learning,8,8,V1 migration drafts,Done,Backend & DB,Learning phase
+Burndown,Backend & DB,BD-03,"Laravel filesystem, UUID strategies, soft-delete patterns",20,27,Learning,7,7,Storage config doc,Done,Backend & DB,Learning phase
+Burndown,Backend & DB,BD-04,"Polymorphic relationships, version metadata, audit logs",27,33,Learning,6,6,Schema extension proposal,Done,Backend & DB,Learning phase
+Burndown,Backend & DB,BD-05,"Search indexing, fulltext vs column index, query optimization",33,40,Learning,7,7,Search strategy doc,Done,Backend & DB,Learning phase
+Burndown,Backend & DB,BD-06,"Scholars migration, lookup tables, rollback config",40,48,Implementation,8,20,All V1 migrations + rollback,In Progress,Backend & DB,DTR-backed: schema refinement + migration prep
+Burndown,Backend & DB,BD-07,"Scholar model + relationships, Document model, seeders",48,54,Implementation,6,0,Models + seeders,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-08,"UUID storage config, soft-delete migration, strike-off logic",54,62,Implementation,8,0,Storage + strike-off done,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-09,"Duplicate detection, cancel/history/overwrite, version metadata",62,68,Implementation,6,0,Duplicate workflow backend,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-10,"Audit_log migration, login + file action logging",68,76,Implementation,8,0,Audit log scaffold,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-11,"QA test writing, feature tests, integration tests",76,85,Implementation,9,0,QA tests green,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-12,"Performance optimization, query tuning, index optimization",85,94,Implementation,9,0,Query tuning complete,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-13,"Security hardening, permission testing, audit log review",94,103,Implementation,9,0,Security review complete,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-14,"Final backend testing, bug fixes",103,112,Implementation,9,0,Backend bug list cleared,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-15,"Handoff documentation, schema docs, retrospective",112,121,Implementation,9,0,Schema docs ready,Pending,Backend & DB,Implementation
+Burndown,Backend & DB,BD-16,Buffer / schema iterations / late validation,121,162,Implementation,41,0,Buffer kept intact,Pending,Backend & DB,Buffer

@@ -1,0 +1,17 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Phase,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Rui - Frontend,FE-01,"Blade templating, Bootstrap 5, Livewire basics + sample pages",0,12,Learning,12,12,Sample pages + Blade practice,Done,Rui,Learning phase
+Burndown,Rui - Frontend,FE-02,"File API, drag-drop JS, Alpine.js, upload component plan",12,20,Learning,8,8,Component map + Alpine notes,Done,Rui,Learning phase
+Burndown,Rui - Frontend,FE-03,"Livewire pagination, filters, form validation",20,27,Learning,7,7,Pagination + filter examples,Done,Rui,Learning phase
+Burndown,Rui - Frontend,FE-04,"Responsive QA, cross-browser testing",27,33,Learning,6,6,Responsive QA report,Done,Rui,Learning phase
+Burndown,Rui - Frontend,FE-05,"Frontend testing, Pest + Livewire test utilities",33,40,Learning,7,7,Frontend smoke tests,Done,Rui,Learning phase
+Burndown,Rui - Frontend,FE-06,"Blade layout shell, Bootstrap theme, nav + login view",40,48,Implementation,8,20,Layout + theme + login,In Progress,Rui,DTR-backed: AI tool setup + workflow refinement
+Burndown,Rui - Frontend,FE-07,"Scholar index Livewire, filters, show page scaffold",48,54,Implementation,6,0,Index + show views working,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-08,"Upload form, drag-drop JS, 10MB validation UI",54,62,Implementation,8,0,Upload form complete,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-09,"Strike-off button UI, restore modal, admin-only perm check",62,67,Implementation,5,0,Strike-off + restore UI,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-10,"Responsive QA, cleanup",67,76,Implementation,9,0,Responsive QA pass,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-11,"Frontend testing, Livewire test utilities",76,85,Implementation,9,0,Frontend tests green,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-12,"Component refinement, Alpine.js integration",85,94,Implementation,9,0,Component refinement complete,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-13,"Cross-browser testing, responsive fixes",94,103,Implementation,9,0,Cross-browser QA complete,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-14,"Final QA pass, bug fixes",103,112,Implementation,9,0,UI bug list cleared,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-15,"Handoff documentation, code cleanup, retrospective",112,121,Implementation,9,0,Component docs ready,Pending,Rui,Implementation
+Burndown,Rui - Frontend,FE-16,Buffer / polish / unmet responsive issues,121,162,Implementation,41,0,Buffer kept intact,Pending,Rui,Buffer

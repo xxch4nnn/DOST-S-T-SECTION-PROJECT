@@ -1,0 +1,17 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Phase,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Fullstack / AIOps,FS-01,Study Laravel/Livewire/Spatie/Docker fundamentals + mirror project,0,12,Learning,12,12,Mirror project + wiki entries,Done,Fullstack,Learning phase
+Burndown,Fullstack / AIOps,FS-02,"Docker networking, CI scripting, Bible Keeper system",12,20,Learning,8,8,Bible Keeper v1 working,Done,Fullstack,Learning phase
+Burndown,Fullstack / AIOps,FS-03,"Deployment hardening, LAN access, backup/restore",20,27,Learning,7,7,Deployment runbook draft,Done,Fullstack,Learning phase
+Burndown,Fullstack / AIOps,FS-04,"CI/CD pipelines, healthcheck scripts, automation",27,33,Learning,6,6,CI healthcheck script,Done,Fullstack,Learning phase
+Burndown,Fullstack / AIOps,FS-05,"Laravel testing, smoke tests, test plan + utilities",33,40,Learning,7,7,Test plan + smoke tests,Done,Fullstack,Learning phase
+Burndown,Fullstack / AIOps,FS-06,"Repo init, git workflow, Dockerfile + compose, healthcheck",40,48,Implementation,8,20,Repo + Docker + CI,In Progress,Fullstack,DTR-backed: seeders/migrations/CRUD practice + Bible Keeper patch
+Burndown,Fullstack / AIOps,FS-07,"Laravel Breeze install, Spatie setup, auth test",48,56,Implementation,8,0,Auth working in Docker,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-08,"Backend migrations volume-mounted, MySQL init, run testing",56,64,Implementation,8,0,Migrations run cleanly,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-09,"CI script testing, backup script, restore test",64,70,Implementation,6,0,CI + backup + restore tested,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-10,"Docker hardening, LAN access test",70,76,Implementation,6,0,Docker hardened; LAN access verified,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-11,"Bible Keeper deployment, cron setup, trim workflow",76,85,Implementation,9,0,Bible Keeper live in project,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-12,"CI pipeline refinement, automation improvements",85,94,Implementation,9,0,CI refinements complete,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-13,"Deployment runbook finalization, LAN testing",94,103,Implementation,9,0,Deployment runbook final,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-14,"Final integration testing, smoke tests, healthcheck verify",103,112,Implementation,9,0,Verified end-to-end delivery path,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-15,"Handoff pack, documentation, final review, retrospective",112,121,Implementation,9,0,Handoff pack ready,Pending,Fullstack,Implementation
+Burndown,Fullstack / AIOps,FS-16,Buffer / polish / unplanned blockers,121,162,Implementation,41,0,Buffer kept intact,Pending,Fullstack,Buffer

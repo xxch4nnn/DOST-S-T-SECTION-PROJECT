@@ -1,0 +1,7 @@
+Sheet,Role,Task ID,Task,Start Hour,End Hour,Phase,Est. Hours,Actual Hours,Deliverable,Status,Assignee,Notes
+Burndown,Miguel - PM / UI-UX,MQ-01,Test plan + cases doc,0,8,Learning,8,8,Minimum test set documented,In Progress,Miguel,Merged QA ownership; continuing from PM learning phase
+Burndown,Miguel - PM / UI-UX,MQ-02,Smoke test: login + scholar CRUD,8,14,Learning,6,0,Manual + PHPUnit smoke passing,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,MQ-03,Upload edge cases + validation,14,18,Learning,4,0,"Invalid MIME, >10MB, missing docs tested",Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,MQ-04,Role permission matrix test,18,24,Learning,6,0,Spatie permissions enforced per role,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,MQ-05,Regression + handoff pack,24,40,Learning,16,0,Bug list + screenshots + client demo prep,Pending,Miguel,Implementation
+Burndown,Miguel - PM / UI-UX,MQ-06,Final acceptance sign-off rehearsal,40,41,Implementation,1,0,Acceptance rehearsal completed,Pending,Miguel,Implementation

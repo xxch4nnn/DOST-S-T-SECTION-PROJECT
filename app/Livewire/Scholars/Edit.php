@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Livewire\Scholars;
+
+use App\Models\Scholar;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
+use App\Models\School;
+use App\Models\Course;
+use App\Models\Region;
+use App\Models\ClearanceStatus;
+use Livewire\Component;
+
+class Edit extends Component
+{
+    public Scholar $scholar;
+
+    public $first_name;
+    public $middle_name;
+    public $last_name;
+    public $generational_suffix;
+    public $year_of_award;
+    public $scholarship_id;
+    public $scholarship_type_id;
+    public $spas_no;
+    public $sex;
+    public $birthdate;
+    public $contact_number;
+    public $email_address;
+    public $school_id;
+    public $course_id;
+    public $program;
+    public $barangay;
+    public $municipality;
+    public $district;
+    public $province;
+    public $region_id;
+    public $clearance_status_id;
+    public $clearance_date;
+    public $for_disposal = false;
+
+    public function mount(Scholar $scholar)
+    {
+        $this->scholar = $scholar;
+        $this->fill($scholar->toArray());
+        
+        // format date fields for input
+        if ($this->birthdate) {
+            $this->birthdate = $scholar->birthdate->format('Y-m-d');
+        }
+        if ($this->clearance_date) {
+            $this->clearance_date = $scholar->clearance_date->format('Y-m-d');
+        }
+    }
+
+    public function save()
+    {
+        $validated = $this->validate([
+            'first_name' => 'required|string|max:50',
+            'middle_name' => 'nullable|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'generational_suffix' => 'nullable|string|max:5',
+            'year_of_award' => 'required|integer',
+            'scholarship_id' => 'required|exists:scholarships,id',
+            'scholarship_type_id' => 'required|exists:scholarship_types,id',
+            'spas_no' => 'nullable|string|max:50',
+            'sex' => 'nullable|string|in:Male,Female',
+            'birthdate' => 'nullable|date',
+            'contact_number' => 'nullable|string|max:11',
+            'email_address' => 'nullable|email|max:70|unique:scholars,email_address,' . $this->scholar->id,
+            'school_id' => 'required|exists:schools,id',
+            'course_id' => 'nullable|exists:courses,id',
+            'program' => 'nullable|string|max:150',
+            'barangay' => 'nullable|string|max:150',
+            'municipality' => 'nullable|string|max:150',
+            'district' => 'nullable|string|max:150',
+            'province' => 'nullable|string|max:150',
+            'region_id' => 'required|exists:regions,id',
+            'clearance_status_id' => 'required|exists:clearance_statuses,id',
+            'clearance_date' => 'nullable|date',
+            'for_disposal' => 'boolean',
+        ]);
+
+        $this->scholar->update($validated);
+
+        return redirect()->route('scholars.show', $this->scholar->id);
+    }
+
+    public function render()
+    {
+        return view('livewire.scholars.edit', [
+            'scholarships' => Scholarship::all(),
+            'scholarshipTypes' => ScholarshipType::all(),
+            'schools' => School::orderBy('name')->get(),
+            'courses' => Course::orderBy('name')->get(),
+            'regions' => Region::orderBy('name')->get(),
+            'clearanceStatuses' => ClearanceStatus::all(),
+        ])->layout('layouts.app');
+    }
+}

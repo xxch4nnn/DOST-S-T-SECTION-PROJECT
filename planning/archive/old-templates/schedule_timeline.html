@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOSTorage V1 — Compact Timeline Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-aiops: #a78bfa;
+            --accent-pm: #60a5fa;
+            --accent-frontend: #34d399;
+            --accent-backend: #f59e0b;
+            --accent-gate: #f43f5e;
+            --accent-buffer: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 1rem;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 40%);
+        }
+
+        header {
+            max-width: 1600px;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .meta-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 0.3rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.8rem;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: #818cf8;
+            color: #c7d2fe;
+        }
+
+        .gantt-outer {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(12px);
+            overflow-x: auto;
+        }
+
+        .gantt-table {
+            min-width: 1200px;
+            position: relative;
+        }
+
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 420px repeat(162, 1fr);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            position: sticky;
+            top: 0;
+            background: #0f172a;
+            z-index: 10;
+        }
+
+        .task-column-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .hour-tick-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            transform: translateX(-50%);
+        }
+
+        .gantt-section-header {
+            background: rgba(255, 255, 255, 0.02);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.4rem 0.75rem;
+            margin: 0.75rem 0 0.4rem 0;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-pm);
+            letter-spacing: 0.02em;
+        }
+
+        .gantt-section-header.sec-aiops { border-left-color: var(--accent-aiops); }
+        .gantt-section-header.sec-pm { border-left-color: var(--accent-pm); }
+        .gantt-section-header.sec-frontend { border-left-color: var(--accent-frontend); }
+        .gantt-section-header.sec-backend { border-left-color: var(--accent-backend); }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 420px repeat(162, 1fr);
+            align-items: center;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .gantt-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .task-details {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-right: 1rem;
+            overflow: hidden;
+        }
+
+        .task-id {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            min-width: 28px;
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .task-title {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .task-duration-badge {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            margin-left: auto;
+        }
+
+        .timeline-track {
+            grid-column: 2 / -1;
+            display: grid;
+            grid-template-columns: repeat(162, 1fr);
+            height: 20px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 4px;
+        }
+
+        .task-bar {
+            height: 12px;
+            margin: auto 0;
+            border-radius: 3px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            cursor: help;
+        }
+
+        .task-aiops { background: #8b5cf6; }
+        .task-pm { background: #3b82f6; }
+        .task-frontend { background: #10b981; }
+        .task-backend { background: #f59e0b; }
+        .task-buffer { background: #64748b; }
+
+        .guide-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+        }
+
+        .guide-line.gate-40 {
+            width: 1px;
+            background: #ef4444;
+            opacity: 0.6;
+        }
+
+        .guide-line.gate-121 {
+            width: 1px;
+            background: #ef4444;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>DOSTorage V1 Schedule</h1>
+        <div class="meta-subtitle">Hour-accurate view — 38 hours used / 610 remaining</div>
+        <div class="controls">
+            <button class="filter-btn active" onclick="filterRole('all')">All Roles</button>
+            <button class="filter-btn" onclick="filterRole('Fullstack / AIOps')">Fullstack / AIOps</button>
+            <button class="filter-btn" onclick="filterRole('Miguel - PM / UI-UX')">Miguel (PM)</button>
+            <button class="filter-btn" onclick="filterRole('Rui - Frontend')">Rui (Frontend)</button>
+            <button class="filter-btn" onclick="filterRole('Wakin - Backend & DB')">Wakin (Backend)</button>
+        </div>
+    </header>
+
+    <div class="gantt-outer">
+        <div class="gantt-table">
+            <div class="gantt-header" id="gantt-ticks">
+                <div class="task-column-title">Task</div>
+            </div>
+            <div id="gantt-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            // Fullstack / AIOps
+            { role: "Fullstack / AIOps", id: "FS-01", name: "Bootcamp + mirror project setup", start: 0, duration: 12, class: "task-aiops", desc: "Learning: Laravel/Livewire/Spatie/Docker plus scaffolded mirror project." },
+            { role: "Fullstack / AIOps", id: "FS-02", name: "Docker networking, CI, Bible Keeper v1", start: 12, duration: 8, class: "task-aiops", desc: "Docker networking, healthcheck scripts, Bible Keeper v1 automation." },
+            { role: "Fullstack / AIOps", id: "FS-03", name: "Deployment hardening, LAN access, backup/restore", start: 20, duration: 7, class: "task-aiops", desc: "Offline/local deployment, backup/restore, LAN validation." },
+            { role: "Fullstack / AIOps", id: "FS-04", name: "CI/CD automation, healthcheck, build hardening", start: 27, duration: 6, class: "task-aiops", desc: "Automated validation and containerized healthchecks." },
+            { role: "Fullstack / AIOps", id: "FS-05", name: "Testing + smoke tests + test plan", start: 33, duration: 5, class: "task-aiops", desc: "Wrote smoke tests and a defined test plan." },
+            { role: "Fullstack / AIOps", id: "FS-06", name: "Blocker buffer / learning gate prep", start: 38, duration: 2, class: "task-buffer", desc: "Retro and final learning handoff before Hour 40 gate." },
+            { role: "Fullstack / AIOps", id: "FS-07", name: "Repo init + Docker + auth scaffold", start: 40, duration: 8, class: "task-aiops", desc: "Created repo, Docker compose, Laravel Breeze auth inside container." },
+            { role: "Fullstack / AIOps", id: "FS-08", name: "Migrations + MySQL init + run testing", start: 48, duration: 8, class: "task-aiops", desc: "All migrations runnable inside Docker with seed data." },
+            { role: "Fullstack / AIOps", id: "FS-09", name: "Backup/restore + Docker hardening + LAN test", start: 56, duration: 8, class: "task-aiops", desc: "Backup/restore validated; LAN access confirmed." },
+            { role: "Fullstack / AIOps", id: "FS-10", name: "Bible Keeper deployment + automation + trim", start: 64, duration: 12, class: "task-aiops", desc: "Bible Keeper in project, cron live, trim workflow documented." },
+            { role: "Fullstack / AIOps", id: "FS-11", name: "Integration testing + smoke + healthcheck verify", start: 76, duration: 18, class: "task-aiops", desc: "All paths tested end-to-end including healthchecks." },
+            { role: "Fullstack / AIOps", id: "FS-12", name: "Deployment runbook finalization + LAN testing", start: 94, duration: 18, class: "task-aiops", desc: "Final runbook and reproducible delivery path." },
+            { role: "Fullstack / AIOps", id: "FS-13", name: "Handoff pack + documentation + retrospective", start: 112, duration: 9, class: "task-aiops", desc: "Docs, handoff pack, and lessons learned." },
+            { role: "Fullstack / AIOps", id: "FS-14", name: "Buffer: polish + unplanned blockers", start: 121, duration: 41, class: "task-buffer", desc: "Late bugs or defects without delaying client milestone." },
+
+            // Miguel - PM / UI-UX
+            { role: "Miguel - PM / UI-UX", id: "PM-01", name: "UX + wireframes + acceptance criteria", start: 0, duration: 12, class: "task-pm", desc: "Physical low-fi prototype and acceptance criteria draft." },
+            { role: "Miguel - PM / UI-UX", id: "PM-02", name: "Design tokens + brand + component list", start: 12, duration: 8, class: "task-pm", desc: "Final wireframes and Bootstrap design token system." },
+            { role: "Miguel - PM / UI-UX", id: "PM-03", name: "Accessibility + responsive QA patterns", start: 20, duration: 7, class: "task-pm", desc: "Accessibility baseline and responsive testing patterns." },
+            { role: "Miguel - PM / UI-UX", id: "PM-04", name: "Handoff draft + demo script", start: 27, duration: 6, class: "task-pm", desc: "Demo script, UI spec draft, and client handoff draft." },
+            { role: "Miguel - PM / UI-UX", id: "PM-05", name: "Test plan + regression + client-confirmation prep", start: 33, duration: 5, class: "task-pm", desc: "Test plan, bug triage, and client confirmation checklist." },
+            { role: "Miguel - PM / UI-UX", id: "PM-06", name: "Blocker buffer / learning gate prep", start: 38, duration: 2, class: "task-buffer", desc: "Retro before implementation gate." },
+            { role: "Miguel - PM / UI-UX", id: "PM-07", name: "Finalize design package + Bootstrap theme", start: 40, duration: 8, class: "task-pm", desc: "Design package approved; component specs finalized." },
+            { role: "Miguel - PM / UI-UX", id: "PM-08", name: "Review layout + nav + responsive QA", start: 48, duration: 8, class: "task-pm", desc: "Reviewed layout, nav, login, and responsive behavior." },
+            { role: "Miguel - PM / UI-UX", id: "PM-09", name: "Review upload UI + strike-off UI + regression", start: 56, duration: 8, class: "task-pm", desc: "Reviewed workflows and prepared regression checklist." },
+            { role: "Miguel - PM / UI-UX", id: "PM-10", name: "Handoff pack + client alignment", start: 64, duration: 9, class: "task-pm", desc: "Screenshots, criteria, demo prep, and client notes." },
+            { role: "Miguel - PM / UI-UX", id: "PM-11", name: "Demo script + client communication", start: 73, duration: 8, class: "task-pm", desc: "Final demo script and async client comms plan." },
+            { role: "Miguel - PM / UI-UX", id: "PM-12", name: "Design review + accessibility audit", start: 81, duration: 9, class: "task-pm", desc: "Final WCAG pass and visual design review." },
+            { role: "Miguel - PM / UI-UX", id: "PM-13", name: "Regression oversight + sign-off docs", start: 90, duration: 31, class: "task-pm", desc: "Regression oversight, bug triage, and sign-off documentation." },
+            { role: "Miguel - PM / UI-UX", id: "PM-14", name: "Buffer: client follow-up + polish", start: 121, duration: 41, class: "task-buffer", desc: "Buffer for client follow-ups and UI polish." },
+
+            // Rui - Frontend
+            { role: "Rui - Frontend", id: "FE-01", name: "Blade/Bootstrap/Livewire + sample pages", start: 0, duration: 12, class: "task-frontend", desc: "Learned templates, Livewire reactivity, and bootstrap theming." },
+            { role: "Rui - Frontend", id: "FE-02", name: "File API + drag-drop + Alpine + upload plan", start: 12, duration: 8, class: "task-frontend", desc: "Upload flow planned and component architecture mapped." },
+            { role: "Rui - Frontend", id: "FE-03", name: "Livewire pagination + filters + validation", start: 20, duration: 7, class: "task-frontend", desc: "Pagination and filters built and validated." },
+            { role: "Rui - Frontend", id: "FE-04", name: "Responsive QA + cross-browser testing", start: 27, duration: 6, class: "task-frontend", desc: "Responsive behavior validated and documented." },
+            { role: "Rui - Frontend", id: "FE-05", name: "Frontend testing + Livewire utilities", start: 33, duration: 5, class: "task-frontend", desc: "Smoke tests and test utilities configured." },
+            { role: "Rui - Frontend", id: "FE-06", name: "Blocker buffer / learning gate prep", start: 38, duration: 2, class: "task-buffer", desc: "Prep and cleanup before Hour 40 gate." },
+            { role: "Rui - Frontend", id: "FE-07", name: "Layout shell + Bootstrap theme + nav + login", start: 40, duration: 8, class: "task-frontend", desc: "Visual shell built with login and navigation." },
+            { role: "Rui - Frontend", id: "FE-08", name: "Scholar index + show scaffold + filters", start: 48, duration: 8, class: "task-frontend", desc: "Core Livewire views completed." },
+            { role: "Rui - Frontend", id: "FE-09", name: "Upload form + drag-drop + 10MB validation", start: 56, duration: 8, class: "task-frontend", desc: "Upload pipeline validated end-to-end in UI." },
+            { role: "Rui - Frontend", id: "FE-10", name: "Strike-off + restore UI + admin checks", start: 64, duration: 9, class: "task-frontend", desc: "Strike-off/restore flows implemented and tested." },
+            { role: "Rui - Frontend", id: "FE-11", name: "Responsive QA + cleanup", start: 73, duration: 8, class: "task-frontend", desc: "Responsive cleanup completed." },
+            { role: "Rui - Frontend", id: "FE-12", name: "Frontend tests + Alpine integration", start: 81, duration: 9, class: "task-frontend", desc: "Frontend tests green; Alpine integration refined." },
+            { role: "Rui - Frontend", id: "FE-13", name: "Cross-browser fixes + responsive polish", start: 90, duration: 9, class: "task-frontend", desc: "Browser-specific fixes applied." },
+            { role: "Rui - Frontend", id: "FE-14", name: "Final QA + bug fixes + handoff docs", start: 99, duration: 22, class: "task-frontend", desc: "Final QA, bug fixes, and component docs." },
+            { role: "Rui - Frontend", id: "FE-15", name: "Buffer: polish + responsive issues", start: 121, duration: 41, class: "task-buffer", desc: "Buffer for late visual/UX fixes." },
+
+            // Wakin - Backend & DB
+            { role: "Wakin - Backend & DB", id: "BD-01", name: "Laravel fundamentals + Eloquent + mirror backend", start: 0, duration: 12, class: "task-backend", desc: "Fundamentals and mirror backend completed." },
+            { role: "Wakin - Backend & DB", id: "BD-02", name: "Spatie + testing + V1 migration drafts", start: 12, duration: 8, class: "task-backend", desc: "Permissions, testing, and migration drafts ready." },
+            { role: "Wakin - Backend & DB", id: "BD-03", name: "Filesystem + UUID + soft-delete patterns", start: 20, duration: 7, class: "task-backend", desc: "Storage config and deletion strategy finalized." },
+            { role: "Wakin - Backend & DB", id: "BD-04", name: "Polymorphic + version metadata + audit logs", start: 27, duration: 6, class: "task-backend", desc: "Schema extensions proposed and documented." },
+            { role: "Wakin - Backend & DB", id: "BD-05", name: "Search indexing + query optimization", start: 33, duration: 5, class: "task-backend", desc: "Search strategy documented and validated." },
+            { role: "Wakin - Backend & DB", id: "BD-06", name: "Blocker buffer / learning gate prep", start: 38, duration: 2, class: "task-buffer", desc: "Prep and cleanup before Hour 40 gate." },
+            { role: "Wakin - Backend & DB", id: "BD-07", name: "Scholar + lookup tables + rollback", start: 40, duration: 8, class: "task-backend", desc: "V1 migrations complete with rollbacks." },
+            { role: "Wakin - Backend & DB", id: "BD-08", name: "Scholar + Document models + seeders", start: 48, duration: 8, class: "task-backend", desc: "Models and seed data finalized." },
+            { role: "Wakin - Backend & DB", id: "BD-09", name: "UUID storage + soft-delete + strike-off logic", start: 56, duration: 8, class: "task-backend", desc: "Storage and strike-off behaviors implemented." },
+            { role: "Wakin - Backend & DB", id: "BD-10", name: "Duplicate workflow + version metadata", start: 64, duration: 9, class: "task-backend", desc: "Duplicate detection and history logic complete." },
+            { role: "Wakin - Backend & DB", id: "BD-11", name: "Audit log + login/file action logging", start: 73, duration: 8, class: "task-backend", desc: "Audit logging scaffolded and tested." },
+            { role: "Wakin - Backend & DB", id: "BD-12", name: "QA tests + feature/integration tests", start: 81, duration: 9, class: "task-backend", desc: "QA tests green with coverage evidence." },
+            { role: "Wakin - Backend & DB", id: "BD-13", name: "Performance tuning + query optimization", start: 90, duration: 9, class: "task-backend", desc: "Query tuning and index strategy implemented." },
+            { role: "Wakin - Backend & DB", id: "BD-14", name: "Security hardening + audit review", start: 99, duration: 22, class: "task-backend", desc: "Security review completed and accepted." },
+            { role: "Wakin - Backend & DB", id: "BD-15", name: "Buffer: schema iterations + validation", start: 121, duration: 41, class: "task-buffer", desc: "Buffer for late schema changes and validation." }
+        ];
+
+        const roles = [
+            { name: "Fullstack / AIOps", class: "sec-aiops" },
+            { name: "Miguel - PM / UI-UX", class: "sec-pm" },
+            { name: "Rui - Frontend", class: "sec-frontend" },
+            { name: "Wakin - Backend & DB", class: "sec-backend" }
+        ];
+
+        const ticksContainer = document.getElementById("gantt-ticks");
+        for (let i = 0; i <= 162; i += 10) {
+            const tick = document.createElement("div");
+            tick.className = "hour-tick-label";
+            tick.style.gridColumn = `${i + 2}`;
+            tick.textContent = i;
+            ticksContainer.appendChild(tick);
+        }
+        const finalTick = document.createElement("div");
+        finalTick.className = "hour-tick-label";
+        finalTick.style.gridColumn = "164";
+        finalTick.textContent = "162h";
+        ticksContainer.appendChild(finalTick);
+
+        function filterRole(roleName) {
+            document.querySelectorAll(".filter-btn").forEach(btn => {
+                if (roleName === 'all') {
+                    if (btn.textContent.includes('All')) btn.classList.add("active");
+                    else btn.classList.remove("active");
+                } else {
+                    if (btn.textContent.includes(roleName.split(' ')[0])) btn.classList.add("active");
+                    else btn.classList.remove("active");
+                }
+            });
+            renderGantt(roleName);
+        }
+
+        function renderGantt(selectedRole = 'all') {
+            const container = document.getElementById("gantt-body");
+            container.innerHTML = '';
+
+            roles.forEach(roleObj => {
+                if (selectedRole !== 'all' && roleObj.name !== selectedRole) return;
+
+                const secHeader = document.createElement("div");
+                secHeader.className = `gantt-section-header ${roleObj.class}`;
+                secHeader.textContent = roleObj.name;
+                container.appendChild(secHeader);
+
+                const roleTasks = tasks.filter(t => t.role === roleObj.name);
+                roleTasks.forEach(task => {
+                    const row = document.createElement("div");
+                    row.className = "gantt-row";
+
+                    const detailsDiv = document.createElement("div");
+                    detailsDiv.className = "task-details";
+
+                    const idSpan = document.createElement("span");
+                    idSpan.className = "task-id";
+                    idSpan.textContent = task.id;
+                    detailsDiv.appendChild(idSpan);
+
+                    const titleDiv = document.createElement("div");
+                    titleDiv.className = "task-title";
+                    titleDiv.textContent = task.name;
+                    titleDiv.title = task.desc;
+                    detailsDiv.appendChild(titleDiv);
+
+                    const durSpan = document.createElement("span");
+                    durSpan.className = "task-duration-badge";
+                    durSpan.textContent = `${task.duration}h`;
+                    detailsDiv.appendChild(durSpan);
+
+                    row.appendChild(detailsDiv);
+
+                    const trackDiv = document.createElement("div");
+                    trackDiv.className = "timeline-track";
+
+                    const gate40 = document.createElement("div");
+                    gate40.className = "guide-line gate-40";
+                    gate40.style.left = `${(40 / 162) * 100}%`;
+                    trackDiv.appendChild(gate40);
+
+                    const gate121 = document.createElement("div");
+                    gate121.className = "guide-line gate-121";
+                    gate121.style.left = `${(121 / 162) * 100}%`;
+                    trackDiv.appendChild(gate121);
+
+                    const bar = document.createElement("div");
+                    bar.className = `task-bar ${task.class}`;
+                    const colStart = task.start + 1;
+                    const colEnd = task.start + task.duration + 1;
+                    bar.style.gridColumn = `${colStart} / ${colEnd}`;
+
+                    const hoverTitle = `${task.name} (${task.duration}h)\n[Hour ${task.start} - ${task.start + task.duration}]\n\n${task.desc}`;
+                    bar.title = hoverTitle;
+
+                    trackDiv.appendChild(bar);
+                    row.appendChild(trackDiv);
+                    container.appendChild(row);
+                });
+            });
+        }
+
+        renderGantt();
+    </script>
+</body>
+</html>
