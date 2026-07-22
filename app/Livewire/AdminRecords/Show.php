@@ -64,16 +64,19 @@ class Show extends Component
         $uuid = Str::uuid()->toString();
         $extension = $this->file->getClientOriginalExtension();
         $storedFilename = $uuid . '.' . $extension;
+        $originalFilename = $this->file->getClientOriginalName();
+        $mimeType = $this->file->getMimeType();
+        $fileSizeKb = round($this->file->getSize() / 1024);
 
         // Store flat UUID in local private disk (as per ADR-005)
         $this->file->storeAs('documents', $storedFilename, 'local');
 
         $document = $this->record->documents()->create([
             'file_type_id' => $this->file_type_id,
-            'original_filename' => $this->file->getClientOriginalName(),
+            'original_filename' => $originalFilename,
             'stored_filename' => $storedFilename,
-            'mime_type' => $this->file->getMimeType(),
-            'file_size_kb' => round($this->file->getSize() / 1024),
+            'mime_type' => $mimeType,
+            'file_size_kb' => $fileSizeKb,
             'status' => 'active',
             'uploaded_by' => auth()->id(),
         ]);
@@ -100,9 +103,12 @@ class Show extends Component
         $uuid = Str::uuid()->toString();
         $extension = $this->file->getClientOriginalExtension();
         $storedFilename = $uuid . '.' . $extension;
+        $originalFilename = $this->file->getClientOriginalName();
+        $mimeType = $this->file->getMimeType();
+        $fileSizeKb = round($this->file->getSize() / 1024);
 
         if ($option === 'keep_history') {
-            \DB::transaction(function () use ($storedFilename) {
+            \DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeKb) {
                 // Move current active document values to version table
                 $this->duplicateDocument->versions()->create([
                     'stored_filename' => $this->duplicateDocument->stored_filename,
@@ -119,15 +125,15 @@ class Show extends Component
                 $before = $this->duplicateDocument->toArray();
                 $this->duplicateDocument->update([
                     'stored_filename' => $storedFilename,
-                    'original_filename' => $this->file->getClientOriginalName(),
-                    'mime_type' => $this->file->getMimeType(),
-                    'file_size_kb' => round($this->file->getSize() / 1024),
+                    'original_filename' => $originalFilename,
+                    'mime_type' => $mimeType,
+                    'file_size_kb' => $fileSizeKb,
                 ]);
 
                 $this->logAudit('overwrite', $this->duplicateDocument, $before);
             });
         } elseif ($option === 'overwrite') {
-            \DB::transaction(function () use ($storedFilename) {
+            \DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeKb) {
                 // Delete old file physically
                 Storage::disk('local')->delete('documents/' . $this->duplicateDocument->stored_filename);
 
@@ -138,9 +144,9 @@ class Show extends Component
                 $before = $this->duplicateDocument->toArray();
                 $this->duplicateDocument->update([
                     'stored_filename' => $storedFilename,
-                    'original_filename' => $this->file->getClientOriginalName(),
-                    'mime_type' => $this->file->getMimeType(),
-                    'file_size_kb' => round($this->file->getSize() / 1024),
+                    'original_filename' => $originalFilename,
+                    'mime_type' => $mimeType,
+                    'file_size_kb' => $fileSizeKb,
                 ]);
 
                 $this->logAudit('overwrite', $this->duplicateDocument, $before);

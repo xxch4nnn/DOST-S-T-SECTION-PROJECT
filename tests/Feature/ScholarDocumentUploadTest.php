@@ -25,8 +25,7 @@ class ScholarDocumentUploadTest extends TestCase
 
     public function test_allows_users_to_upload_documents_with_uuid_hashing()
     {
-        Storage::fake('local');
-        
+        // Avoid Storage::fake('local') — it breaks Livewire temporary upload metadata (LW4 + Flysystem).
         $user = User::factory()->create();
         
         $scholarship = Scholarship::firstOrCreate(['name' => 'RA 7687', 'is_available' => true]);
@@ -73,5 +72,6 @@ class ScholarDocumentUploadTest extends TestCase
 
         // File must be stored correctly
         Storage::disk('local')->assertExists('documents/' . $document->stored_filename);
+        Storage::disk('local')->delete('documents/' . $document->stored_filename);
     }
 }
