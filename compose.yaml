@@ -1,49 +1,54 @@
 services:
-    app:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        image: dostorage-app
-        ports:
-            - '${APP_PORT:-8000}:8000'
-        environment:
-            WWWUSER: '${WWWUSER}'
-            APP_ENV: '${APP_ENV:-local}'
-            APP_DEBUG: '${APP_DEBUG:-true}'
-            DB_HOST: '${DB_HOST:-mysql}'
-            DB_PORT: '${DB_PORT:-3306}'
-            DB_DATABASE: '${DB_DATABASE:-dostorage}'
-            DB_USERNAME: '${DB_USERNAME:-dostorage}'
-            DB_PASSWORD: '${DB_PASSWORD:-secret}'
-        volumes:
-            - '.:/var/www/html'
-            - sail-mysql:/var/lib/mysql
-        networks:
-            - sail
-        depends_on:
-            mysql:
-                condition: service_healthy
-    mysql:
-        image: 'mysql:8.4'
-        ports:
-            - '${FORWARD_DB_PORT:-3306}:3306'
-        environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
-            MYSQL_DATABASE: '${DB_DATABASE:-dostorage}'
-            MYSQL_USER: '${DB_USERNAME:-dostorage}'
-            MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
-        volumes:
-            - sail-mysql:/var/lib/mysql
-        networks:
-            - sail
-        healthcheck:
-            test: ['CMD', 'mysqladmin', 'ping', '-p${DB_PASSWORD:-secret}']
-            retries: 3
-            timeout: 5s
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dostorage-app
+    ports:
+      - '${APP_PORT:-8000}:80'
+    environment:
+      WWWUSER: '${WWWUSER:-1000}'
+      APP_ENV: '${APP_ENV:-local}'
+      APP_DEBUG: '${APP_DEBUG:-true}'
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: '3306'
+      DB_DATABASE: '${DB_DATABASE:-dostorage}'
+      DB_USERNAME: '${DB_USERNAME:-dostorage}'
+      DB_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - '.:/var/www/html'
+      - storage_private:/var/www/html/storage/app/private
+    networks:
+      - sail
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: 'mysql:8.4'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
+      MYSQL_DATABASE: '${DB_DATABASE:-dostorage}'
+      MYSQL_USER: '${DB_USERNAME:-dostorage}'
+      MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - sail-mysql:/var/lib/mysql
+    networks:
+      - sail
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-secret}"]
+      retries: 3
+      timeout: 5s
+
 networks:
-    sail:
-        driver: bridge
+  sail:
+    driver: bridge
+
 volumes:
-    sail-mysql:
-        driver: local
+  sail-mysql:
+    driver: local
+  storage_private:
+    driver: local
