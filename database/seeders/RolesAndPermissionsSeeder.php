@@ -9,26 +9,49 @@ use Spatie\Permission\Models\Permission;
 class RolesAndPermissionsSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * V1 baseline roles + permission matrix.
+     * Super Admin has all; Encoder must not receive manageUsers.
      */
     public function run(): void
     {
-        // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create roles
-        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
-        $admin = Role::firstOrCreate(['name' => 'Admin']);
-        $encoder = Role::firstOrCreate(['name' => 'Encoder']);
+        $permissions = [
+            'viewAuditLogs',
+            'manageUsers',
+            'uploadDocuments',
+            'editDocumentMetadata',
+            'strikeOffDocuments',
+            'viewReports',
+        ];
 
-        Permission::firstOrCreate(['name' => 'viewAuditLogs', 'guard_name' => 'web']);
-        $superAdmin->givePermissionTo('viewAuditLogs');
-        $admin->givePermissionTo('viewAuditLogs');
+        foreach ($permissions as $name) {
+            Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
+        }
 
-        // Assign super admin role to the test user if exists
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+        $admin = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
+        $encoder = Role::firstOrCreate(['name' => 'Encoder', 'guard_name' => 'web']);
+
+        $superAdmin->syncPermissions($permissions);
+
+        $admin->syncPermissions([
+            'viewAuditLogs',
+            'manageUsers',
+            'uploadDocuments',
+            'editDocumentMetadata',
+            'strikeOffDocuments',
+            'viewReports',
+        ]);
+
+        $encoder->syncPermissions([
+            'uploadDocuments',
+            'editDocumentMetadata',
+        ]);
+
         $user = \App\Models\User::where('email', 'test@example.com')->first();
         if ($user) {
-            $user->assignRole($superAdmin);
+            $user->syncRoles([$superAdmin]);
         }
     }
 }
