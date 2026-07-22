@@ -30,7 +30,11 @@
 /project_bible.txt
 /archive_local
 /archive
-/scripts
+/scripts/*
+!/scripts/backup.sh
+!/scripts/restore.sh
+!/scripts/start.sh
+!/scripts/test.sh
 /.agents
 /ai
 /planning/output
