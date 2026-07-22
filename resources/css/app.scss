@@ -1,0 +1,7 @@
+// Bootstrap 5 (Vite resolves package imports; no Webpack ~ alias)
+@import "bootstrap/scss/bootstrap";
+
+// App overrides
+body {
+    min-height: 100vh;
+}

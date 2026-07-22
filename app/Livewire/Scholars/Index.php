@@ -12,6 +12,8 @@ class Index extends Component
 {
     use WithPagination;
 
+    protected string $paginationTheme = 'bootstrap';
+
     public $search = '';
     public $spas_no = '';
     public $school_id = '';

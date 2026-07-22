@@ -12,6 +12,8 @@ class Index extends Component
 {
     use WithPagination;
 
+    protected string $paginationTheme = 'bootstrap';
+
     #[Title('Audit Log')]
 
     public string $action = '';

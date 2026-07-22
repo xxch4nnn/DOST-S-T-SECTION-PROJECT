@@ -10,6 +10,8 @@ class Index extends Component
 {
     use WithPagination;
 
+    protected string $paginationTheme = 'bootstrap';
+
     public $search = '';
     public $record_type = '';
     public $year = '';
