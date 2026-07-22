@@ -9,24 +9,20 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack via webhook
+      - name: Notify Slack via bot (fit-test channel)
         env:
-          SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          # Fit-test target: #dostorage-pm (bot allowed_channels). Change after expanding Hermes allowlist.
+          SLACK_CI_CHANNEL_ID: C0BJV9GF38V
         run: |
-          # Trim whitespace/newlines that break curl URL parsing
-          URL="$(printf '%s' "$SLACK_CI_WEBHOOK_URL" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-          if [ -z "$URL" ]; then
-            echo "SLACK_CI_WEBHOOK_URL secret is empty."
+          TOKEN="$(printf '%s' "$SLACK_BOT_TOKEN" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if [ -z "$TOKEN" ]; then
+            echo "SLACK_BOT_TOKEN secret is empty."
             exit 1
           fi
-          case "$URL" in
-            https://hooks.slack.com/services/*) ;;
-            *)
-              echo "SLACK_CI_WEBHOOK_URL must look like https://hooks.slack.com/services/T.../B.../..."
-              echo "Got a value that is set but not a Slack Incoming Webhook URL (malformed for curl)."
-              exit 1
-              ;;
-          esac
-          curl -fsS -X POST -H 'Content-type: application/json' \
-            --data '{"text":":white_check_mark: DOSTorage V1 Slack fit test — pipeline ran successfully."}' \
-            "$URL"
+          RESP="$(curl -fsS -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H 'Content-type: application/json; charset=utf-8' \
+            --data "{\"channel\":\"${SLACK_CI_CHANNEL_ID}\",\"text\":\":white_check_mark: DOSTorage V1 Slack fit test — pipeline ran successfully.\"}")"
+          echo "$RESP" | tee /tmp/slack_resp.json
+          echo "$RESP" | grep -q '"ok":true' || { echo "Slack API rejected the post"; exit 1; }
