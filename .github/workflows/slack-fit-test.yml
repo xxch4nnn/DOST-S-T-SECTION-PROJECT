@@ -13,10 +13,20 @@ jobs:
         env:
           SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
         run: |
-          if [ -z "$SLACK_CI_WEBHOOK_URL" ]; then
-            echo "SLACK_CI_WEBHOOK_URL secret is not set; skipping Slack notify."
+          # Trim whitespace/newlines that break curl URL parsing
+          URL="$(printf '%s' "$SLACK_CI_WEBHOOK_URL" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if [ -z "$URL" ]; then
+            echo "SLACK_CI_WEBHOOK_URL secret is empty."
             exit 1
           fi
+          case "$URL" in
+            https://hooks.slack.com/services/*) ;;
+            *)
+              echo "SLACK_CI_WEBHOOK_URL must look like https://hooks.slack.com/services/T.../B.../..."
+              echo "Got a value that is set but not a Slack Incoming Webhook URL (malformed for curl)."
+              exit 1
+              ;;
+          esac
           curl -fsS -X POST -H 'Content-type: application/json' \
             --data '{"text":":white_check_mark: DOSTorage V1 Slack fit test — pipeline ran successfully."}' \
-            "$SLACK_CI_WEBHOOK_URL"
+            "$URL"
