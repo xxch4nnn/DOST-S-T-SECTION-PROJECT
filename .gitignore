@@ -35,3 +35,11 @@
 /ai
 /planning/output
 /public/video
+
+# Cursor / MCP local workspace files
+/.cursorrules
+/CURSOR.md
+/CURSOR_INTEGRATION_BRIEF.md
+/.mcp.json
+/docs/cursor_audit_proposals.md
+/CURSOR.md
