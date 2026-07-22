@@ -1,62 +1,44 @@
 # DOSTorage V1 — Docker Runtime V1
 Verification Date: 2026-07-22
 
+## Stack summary
+- **Chosen:** Laravel 13 / Livewire 4 / Spatie / Bootstrap 5 / MySQL 8.4
+- **Decision:** Keep Laravel 13. Do **not** downgrade Livewire (remain on `^4.3.3`).
+- Runtime: nginx + php-fpm 8.3 in `dostorage-app`, MySQL 8.4 with named volume `sail-mysql`, private uploads volume `storage_private`.
+
 ## Verified
 - [x] compose.yaml replaced with nginx + php-fpm + MySQL runtime
 - [x] Dockerfile updated and image builds
-- [x] app accessible at http://localhost:8000
+- [x] app accessible at http://localhost:8000 (HTTP 200)
 - [x] migrate:fresh --force passes inside container
-- [x] Data survives compose down / up
+- [x] Data survives compose down / up (A == D)
+- [x] Test suite green: **28 passed** (Hour 74 backtrack)
 
-## Verification Outputs
-
-### `docker compose ps` (after final up)
-```
-NAME                IMAGE           COMMAND                  SERVICE   CREATED          STATUS                    PORTS
-dostorage-app-1     dostorage-app   ...                      app       ...              Up ...                    0.0.0.0:8000->80/tcp
-dostorage-mysql-1   mysql:8.4       ...                      mysql     ...              Up ... (healthy)          0.0.0.0:3307->3306/tcp
-```
-Note: only `mysql` defines a healthcheck; `app` shows `Up` (HTTP 200). Host MySQL port mapped to **3307** because **3306** was already bound (local WAMP).
-
-### HTTP
-- `GET http://localhost:8000/` → **200**
-- `GET http://localhost:8000/health` → `{"status":"ok",...}` **200**
-
-### Migrations
-`docker compose exec app php artisan migrate:fresh --force` → exit 0  
-Tables created include: `users`, `scholars`, `documents`, Spatie permission tables, etc. (26 tables in `dostorage`).
-
-### Volume persistence
+## Volume persistence (rechecked Hour 74)
 | Step | Result |
 |------|--------|
-| A (before) | `user_count = 1` (`persist@test.local` inserted) |
+| A | `COUNT(*)` users = 0 |
 | B | `docker compose down` |
 | C | `docker compose up -d` |
-| D (after) | `user_count = 1`, email `persist@test.local` still present |
+| D | `COUNT(*)` users = 0 |
+| E | `curl http://localhost:8000` → **200** |
 
-**Pass:** counts match; named volume `dostorage_sail-mysql` retained data.
+**Pass:** A == D and E == 200. Host MySQL published on **3307** (`FORWARD_DB_PORT`) because 3306 is occupied by local WAMP.
+
+## Known test failures
+None remaining after Hour 74 fixes:
+- Widened `file_types.year` to `varchar(50)`
+- Capture upload metadata **before** `storeAs` (Livewire temp file lifecycle)
+- Force `APP_ENV=testing` via `tests/bootstrap.php` so Livewire Volt `assertSeeVolt` macros register under Docker
 
 ## Local env (not committed)
-`.env` updated for Docker MySQL (`DB_CONNECTION=mysql`, `DB_HOST=mysql`, …) plus:
-```
-APP_PORT=8000
-WWWUSER=1000
-FORWARD_DB_PORT=3307
-```
-`.env` remains gitignored (do not commit secrets).
-
-## Intentional deviations from handoff draft
-1. **Removed** `sail-mysql` bind from the `app` service (MySQL data belongs only on `mysql`).
-2. Set `DB_CONNECTION=mysql` in compose `environment` so the app does not keep SQLite when `.env` is wrong.
-3. Dockerfile package names for Debian `php:8.3-fpm`: `libonig-dev`, `default-mysql-client` (not Alpine `oniguruma-dev` / `mysql-client`).
-4. Nginx config path: `/etc/nginx/conf.d/default.conf` (+ remove `sites-enabled/default`), not Alpine `http.d`.
-5. Create `storage` / `bootstrap/cache` before `chown` at build time.
-6. Docker Hub DNS: added `"dns": ["8.8.8.8","1.1.1.1"]` to `%USERPROFILE%\.docker\daemon.json` so pulls succeed on this machine.
+`.env` uses MySQL (`DB_HOST=mysql`) plus `APP_PORT=8000`, `WWWUSER=1000`, `FORWARD_DB_PORT=3307`. Remains gitignored.
 
 ## How to run again
 ```bash
 docker compose build
 docker compose up -d
-docker compose exec app php artisan migrate:fresh --force
+docker compose exec app php artisan migrate:fresh --force --seed
+docker compose exec app php artisan test
 # open http://localhost:8000
 ```

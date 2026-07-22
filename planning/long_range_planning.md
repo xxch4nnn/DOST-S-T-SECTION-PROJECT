@@ -19,10 +19,15 @@
 - **Backend & DB (Wakin)**: models, seeders, storage logic, strike-off, audit log, QA test writing
 
 ## Current Team Grounding
-- **Fullstack / AIOps (you):** studying project bible keeper system + full stack / tech stack
+- **Stack decision:** Laravel 13 / Livewire 4 / Spatie / Bootstrap 5 (no stack downgrades)
+- **Fullstack / AIOps (you):** Docker runtime complete; migrations/seeds green; test suite green; backup/restore scripts in progress
 - **Project Manager / UI-UX (Miguel):** drawing physical low-fi prototype
 - **Frontend (Rui):** studying front-end (Blade, Bootstrap, Livewire)
 - **Backend & DB (Wakin):** studying back end (Laravel, Eloquent, migrations)
+
+## Phase status
+- **Phase 1: Learning — COMPLETE**
+- Remaining implementation budget: **488 shared hours / 122 per member**
 
 ## 648-Hour Burn Plan  
 | Phase | Hours Burned | Remaining | Milestone |  
