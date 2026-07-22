@@ -1,0 +1,22 @@
+name: Slack Fit Test
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack via webhook
+        env:
+          SLACK_CI_WEBHOOK_URL: ${{ secrets.SLACK_CI_WEBHOOK_URL }}
+        run: |
+          if [ -z "$SLACK_CI_WEBHOOK_URL" ]; then
+            echo "SLACK_CI_WEBHOOK_URL secret is not set; skipping Slack notify."
+            exit 1
+          fi
+          curl -fsS -X POST -H 'Content-type: application/json' \
+            --data '{"text":":white_check_mark: DOSTorage V1 Slack fit test — pipeline ran successfully."}' \
+            "$SLACK_CI_WEBHOOK_URL"
