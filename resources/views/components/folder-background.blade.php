@@ -8,10 +8,10 @@
             </filter>
         </defs>
 
-        {{-- Dark Blue Folder Layer (High on left, straight horizontal -> S-curve down -> straight horizontal to right edge) --}}
-        <path d="M 0,360 V 60 H 520 C 640,60 720,200 840,200 H 1440 V 360 Z" fill="#0066b2" filter="url(#folder-shadow)"/>
+        {{-- Dark Blue Folder Layer (Rounded outer edges, steeper central transition >45deg) --}}
+        <path d="M 0,360 V 76 Q 0,50 26,50 H 610 C 670,50 710,210 770,210 H 1414 Q 1440,210 1440,236 V 360 Z" fill="#0066b2" filter="url(#folder-shadow)"/>
 
-        {{-- Light Main Blue Folder Layer (Low on left, straight horizontal -> S-curve up -> straight horizontal to right edge) --}}
-        <path d="M 0,360 V 270 H 520 C 640,270 720,160 840,160 H 1440 V 360 Z" fill="#54bbff" filter="url(#folder-shadow)"/>
+        {{-- Light Main Blue Folder Layer (Rounded outer edges, steeper central transition >45deg) --}}
+        <path d="M 0,360 V 286 Q 0,260 26,260 H 610 C 670,260 710,140 770,140 H 1414 Q 1440,140 1440,166 V 360 Z" fill="#54bbff" filter="url(#folder-shadow)"/>
     </svg>
 </div>

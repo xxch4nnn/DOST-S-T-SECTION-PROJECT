@@ -1,8 +1,8 @@
 <div>
     <!-- Logo & Title Header -->
     <div class="text-center mb-4">
-        <img src="{{ asset('DostSEILogo.svg') }}" alt="DOST SEI Logo" class="img-fluid mb-2" style="height: 3.8rem; width: auto;">
-        <h1 class="fw-extrabold text-dark tracking-tight mb-0" style="font-size: 2.6rem; font-family: 'Zalando Sans', system-ui, sans-serif;">DOSTorage</h1>
+        <img src="{{ asset('DostSEILogo.svg') }}" alt="DOST SEI Logo" class="img-fluid mb-2" style="height: 5rem; width: auto;">
+        <h1 class="fw-extrabold text-dark tracking-tight mb-0" style="font-size: 3rem; font-family: 'Zalando Sans', system-ui, sans-serif;">DOSTorage</h1>
     </div>
 
     <!-- Session Status -->
