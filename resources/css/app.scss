@@ -1,5 +1,11 @@
-// Typography
-@import url('https://fonts.cdnfonts.com/css/zalando-sans');
+// Local Typography Definition (Self-Hosted / Offline Ready - Zero Online CDN Dependencies)
+@font-face {
+    font-family: 'Zalando Sans';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: local('Zalando Sans'), local('ZalandoSans-Regular'), local('ZalandoSans'), local('Inter'), local('Segoe UI'), system-ui;
+}
 
 // Bootstrap 5 Variable Overrides (Before importing Bootstrap)
 $font-family-sans-serif: 'Zalando Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
