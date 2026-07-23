@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -14,7 +16,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
     public function test_seeds_three_baseline_roles(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $this->assertEqualsCanonicalizing(
             ['Super Admin', 'Admin', 'Encoder'],
@@ -24,7 +26,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
     public function test_super_admin_has_all_baseline_permissions(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $expected = [
             'viewAuditLogs',
@@ -51,7 +53,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
     public function test_encoder_lacks_manage_users_and_destructive_admin_gates(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $encoder = Role::findByName('Encoder');
 
@@ -65,7 +67,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
     public function test_seeded_test_admin_user_is_super_admin(): void
     {
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
 
         $user = User::where('email', 'test@example.com')->firstOrFail();
 
@@ -76,7 +78,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
     public function test_encoder_user_cannot_manage_users(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $encoderUser = User::factory()->create(['email' => 'encoder@example.com']);
         $encoderUser->assignRole('Encoder');

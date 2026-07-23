@@ -11,7 +11,7 @@ class DocumentVersion extends Model
 
     protected $fillable = [
         'document_id', 'stored_filename', 'original_filename',
-        'file_size_kb', 'version_number', 'replaced_by_user_id'
+        'file_size_kb', 'version_number', 'replaced_by_user_id',
     ];
 
     public function document()

@@ -11,7 +11,7 @@ class AdministrativeRecord extends Model
 
     protected $fillable = [
         'record_type', 'series_number', 'title', 'recipient',
-        'year', 'quarter', 'for_disposal', 'created_by'
+        'year', 'quarter', 'for_disposal', 'created_by',
     ];
 
     protected $casts = [
