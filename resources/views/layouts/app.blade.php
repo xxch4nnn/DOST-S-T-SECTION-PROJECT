@@ -7,21 +7,30 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
-<body>
-    <div class="min-vh-100 bg-light">
+<body class="text-body bg-light">
+    <div class="min-vh-100 d-flex flex-column">
         <livewire:layout.navigation />
 
         @if (isset($header))
-            <header class="bg-white border-bottom shadow-sm">
+            <header class="bg-white border-bottom border-primary border-opacity-25 shadow-sm">
                 <div class="container py-3">
-                    {{ $header }}
+                    <div class="text-dost-dark-blue">
+                        {{ $header }}
+                    </div>
                 </div>
             </header>
         @endif
 
-        <main class="py-4">
+        <main class="flex-grow-1 py-4">
             {{ $slot }}
         </main>
+
+        <footer class="border-top bg-white py-3 mt-auto">
+            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="small text-muted">{{ config('app.name', 'DOSTorage') }}</span>
+                <span class="small text-dost-dark-blue fw-semibold">DOST-SEI Davao Region</span>
+            </div>
+        </footer>
     </div>
 </body>
 </html>

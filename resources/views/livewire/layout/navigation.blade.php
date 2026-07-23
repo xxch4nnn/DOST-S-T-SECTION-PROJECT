@@ -16,13 +16,14 @@ new class extends Component
     }
 }; ?>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" x-data="{ open: false }">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" x-data="{ open: false }">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}" wire:navigate>
-            <x-application-logo style="height: 2rem; width: auto;" class="text-dark" />
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}" wire:navigate>
+            <x-application-logo style="height: 2rem; width: auto;" class="text-white" />
+            <span class="fw-semibold">DOSTorage</span>
         </a>
 
-        <button class="navbar-toggler" type="button" @click="open = ! open" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" @click="open = ! open" aria-label="Toggle navigation" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -56,7 +57,7 @@ new class extends Component
                 <li class="nav-item dropdown">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button type="button" class="btn btn-link nav-link dropdown-toggle text-decoration-none">
+                            <button type="button" class="btn btn-link nav-link dropdown-toggle text-decoration-none text-white">
                                 <span x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></span>
                             </button>
                         </x-slot>
