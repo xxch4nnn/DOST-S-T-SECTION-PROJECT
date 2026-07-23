@@ -25,6 +25,8 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
+    <h5 class="fw-bold text-dost-dark-blue mb-3">{{ __('Sign in') }}</h5>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-3" :status="session('status')" />
 
