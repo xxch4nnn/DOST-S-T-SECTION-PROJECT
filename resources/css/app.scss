@@ -1,8 +1,26 @@
-// Typography
-@import url('https://fonts.cdnfonts.com/css/zalando-sans');
+// Self-hosted Zalando Sans (OFL) — files in public/fonts/zalando-sans/
+@font-face {
+    font-family: 'Zalando Sans';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: local('Zalando Sans'),
+        url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2-variations'),
+        url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2');
+}
 
 // Bootstrap 5 Variable Overrides (Before importing Bootstrap)
 $font-family-sans-serif: 'Zalando Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+// Figma Typography Scale (16px base root)
+$h1-font-size: 2.5rem;    // 40px
+$h2-font-size: 2rem;      // 32px
+$h3-font-size: 1.75rem;   // 28px
+$h4-font-size: 1.5rem;    // 24px
+$h5-font-size: 1.25rem;   // 20px
+$h6-font-size: 1rem;      // 16px
+
+$headings-font-weight: 600; // Default Semi-Bold Headings
 
 $primary: #052c65;    // DOST-Dark Blue
 $info: #0099ff;       // DOST-Main Blue
@@ -105,4 +123,10 @@ body {
     background-color: var(--status-not-cleared) !important;
     color: #ffffff !important;
 }
+
+// Typography Weight Utility Classes
+.fw-semibold { font-weight: 600 !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-extrabold { font-weight: 800 !important; }
+
 
