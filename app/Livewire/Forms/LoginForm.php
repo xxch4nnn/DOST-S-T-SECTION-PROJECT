@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\AuditLog;
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -39,6 +41,21 @@ class LoginForm extends Form
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        $user = Auth::user();
+
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'login',
+            'record_type' => User::class,
+            'record_id' => $user->id,
+            'before_payload' => null,
+            'after_payload' => [
+                'email' => $user->email,
+                'user_agent' => request()->userAgent(),
+            ],
+            'ip_address' => request()->ip() ?? '127.0.0.1',
+        ]);
     }
 
     /**

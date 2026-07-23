@@ -34,3 +34,19 @@ Use these rules whenever this repo is the working directory.
 - Do not build backend models/migrations unless explicitly asked
 - Prefer modifying planning/docs artifacts inside `planning\`
 - Keep Bible Center clean: archive resolved items, avoid duplicate findings
+
+## Cursor Cloud specific instructions
+
+The Cloud VM runs this Laravel 13 / Livewire 4 app **natively with SQLite**. Docker is not installed on the Cloud VM (local Windows/WAMP and Docker/CI MySQL remain separate paths). PHP 8.3 + Composer and Node 22 are present. The startup update script only refreshes dependencies (`composer install`, `npm install`); everything below is NOT run automatically and must be done manually in a fresh workspace.
+
+- Use SQLite for Cloud/local agent dev (matches `.env.example` default `DB_CONNECTION=sqlite` and `phpunit.xml`). CI uses MySQL; you do not need MySQL on the Cloud VM.
+- First-time setup after deps are installed (env, key, DB are not created by the update script and are gitignored, so re-run these if missing):
+  - `cp .env.example .env`
+  - `touch database/database.sqlite`
+  - `php artisan key:generate`
+  - `php artisan migrate --seed`  (seeds a Super Admin `test@example.com` / `password`)
+- Build assets before **serving the UI**: `npm run build` (or keep `npm run dev` running). Bootstrap Sass deprecation warnings during build are harmless. Feature tests call `withoutVite()` in `tests/TestCase.php`, so they do **not** require `public/build/manifest.json`.
+- Run the app in dev mode with two processes: `php artisan serve --host=0.0.0.0 --port=8000` and `npm run dev` (Vite on 5173). `composer dev` runs the full concurrently stack (server + queue + pail + vite) but pail/queue are optional for basic dev.
+- Tests: `php artisan test` (do NOT pass `--no-interaction`; PHPUnit rejects it).
+- Lint PHP: `vendor/bin/pint --test` (clean on current `master`). Lint SCSS: `npm run lint:css` (CI job `lint-css`).
+- Seeded login for manual testing: `test@example.com` / `password` (Super Admin, email pre-verified; seed-only credentials).
