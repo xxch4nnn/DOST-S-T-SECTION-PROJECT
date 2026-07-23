@@ -20,15 +20,34 @@ class PasswordUpdateTest extends TestCase
 
         $component = Volt::test('profile.update-password-form')
             ->set('current_password', 'password')
-            ->set('password', 'new-password')
-            ->set('password_confirmation', 'new-password')
+            ->set('password', 'New-Password1')
+            ->set('password_confirmation', 'New-Password1')
             ->call('updatePassword');
 
         $component
             ->assertHasNoErrors()
             ->assertNoRedirect();
 
-        $this->assertTrue(Hash::check('new-password', $user->refresh()->password));
+        $this->assertTrue(Hash::check('New-Password1', $user->refresh()->password));
+    }
+
+    public function test_weak_password_is_rejected(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+
+        $component = Volt::test('profile.update-password-form')
+            ->set('current_password', 'password')
+            ->set('password', 'password')
+            ->set('password_confirmation', 'password')
+            ->call('updatePassword');
+
+        $component
+            ->assertHasErrors(['password'])
+            ->assertNoRedirect();
+
+        $this->assertTrue(Hash::check('password', $user->refresh()->password));
     }
 
     public function test_correct_password_must_be_provided_to_update_password(): void
@@ -39,8 +58,8 @@ class PasswordUpdateTest extends TestCase
 
         $component = Volt::test('profile.update-password-form')
             ->set('current_password', 'wrong-password')
-            ->set('password', 'new-password')
-            ->set('password_confirmation', 'new-password')
+            ->set('password', 'New-Password1')
+            ->set('password_confirmation', 'New-Password1')
             ->call('updatePassword');
 
         $component
