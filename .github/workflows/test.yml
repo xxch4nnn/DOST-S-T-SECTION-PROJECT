@@ -54,3 +54,14 @@ jobs:
           extensions: mbstring, intl, zip
       - run: composer install --no-interaction --no-progress --prefer-dist
       - run: vendor/bin/pint --test
+
+  lint-css:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:css
