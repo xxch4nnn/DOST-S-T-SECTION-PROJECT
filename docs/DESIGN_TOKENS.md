@@ -6,9 +6,9 @@ This document serves as the official source of truth for the DOST-S-T design sys
 ---
 
 ## 1. Typography
-* **Primary Font Family:** `Zalando Sans`
+* **Primary Font Family:** `Zalando Sans` (SIL Open Font License 1.1)
 * **Fallback Stack:** `system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`
-* **Local Hosting:** Self-hosted via `@font-face` in `resources/css/app.scss` with zero external online dependencies.
+* **Local Hosting:** Bundled at `public/fonts/zalando-sans/ZalandoSans-Variable.woff2` with license at `public/fonts/zalando-sans/OFL.txt`. Loaded via `@font-face` in `resources/css/app.scss` (no CDN).
 
 ### Heading Hierarchy & Font Size Scale (16px base root)
 * **h1:** `40px` (`2.5rem`)
