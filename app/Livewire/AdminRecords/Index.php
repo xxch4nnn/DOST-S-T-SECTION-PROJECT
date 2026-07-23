@@ -13,7 +13,9 @@ class Index extends Component
     protected string $paginationTheme = 'bootstrap';
 
     public $search = '';
+
     public $record_type = '';
+
     public $year = '';
 
     public function updating($field)
@@ -29,9 +31,9 @@ class Index extends Component
             ->with(['creator'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('series_number', 'like', '%' . $this->search . '%')
-                      ->orWhere('recipient', 'like', '%' . $this->search . '%');
+                    $q->where('title', 'like', '%'.$this->search.'%')
+                        ->orWhere('series_number', 'like', '%'.$this->search.'%')
+                        ->orWhere('recipient', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->record_type, function ($query) {

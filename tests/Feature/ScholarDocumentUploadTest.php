@@ -2,22 +2,22 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Livewire\Scholars\Show;
+use App\Models\ClearanceStatus;
+use App\Models\Course;
+use App\Models\FileType;
+use App\Models\Region;
 use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
-use App\Models\Course;
-use App\Models\Region;
-use App\Models\ClearanceStatus;
-use App\Models\FileType;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
-use App\Livewire\Scholars\Show;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ScholarDocumentUploadTest extends TestCase
 {
@@ -27,7 +27,7 @@ class ScholarDocumentUploadTest extends TestCase
     {
         // Avoid Storage::fake('local') — it breaks Livewire temporary upload metadata (LW4 + Flysystem).
         $user = User::factory()->create();
-        
+
         $scholarship = Scholarship::firstOrCreate(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::firstOrCreate(['name' => 'Undergrad', 'is_available' => true]);
         $school = School::firstOrCreate(['name' => 'Test University', 'campus' => 'Main', 'is_available' => true]);
@@ -71,7 +71,7 @@ class ScholarDocumentUploadTest extends TestCase
         $this->assertTrue(Str::isUuid(pathinfo($document->stored_filename, PATHINFO_FILENAME)));
 
         // File must be stored correctly
-        Storage::disk('local')->assertExists('documents/' . $document->stored_filename);
-        Storage::disk('local')->delete('documents/' . $document->stored_filename);
+        Storage::disk('local')->assertExists('documents/'.$document->stored_filename);
+        Storage::disk('local')->delete('documents/'.$document->stored_filename);
     }
 }

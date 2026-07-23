@@ -3,23 +3,28 @@
 namespace App\Livewire\AdminRecords;
 
 use App\Models\AdministrativeRecord;
+use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\FileType;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class Show extends Component
 {
     use WithFileUploads;
 
     public AdministrativeRecord $record;
+
     public $file;
+
     public $file_type_id = '';
 
     public $documents = [];
+
     public $duplicateDocument = null;
+
     public $showDuplicateModal = false;
 
     public function mount(AdministrativeRecord $record)
@@ -53,6 +58,7 @@ class Show extends Component
         if ($duplicate) {
             $this->duplicateDocument = $duplicate;
             $this->showDuplicateModal = true;
+
             return;
         }
 
@@ -63,7 +69,7 @@ class Show extends Component
     {
         $uuid = Str::uuid()->toString();
         $extension = $this->file->getClientOriginalExtension();
-        $storedFilename = $uuid . '.' . $extension;
+        $storedFilename = $uuid.'.'.$extension;
         $originalFilename = $this->file->getClientOriginalName();
         $mimeType = $this->file->getMimeType();
         $fileSizeKb = round($this->file->getSize() / 1024);
@@ -92,6 +98,7 @@ class Show extends Component
     {
         if ($option === 'cancel') {
             $this->reset(['file', 'file_type_id', 'duplicateDocument', 'showDuplicateModal']);
+
             return;
         }
 
@@ -102,7 +109,7 @@ class Show extends Component
 
         $uuid = Str::uuid()->toString();
         $extension = $this->file->getClientOriginalExtension();
-        $storedFilename = $uuid . '.' . $extension;
+        $storedFilename = $uuid.'.'.$extension;
         $originalFilename = $this->file->getClientOriginalName();
         $mimeType = $this->file->getMimeType();
         $fileSizeKb = round($this->file->getSize() / 1024);
@@ -135,7 +142,7 @@ class Show extends Component
         } elseif ($option === 'overwrite') {
             \DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeKb) {
                 // Delete old file physically
-                Storage::disk('local')->delete('documents/' . $this->duplicateDocument->stored_filename);
+                Storage::disk('local')->delete('documents/'.$this->duplicateDocument->stored_filename);
 
                 // Store new file
                 $this->file->storeAs('documents', $storedFilename, 'local');
@@ -160,13 +167,13 @@ class Show extends Component
 
     public function strikeOff($documentId)
     {
-        if (!auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
+        if (! auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
             abort(403, 'Unauthorized action.');
         }
 
         $document = Document::findOrFail($documentId);
         $before = $document->toArray();
-        
+
         $document->update(['status' => 'struck_off']);
         $document->delete(); // soft delete
 
@@ -178,7 +185,7 @@ class Show extends Component
 
     public function undoStrikeOff($documentId)
     {
-        if (!auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
+        if (! auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -194,9 +201,9 @@ class Show extends Component
         session()->flash('message', 'Document restored successfully.');
     }
 
-    protected function logAudit(string $action, $record, array $before = null)
+    protected function logAudit(string $action, $record, ?array $before = null)
     {
-        \App\Models\AuditLog::create([
+        AuditLog::create([
             'user_id' => auth()->id(),
             'action' => $action,
             'record_type' => get_class($record),
@@ -210,7 +217,7 @@ class Show extends Component
     public function render()
     {
         return view('livewire.admin-records.show', [
-            'fileTypes' => FileType::orderBy('name')->get()
+            'fileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

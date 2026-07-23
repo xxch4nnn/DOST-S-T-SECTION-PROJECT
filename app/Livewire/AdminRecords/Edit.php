@@ -10,11 +10,17 @@ class Edit extends Component
     public AdministrativeRecord $record;
 
     public $record_type = '';
+
     public $series_number = '';
+
     public $title = '';
+
     public $recipient = '';
+
     public $year = '';
+
     public $quarter = '';
+
     public $for_disposal = false;
 
     public function mount(AdministrativeRecord $record)

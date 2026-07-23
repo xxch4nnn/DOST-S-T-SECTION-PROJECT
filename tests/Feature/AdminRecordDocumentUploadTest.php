@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Livewire\AdminRecords\Show;
 use App\Models\AdministrativeRecord;
 use App\Models\FileType;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
-use App\Livewire\AdminRecords\Show;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdminRecordDocumentUploadTest extends TestCase
 {
@@ -55,7 +55,7 @@ class AdminRecordDocumentUploadTest extends TestCase
         $this->assertTrue(Str::isUuid(pathinfo($document->stored_filename, PATHINFO_FILENAME)));
 
         // File must be stored correctly
-        Storage::disk('local')->assertExists('documents/' . $document->stored_filename);
-        Storage::disk('local')->delete('documents/' . $document->stored_filename);
+        Storage::disk('local')->assertExists('documents/'.$document->stored_filename);
+        Storage::disk('local')->delete('documents/'.$document->stored_filename);
     }
 }
