@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Livewire\Auth\LoginFormCard;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
+use Livewire\Livewire;
 use Livewire\Volt\Volt;
 use Tests\TestCase;
 
@@ -26,7 +28,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $component = Volt::test('pages.auth.login')
+        $component = Livewire::test(LoginFormCard::class)
             ->set('form.email', $user->email)
             ->set('form.password', 'password');
 
@@ -52,7 +54,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $component = Volt::test('pages.auth.login')
+        $component = Livewire::test(LoginFormCard::class)
             ->set('form.email', $user->email)
             ->set('form.password', 'wrong-password');
 
@@ -73,14 +75,14 @@ class AuthenticationTest extends TestCase
         RateLimiter::clear(strtolower($user->email).'|127.0.0.1');
 
         for ($i = 0; $i < 5; $i++) {
-            Volt::test('pages.auth.login')
+            Livewire::test(LoginFormCard::class)
                 ->set('form.email', $user->email)
                 ->set('form.password', 'wrong-password')
                 ->call('login')
                 ->assertHasErrors(['form.email']);
         }
 
-        $component = Volt::test('pages.auth.login')
+        $component = Livewire::test(LoginFormCard::class)
             ->set('form.email', $user->email)
             ->set('form.password', 'wrong-password')
             ->call('login');

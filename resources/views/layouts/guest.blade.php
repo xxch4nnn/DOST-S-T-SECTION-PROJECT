@@ -5,23 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
+
+    {{-- Zalando Sans – loaded directly so Vite/Sass cannot strip it --}}
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/zalando-sans">
+
+    {{-- Self-hosted fallback @font-face (for offline / faster loads) --}}
+    <style>
+        @font-face {
+            font-family: 'Zalando Sans';
+            font-style: normal;
+            font-weight: 100 900;
+            font-display: swap;
+            src: url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2');
+        }
+    </style>
+
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
-<body class="text-body min-vh-100 position-relative d-flex flex-column align-items-center justify-content-center overflow-x-hidden" style="background-color: #f8f9fa;">
-    
-    <!-- Slot Container for Auth Page View -->
-    <div class="w-100 mx-auto px-3 my-auto py-4" style="max-width: 26rem; z-index: 10; position: relative;">
-        {{ $slot }}
+<body style="margin: 0; padding: 0; min-height: 100vh; background-color: #f8f9fa; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden;">
+
+    <div class="d-flex flex-column min-vh-100">
+        {{-- Row 1: Login Form (takes remaining space, centers content) --}}
+        <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+            <div style="width: 100%; max-width: 26rem; padding: 2rem 1rem;">
+                {{ $slot }}
+            </div>
+        </div>
+
+        {{-- Row 2: Folder Footer Background Component --}}
+        <x-folder-background />
     </div>
 
-    <!-- Inline SVG Folder Bottom Shape -->
-    <div class="position-fixed bottom-0 start-0 w-100 overflow-hidden" style="z-index: 1; pointer-events: none;">
-        <svg viewBox="0 0 1440 360" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-100 d-block" style="height: auto; max-height: 38vh; min-height: 180px;">
-            <!-- Light Main Blue Folder Curve -->
-            <path d="M0 260C450 260 650 180 1440 180V360H0V260Z" fill="#54bbff"/>
-            <!-- Dark Blue Left Folder Tab -->
-            <path d="M0 90C420 90 600 170 780 360H0V90Z" fill="#0066b2"/>
-        </svg>
-    </div>
 </body>
 </html>
+
