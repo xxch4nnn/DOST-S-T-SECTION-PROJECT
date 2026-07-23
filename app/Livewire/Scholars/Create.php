@@ -2,39 +2,61 @@
 
 namespace App\Livewire\Scholars;
 
+use App\Models\ClearanceStatus;
+use App\Models\Course;
+use App\Models\Region;
 use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
-use App\Models\Course;
-use App\Models\Region;
-use App\Models\ClearanceStatus;
 use Livewire\Component;
 
 class Create extends Component
 {
     public $first_name = '';
+
     public $middle_name = '';
+
     public $last_name = '';
+
     public $generational_suffix = '';
+
     public $year_of_award = '';
+
     public $scholarship_id = '';
+
     public $scholarship_type_id = '';
+
     public $spas_no = '';
+
     public $sex = '';
+
     public $birthdate = '';
+
     public $contact_number = '';
+
     public $email_address = '';
+
     public $school_id = '';
+
     public $course_id = '';
+
     public $program = '';
+
     public $barangay = '';
+
     public $municipality = '';
+
     public $district = '';
+
     public $province = '';
+
     public $region_id = '';
+
     public $clearance_status_id = 1; // Default
+
     public $clearance_date = '';
+
     public $for_disposal = false;
 
     public function save()

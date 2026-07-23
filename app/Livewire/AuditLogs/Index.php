@@ -3,7 +3,6 @@
 namespace App\Livewire\AuditLogs;
 
 use App\Models\AuditLog;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -15,23 +14,45 @@ class Index extends Component
     protected string $paginationTheme = 'bootstrap';
 
     #[Title('Audit Log')]
-
     public string $action = '';
+
     public string $recordType = '';
+
     public string $user = '';
+
     public ?string $from = null;
+
     public ?string $to = null;
 
     public function mount(): void
     {
-        abort_if(!auth()->user()->hasAnyRole(['Super Admin', 'Admin']), 403);
+        abort_if(! auth()->user()->hasAnyRole(['Super Admin', 'Admin']), 403);
     }
 
-    public function updatingAction(): void { $this->resetPage(); }
-    public function updatingRecordType(): void { $this->resetPage(); }
-    public function updatingUser(): void { $this->resetPage(); }
-    public function updatingFrom(): void { $this->resetPage(); }
-    public function updatingTo(): void { $this->resetPage(); }
+    public function updatingAction(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingRecordType(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingUser(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFrom(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingTo(): void
+    {
+        $this->resetPage();
+    }
 
     public function clear(): void
     {
@@ -54,7 +75,7 @@ class Index extends Component
         if ($this->user !== '') {
             $query->whereHas('user', function ($q) {
                 $q->where('name', 'like', '%'.$this->user.'%')
-                  ->orWhere('email', 'like', '%'.$this->user.'%');
+                    ->orWhere('email', 'like', '%'.$this->user.'%');
             });
         }
         if ($this->from) {

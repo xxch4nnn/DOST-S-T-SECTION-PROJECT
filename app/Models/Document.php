@@ -12,7 +12,7 @@ class Document extends Model
 
     protected $fillable = [
         'file_type_id', 'original_filename', 'stored_filename',
-        'mime_type', 'file_size_kb', 'status', 'uploaded_by'
+        'mime_type', 'file_size_kb', 'status', 'uploaded_by',
     ];
 
     public function documentable()

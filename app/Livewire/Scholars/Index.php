@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Scholars;
 
+use App\Models\Course;
 use App\Models\Scholar;
+use App\Models\School;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\School;
-use App\Models\Course;
 
 class Index extends Component
 {
@@ -15,8 +15,11 @@ class Index extends Component
     protected string $paginationTheme = 'bootstrap';
 
     public $search = '';
+
     public $spas_no = '';
+
     public $school_id = '';
+
     public $course_id = '';
 
     public function updating($field)
@@ -32,13 +35,13 @@ class Index extends Component
             ->with(['scholarship', 'school', 'course', 'clearanceStatus'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('middle_name', 'like', '%' . $this->search . '%');
+                    $q->where('first_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('middle_name', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->spas_no, function ($query) {
-                $query->where('spas_no', 'like', '%' . $this->spas_no . '%');
+                $query->where('spas_no', 'like', '%'.$this->spas_no.'%');
             })
             ->when($this->school_id, function ($query) {
                 $query->where('school_id', $this->school_id);
