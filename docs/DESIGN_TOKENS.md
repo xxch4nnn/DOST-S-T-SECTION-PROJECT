@@ -10,6 +10,19 @@ This document serves as the official source of truth for the DOST-S-T design sys
 * **Fallback Stack:** `system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`
 * **Local Hosting:** Self-hosted via `@font-face` in `resources/css/app.scss` with zero external online dependencies.
 
+### Heading Hierarchy & Font Size Scale (16px base root)
+* **h1:** `40px` (`2.5rem`)
+* **h2:** `32px` (`2.0rem`)
+* **h3:** `28px` (`1.75rem`)
+* **h4:** `24px` (`1.5rem`)
+* **h5:** `20px` (`1.25rem`)
+* **h6:** `16px` (`1.0rem`)
+
+### Font Weight Variants & Utilities
+* **Semi-Bold:** `font-weight: 600` (`.fw-semibold` / default heading weight)
+* **Bold:** `font-weight: 700` (`.fw-bold`)
+* **Extra-Bold:** `font-weight: 800` (`.fw-extrabold`)
+
 ---
 
 ## 2. Core Color Palette & Bootstrap Mappings
