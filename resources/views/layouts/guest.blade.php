@@ -20,6 +20,9 @@
         }
     </style>
 
+    {{-- Phosphor Icons --}}
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
 <body style="margin: 0; padding: 0; min-height: 100vh; background-color: #f8f9fa; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden;">

@@ -7,13 +7,14 @@ use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
-Route::view('/', 'welcome');
+Route::redirect('/', '/login');
 
 Route::get('/health', HealthController::class)->name('health');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Volt::route('dashboard', 'dashboard.main')->name('dashboard');
 
     // Scholars CRUD
     Route::get('/scholars', Index::class)->name('scholars.index');
