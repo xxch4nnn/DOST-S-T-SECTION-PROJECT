@@ -4,51 +4,121 @@ namespace App\Livewire\AdminRecords;
 
 use App\Models\AdministrativeRecord;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    public ?string $selectedCategory = null;
 
-    protected string $paginationTheme = 'bootstrap';
+    public string $search = '';
 
-    public $search = '';
+    public array $expandedYears = [];
 
-    public $record_type = '';
+    public array $selectedYears = [];
 
-    public $year = '';
+    public array $selectedCards = [];
 
-    public function updating($field)
+    public array $categories = [
+        'Annual Financial Reports',
+        'Memorandum',
+        'Quarterly Financial Reports',
+        'Payrolls',
+        'Endorsements',
+        'Communications',
+    ];
+
+    public function mount(): void
     {
-        if (in_array($field, ['search', 'record_type', 'year'])) {
-            $this->resetPage();
+        $this->expandedYears = ['2023'];
+    }
+
+    public function selectCategory(?string $category): void
+    {
+        $this->selectedCategory = $category;
+        $this->search = '';
+        $this->selectedYears = [];
+        $this->selectedCards = [];
+    }
+
+    public function clearCategory(): void
+    {
+        $this->selectedCategory = null;
+        $this->selectedYears = [];
+        $this->selectedCards = [];
+    }
+
+    public function toggleYear(string $year): void
+    {
+        if (in_array($year, $this->expandedYears, true)) {
+            $this->expandedYears = array_values(array_diff($this->expandedYears, [$year]));
+        } else {
+            $this->expandedYears[] = $year;
         }
+    }
+
+    public function toggleSelectYear(string $year): void
+    {
+        if (in_array($year, $this->selectedYears, true)) {
+            $this->selectedYears = array_values(array_diff($this->selectedYears, [$year]));
+        } else {
+            $this->selectedYears[] = $year;
+        }
+    }
+
+    public function toggleSelectCard(int $cardId): void
+    {
+        if (in_array($cardId, $this->selectedCards, true)) {
+            $this->selectedCards = array_values(array_diff($this->selectedCards, [$cardId]));
+        } else {
+            $this->selectedCards[] = $cardId;
+        }
+    }
+
+    public function selectAllYears(array $years): void
+    {
+        $this->selectedYears = array_map('strval', $years);
+    }
+
+    public function deselectAll(): void
+    {
+        $this->selectedYears = [];
+        $this->selectedCards = [];
+    }
+
+    public function openRecord(int $recordId): void
+    {
+        $this->dispatch('open-admin-file-drawer', recordId: $recordId);
     }
 
     public function render()
     {
-        $records = AdministrativeRecord::query()
-            ->with(['creator'])
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%'.$this->search.'%')
+        $query = AdministrativeRecord::query()
+            ->when($this->selectedCategory, function ($q) {
+                $q->where('record_type', 'like', '%'.$this->selectedCategory.'%');
+            })
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('title', 'like', '%'.$this->search.'%')
                         ->orWhere('series_number', 'like', '%'.$this->search.'%')
                         ->orWhere('recipient', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->record_type, function ($query) {
-                $query->where('record_type', $this->record_type);
-            })
-            ->when($this->year, function ($query) {
-                $query->where('year', $this->year);
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->orderBy('year', 'desc')
+            ->orderBy('created_at', 'desc');
+
+        $records = $query->get();
+
+        // Group records by year
+        $groupedRecords = $records->groupBy(function ($record) {
+            return (string) ($record->year ?? '2023');
+        });
+
+        if ($groupedRecords->isEmpty()) {
+            $groupedRecords = collect(['2023' => collect([])]);
+        }
 
         return view('livewire.admin-records.index', [
-            'records' => $records,
-            // Predefined categories from client proposal
-            'recordTypes' => ['Memorandum', 'Special Order', 'Financial Report', 'Payroll', 'Endorsement', 'Communications'],
+            'groupedRecords' => $groupedRecords,
+            'allYears' => $groupedRecords->keys()->toArray(),
         ])->layout('layouts.app');
     }
 }
