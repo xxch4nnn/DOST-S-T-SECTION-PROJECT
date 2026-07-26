@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\HealthController;
-use App\Livewire\Scholars\Create;
+use App\Livewire\AddFile;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
@@ -18,13 +18,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Scholars CRUD
     Route::get('/scholars', Index::class)->name('scholars.index');
-    Route::get('/scholars/create', App\Livewire\AddFile::class)->name('scholars.create');
+    Route::get('/scholars/create', AddFile::class)->name('scholars.create');
     Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
 
     // Add New File Wizard
-    Route::get('/add-file', App\Livewire\AddFile::class)->name('add-file.index');
-
+    Route::get('/add-file', AddFile::class)->name('add-file.index');
 
     // Admin Records CRUD
     Route::get('/admin-records', App\Livewire\AdminRecords\Index::class)->name('admin-records.index');

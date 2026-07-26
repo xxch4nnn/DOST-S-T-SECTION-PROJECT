@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Region;
@@ -9,7 +10,6 @@ use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
-use App\Models\AdministrativeRecord;
 use Livewire\Component;
 
 class AddFile extends Component

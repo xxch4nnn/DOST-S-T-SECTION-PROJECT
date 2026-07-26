@@ -44,13 +44,13 @@
                     <div class="col-md-3 form-field-group">
                         <label for="last_name">Last Name</label>
                         <input wire:model="last_name" type="text" id="last_name" class="form-control-custom" placeholder="Placeholder">
-                        @error('last_name') <span class="text-danger small">{{ $message }}</span> @errorEnd
+                        @error('last_name') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="col-md-3 form-field-group">
                         <label for="first_name">First Name</label>
                         <input wire:model="first_name" type="text" id="first_name" class="form-control-custom" placeholder="Placeholder">
-                        @error('first_name') <span class="text-danger small">{{ $message }}</span> @errorEnd
+                        @error('first_name') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="col-md-3 form-field-group">
@@ -73,7 +73,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="spas_no">SPAS-ID</label>
                         <input wire:model="spas_no" type="text" id="spas_no" class="form-control-custom" placeholder="Placeholder">
-                        @error('spas_no') <span class="text-danger small">{{ $message }}</span> @errorEnd
+                        @error('spas_no') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="col-md-3 form-field-group">
@@ -235,7 +235,7 @@
                     <div class="col-md-6 form-field-group">
                         <label for="admin_title">Document Title</label>
                         <input wire:model="admin_title" type="text" id="admin_title" class="form-control-custom" placeholder="Enter title...">
-                        @error('admin_title') <span class="text-danger small">{{ $message }}</span> @errorEnd
+                        @error('admin_title') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="col-md-3 form-field-group">
