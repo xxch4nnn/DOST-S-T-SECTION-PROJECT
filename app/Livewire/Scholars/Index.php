@@ -2,60 +2,91 @@
 
 namespace App\Livewire\Scholars;
 
-use App\Models\Course;
 use App\Models\Scholar;
-use App\Models\School;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    public string $search = '';
 
-    protected string $paginationTheme = 'bootstrap';
+    public array $expandedYears = [];
 
-    public $search = '';
+    public array $selectedYears = [];
 
-    public $spas_no = '';
-
-    public $school_id = '';
-
-    public $course_id = '';
-
-    public function updating($field)
+    public function mount(): void
     {
-        if (in_array($field, ['search', 'spas_no', 'school_id', 'course_id'])) {
-            $this->resetPage();
+        // Default expand the first year group if available
+        $firstYear = Scholar::query()->distinct()->pluck('year_of_award')->sortDesc()->first();
+        if ($firstYear) {
+            $this->expandedYears[] = (string) $firstYear;
+        } else {
+            $this->expandedYears[] = '2023';
         }
+    }
+
+    public function toggleYear(string $year): void
+    {
+        if (in_array($year, $this->expandedYears, true)) {
+            $this->expandedYears = array_values(array_diff($this->expandedYears, [$year]));
+        } else {
+            $this->expandedYears[] = $year;
+        }
+    }
+
+    public function toggleSelectYear(string $year): void
+    {
+        if (in_array($year, $this->selectedYears, true)) {
+            $this->selectedYears = array_values(array_diff($this->selectedYears, [$year]));
+        } else {
+            $this->selectedYears[] = $year;
+        }
+    }
+
+    public function selectAllYears(array $years): void
+    {
+        $this->selectedYears = array_map('strval', $years);
+    }
+
+    public function deselectAllYears(): void
+    {
+        $this->selectedYears = [];
+    }
+
+    public function openScholar(int $scholarId): void
+    {
+        $this->dispatch('open-scholar-drawer', scholarId: $scholarId);
     }
 
     public function render()
     {
-        $scholars = Scholar::query()
-            ->with(['scholarship', 'school', 'course', 'clearanceStatus'])
-            ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('first_name', 'like', '%'.$this->search.'%')
+        $query = Scholar::query()
+            ->with(['scholarship', 'scholarshipType', 'school', 'course', 'clearanceStatus'])
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('first_name', 'like', '%'.$this->search.'%')
                         ->orWhere('last_name', 'like', '%'.$this->search.'%')
-                        ->orWhere('middle_name', 'like', '%'.$this->search.'%');
+                        ->orWhere('middle_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('spas_no', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->spas_no, function ($query) {
-                $query->where('spas_no', 'like', '%'.$this->spas_no.'%');
-            })
-            ->when($this->school_id, function ($query) {
-                $query->where('school_id', $this->school_id);
-            })
-            ->when($this->course_id, function ($query) {
-                $query->where('course_id', $this->course_id);
-            })
-            ->orderBy('last_name')
-            ->paginate(15);
+            ->orderBy('year_of_award', 'desc')
+            ->orderBy('last_name', 'asc');
+
+        $scholars = $query->get();
+
+        // Group scholars by year_of_award
+        $groupedScholars = $scholars->groupBy(function ($scholar) {
+            return (string) ($scholar->year_of_award ?? '2023');
+        });
+
+        // Ensure default year 2023 exists if DB is empty
+        if ($groupedScholars->isEmpty()) {
+            $groupedScholars = collect(['2023' => collect([])]);
+        }
 
         return view('livewire.scholars.index', [
-            'scholars' => $scholars,
-            'schools' => School::orderBy('name')->get(),
-            'courses' => Course::orderBy('name')->get(),
+            'groupedScholars' => $groupedScholars,
+            'allYears' => $groupedScholars->keys()->toArray(),
         ])->layout('layouts.app');
     }
 }
