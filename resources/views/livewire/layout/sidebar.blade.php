@@ -76,10 +76,13 @@ new class extends Component
     {{-- Actions Group (visual separator) --}}
     <div class="sidebar-separator"></div>
 
-    <a href="#" class="sidebar-item" title="Add File">
+    <a href="{{ route('add-file.index') }}" wire:navigate
+       class="sidebar-item {{ request()->routeIs('add-file.*') ? 'sidebar-item--active' : '' }}"
+       title="Add File">
         <i class="ph ph-file-plus sidebar-icon"></i>
         <span class="sidebar-label">Add File</span>
     </a>
+
 
     <a href="#" class="sidebar-item" title="Edit File Requirements">
         <i class="ph ph-note-pencil sidebar-icon"></i>
