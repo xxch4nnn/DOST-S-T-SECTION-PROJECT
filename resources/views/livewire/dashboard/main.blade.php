@@ -38,11 +38,16 @@ new #[Layout('layouts.app')] class extends Component
     {{-- Category Toggle Tabs --}}
     <livewire:dashboard.category-tabs />
 
-    {{-- Search Bar --}}
+    {{-- Search Bar with Expanded Results --}}
     <livewire:dashboard.file-search />
 
-    {{-- Content Area (placeholder for future file grid) --}}
+    {{-- Content Area Placeholder --}}
     <div class="dashboard-main__content">
-        {{-- Future: file results grid will render here based on $activeCategory and $searchQuery --}}
     </div>
+
+    {{-- Scholar Detail Slide-over Drawer --}}
+    <livewire:dashboard.scholar-drawer />
+
+    {{-- Document Lightbox Viewer Modal --}}
+    <livewire:dashboard.document-viewer />
 </div>

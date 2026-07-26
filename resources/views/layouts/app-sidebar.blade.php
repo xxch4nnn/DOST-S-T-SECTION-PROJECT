@@ -31,14 +31,17 @@
         {{-- Collapsible Sidebar --}}
         <livewire:layout.sidebar />
 
-        {{-- Main Content Area with ONLY top-left and bottom-left rounded corners --}}
-        <div class="main-canvas flex-grow-1 d-flex flex-column" style="min-width: 0; height: 100vh; overflow: hidden; background-color: #f8f9fa; border-top-left-radius: 36px; border-bottom-left-radius: 36px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
-            <main class="flex-grow-1 overflow-auto">
+        {{-- Main Content Area with Background Layering --}}
+        <div class="main-canvas flex-grow-1 d-flex flex-column position-relative" style="min-width: 0; height: 100vh; overflow: hidden; background-color: #f8f9fa; border-top-left-radius: 36px; border-bottom-left-radius: 36px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+            {{-- Main Content Slot (Z-Index 10 so dropdowns float over background) --}}
+            <main class="flex-grow-1 overflow-auto position-relative" style="z-index: 10;">
                 {{ $slot }}
             </main>
 
-            {{-- Folder Footer Background --}}
-            <x-folder-background />
+            {{-- Folder Footer Background Graphic (Positioned Absolutely as Background) --}}
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; line-height: 0;">
+                <x-folder-background />
+            </div>
         </div>
     </div>
 

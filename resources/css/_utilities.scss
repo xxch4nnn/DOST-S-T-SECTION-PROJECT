@@ -1,0 +1,31 @@
+body {
+    font-family: var(--font-family-sans);
+    min-height: 100vh;
+}
+
+// Utility Classes for DOST Design Tokens
+.bg-dost-dark-blue { background-color: var(--dost-dark-blue) !important; }
+.bg-dost-blue { background-color: var(--dost-blue) !important; }
+.bg-dost-main-blue { background-color: var(--dost-main-blue) !important; }
+.bg-dost-yellow { background-color: var(--dost-yellow) !important; }
+
+.text-dost-dark-blue { color: var(--dost-dark-blue) !important; }
+.text-dost-blue { color: var(--dost-blue) !important; }
+.text-dost-main-blue { color: var(--dost-main-blue) !important; }
+.text-dost-yellow { color: var(--dost-yellow) !important; }
+
+// Status Badges
+.badge-status-cleared {
+    background-color: var(--status-cleared) !important;
+    color: #ffffff !important;
+}
+
+.badge-status-not-cleared {
+    background-color: var(--status-not-cleared) !important;
+    color: #ffffff !important;
+}
+
+// Typography Weight Utility Classes
+.fw-semibold { font-weight: 600 !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-extrabold { font-weight: 800 !important; }
