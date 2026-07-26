@@ -16,15 +16,24 @@
             >
         </div>
 
+        @php
+            $allSelected = count($allYears) > 0 && count($selectedYears) === count($allYears);
+        @endphp
+
         <button 
             type="button" 
-            class="scholars-filter-btn" 
-            title="Select All / Options"
-            wire:click="{{ count($selectedYears) === count($allYears) ? 'deselectAllYears' : 'selectAllYears('.json_encode($allYears).')' }}"
+            class="scholars-select-all-btn {{ $allSelected ? 'scholars-select-all-btn--checked' : '' }}" 
+            title="{{ $allSelected ? 'Deselect All Years' : 'Select All Years' }}"
+            wire:click="{{ $allSelected ? 'deselectAllYears' : 'selectAllYears('.json_encode($allYears).')' }}"
         >
-            <i class="ph ph-squares-four"></i>
+            @if($allSelected)
+                <i class="ph-fill ph-check-square"></i>
+            @else
+                <i class="ph ph-square"></i>
+            @endif
         </button>
     </div>
+
 
     {{-- Batch Selection Toolbar (Screenshot 2) --}}
     @if(count($selectedYears) > 0)
