@@ -1,0 +1,307 @@
+// ===================================================================
+// Scholars File List Page Styles (Figma Match)
+// ===================================================================
+
+.scholars-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+}
+
+.scholars-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--color-black);
+        margin: 0;
+        font-family: var(--font-family-sans);
+    }
+}
+
+// Top Search & Filter Bar
+.scholars-search-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.scholars-search-input-group {
+    position: relative;
+    flex: 1;
+}
+
+.scholars-search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: var(--dost-main-blue);
+    pointer-events: none;
+}
+
+.scholars-search-input {
+    width: 100%;
+    padding: 0.75rem 1.5rem 0.75rem 3.25rem;
+    font-size: 0.95rem;
+    border: 2px solid var(--main-blue-300);
+    border-radius: 16px;
+    background: var(--color-white);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder {
+        color: var(--gray-400);
+    }
+
+    &:focus {
+        border-color: var(--dost-main-blue);
+        box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+    }
+}
+
+.scholars-select-all-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--main-blue-300);
+    border-radius: 12px;
+    background: var(--color-white);
+    color: var(--dost-main-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--main-blue-50);
+        border-color: var(--dost-main-blue);
+    }
+
+    &--checked {
+        background: var(--main-blue-50);
+        border-color: var(--dost-main-blue);
+        color: var(--dost-main-blue);
+    }
+}
+
+
+// Batch Action Toolbar (Screenshot 2)
+.scholars-batch-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: var(--main-blue-50);
+    border: 1px solid var(--main-blue-200);
+    border-radius: 16px;
+    padding: 0.625rem 1.25rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.2s ease-out;
+
+    .batch-deselect-btn {
+        background: transparent;
+        border: none;
+        color: var(--gray-700);
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 0.2rem;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            color: var(--color-black);
+        }
+    }
+
+    .batch-count-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--color-black);
+    }
+
+    .batch-action-icons {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: 0.5rem;
+
+        .batch-icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--gray-800);
+            font-size: 1.15rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+            transition: color 0.15s ease;
+
+            &:hover {
+                color: var(--dost-main-blue);
+            }
+
+            &--danger:hover {
+                color: var(--danger);
+            }
+        }
+    }
+}
+
+// Year Folder Accordion Stack (Screenshots 1 & 2)
+.year-folders-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.year-folder-item {
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.year-folder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 0.875rem 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+
+    &:hover {
+        background-color: var(--gray-100);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    &--selected {
+        background-color: var(--main-blue-50) !important;
+        border-color: var(--main-blue-300) !important;
+    }
+
+    &--expanded {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom: none;
+    }
+}
+
+.year-folder-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .year-folder-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-black);
+        font-family: var(--font-family-sans);
+    }
+}
+
+.year-folder-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    accent-color: var(--dost-main-blue);
+    cursor: pointer;
+}
+
+// Expanded Folder Body (Screenshots 3 & 4)
+.year-folder-body {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-top: none;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    padding: 1.5rem;
+}
+
+.scholars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+
+    @media (max-width: 992px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 576px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// Scholar Card (Inside Expanded Year Folder)
+.scholar-grid-card {
+    background: var(--color-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 153, 255, 0.12);
+        border-color: var(--main-blue-300);
+    }
+}
+
+.scholar-grid-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+
+    .scholar-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--color-black);
+        line-height: 1.25;
+        margin: 0;
+    }
+}
+
+.scholar-grid-card__spas {
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.scholar-grid-card__meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+
+    .scholar-meta-sub {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-size: 0.6875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.1rem;
+            font-weight: 500;
+        }
+
+        span {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--color-black);
+            line-height: 1.2;
+        }
+    }
+}

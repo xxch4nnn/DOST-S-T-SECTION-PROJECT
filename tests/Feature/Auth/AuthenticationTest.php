@@ -2,12 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Livewire\Auth\LoginFormCard;
 use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
-use Livewire\Livewire;
 use Livewire\Volt\Volt;
 use Tests\TestCase;
 
@@ -28,7 +26,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $component = Livewire::test(LoginFormCard::class)
+        $component = Volt::test('pages.auth.login')
             ->set('form.email', $user->email)
             ->set('form.password', 'password');
 
@@ -54,7 +52,7 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $component = Livewire::test(LoginFormCard::class)
+        $component = Volt::test('pages.auth.login')
             ->set('form.email', $user->email)
             ->set('form.password', 'wrong-password');
 
@@ -75,14 +73,14 @@ class AuthenticationTest extends TestCase
         RateLimiter::clear(strtolower($user->email).'|127.0.0.1');
 
         for ($i = 0; $i < 5; $i++) {
-            Livewire::test(LoginFormCard::class)
+            Volt::test('pages.auth.login')
                 ->set('form.email', $user->email)
                 ->set('form.password', 'wrong-password')
                 ->call('login')
                 ->assertHasErrors(['form.email']);
         }
 
-        $component = Livewire::test(LoginFormCard::class)
+        $component = Volt::test('pages.auth.login')
             ->set('form.email', $user->email)
             ->set('form.password', 'wrong-password')
             ->call('login');
@@ -105,7 +103,7 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+            ->assertSeeVolt('layout.sidebar');
     }
 
     public function test_users_can_logout(): void
@@ -114,7 +112,7 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        $component = Volt::test('layout.navigation');
+        $component = Volt::test('layout.sidebar');
 
         $component->call('logout');
 
