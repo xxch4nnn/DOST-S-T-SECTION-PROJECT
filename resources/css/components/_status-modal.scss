@@ -12,7 +12,7 @@
     background: var(--color-white);
     border: 1px solid var(--gray-200);
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 25px rgb(0, 0, 0, 0.12);
     padding: 0.4rem;
     z-index: 1060;
     display: flex;
@@ -41,7 +41,7 @@
         }
 
         &--danger:hover {
-            background-color: rgba(220, 53, 69, 0.08);
+            background-color: rgb(220, 53, 69, 0.08);
             color: var(--danger);
         }
     }
@@ -54,7 +54,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgb(0, 0, 0, 0.35);
     z-index: 1100;
     display: flex;
     align-items: center;
@@ -66,7 +66,7 @@
     background: var(--color-white);
     border-radius: 20px;
     padding: 1.5rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 40px rgb(0, 0, 0, 0.2);
     position: relative;
 
     .status-modal__header {

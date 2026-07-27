@@ -31,11 +31,11 @@
     gap: 1.75rem;
     margin-top: 1rem;
 
-    @media (max-width: 992px) {
+    @media (width <= 992px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 576px) {
+    @media (width <= 576px) {
         grid-template-columns: 1fr;
     }
 }
@@ -45,7 +45,7 @@
     border: 1px solid var(--gray-200);
     border-radius: 20px;
     padding: 2.5rem 1.5rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 16px rgb(0, 0, 0, 0.04);
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@
 
     &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0, 153, 255, 0.14);
+        box-shadow: 0 12px 30px rgb(0, 153, 255, 0.14);
         border-color: var(--main-blue-300);
         background-color: var(--main-blue-50);
     }
@@ -116,7 +116,7 @@
     border: 1px solid var(--gray-200);
     border-radius: 20px;
     padding: 1.75rem 2rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 16px rgb(0, 0, 0, 0.04);
 
     .add-file-form-card__title {
         font-size: 1.2rem;
@@ -163,7 +163,7 @@
 
         &:focus {
             border-color: var(--dost-main-blue);
-            box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+            box-shadow: 0 0 0 3px rgb(0, 153, 255, 0.15);
         }
     }
 }

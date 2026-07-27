@@ -63,7 +63,7 @@
 
     &:focus {
         border-color: var(--dost-main-blue);
-        box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+        box-shadow: 0 0 0 3px rgb(0, 153, 255, 0.15);
     }
 }
 
@@ -176,13 +176,13 @@
     border-radius: 16px;
     padding: 0.875rem 1.5rem;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 8px rgb(0, 0, 0, 0.04);
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     position: relative;
 
     &:hover {
         background-color: var(--gray-100);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 12px rgb(0, 0, 0, 0.06);
     }
 
     &--selected {
@@ -233,11 +233,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
 
-    @media (max-width: 992px) {
+    @media (width <= 992px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 576px) {
+    @media (width <= 576px) {
         grid-template-columns: 1fr;
     }
 }
@@ -248,13 +248,13 @@
     border: 1px solid var(--gray-200);
     border-radius: 16px;
     padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.04);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
     &:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 24px rgba(0, 153, 255, 0.12);
+        box-shadow: 0 8px 24px rgb(0, 153, 255, 0.12);
         border-color: var(--main-blue-300);
     }
 }
