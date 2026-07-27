@@ -148,73 +148,22 @@ new class extends Component
 
         {{-- Document Display Paper Canvas --}}
         <div class="doc-viewer-canvas" style="transform: scale({{ $zoom / 100 }});">
-            <div class="doc-viewer-paper shadow-lg">
-                {{-- Document Header --}}
-                <div class="text-center mb-4">
-                    <img src="{{ asset('DostSEILogo.svg') }}" alt="Logo" style="height: 3.5rem; width: auto;" class="mb-2">
-                    <h6 class="fw-bold text-dark mb-0 fs-6">University of Southeastern Philippines</h6>
-                    <span class="small text-secondary">OBRERO CAMPUS</span>
-                    <h5 class="fw-bold text-dark mt-3 mb-0" style="font-size: 1.1rem; letter-spacing: 0.05em;">REPORT OF GRADES</h5>
-                    <span class="small text-muted">2026 Summer</span>
-                </div>
-
-                {{-- Student Info Header --}}
-                <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 mb-4 border">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="bg-secondary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center" style="width: 3.25rem; height: 3.25rem;">
-                            <i class="ph ph-user fs-3 text-secondary"></i>
+            <div class="doc-viewer-paper shadow-lg d-flex flex-column align-items-center justify-content-center text-center">
+                @if($imageUrl && $imageUrl !== 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop')
+                    <img src="{{ $imageUrl }}" alt="{{ $title }}" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
+                @else
+                    {{-- Blank Slate Container Placeholder for Document Files --}}
+                    <div class="my-auto py-5 text-secondary">
+                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 4.5rem; height: 4.5rem;">
+                            <i class="ph ph-file-pdf display-4 text-muted"></i>
                         </div>
-                        <div>
-                            <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.9rem;">FERNANDEZ, Gianfranco Miguel D.</h6>
-                            <div class="small text-muted" style="font-size: 0.78rem;">ID Number: <strong class="text-dark">2023-00855</strong></div>
-                            <div class="small text-muted" style="font-size: 0.78rem;">Course: <strong class="text-dark">Bachelor of Science in Computer Science</strong></div>
-                            <div class="small text-muted" style="font-size: 0.78rem;">Year Level: <strong class="text-dark">3rd Year</strong></div>
-                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ $title ?: 'Document Container' }}</h5>
+                        <p class="text-muted small mb-3">Blank slate container for document files</p>
+                        <span class="badge bg-light text-secondary border px-3 py-2 fw-medium" style="font-size: 0.75rem;">
+                            <i class="ph ph-files me-1"></i> Ready for document upload / preview
+                        </span>
                     </div>
-                </div>
-
-                {{-- Grades Table --}}
-                <table class="table table-bordered table-sm align-middle small mb-4">
-                    <thead class="table-dark text-uppercase fs-8">
-                        <tr>
-                            <th>Code</th>
-                            <th>Subject Title</th>
-                            <th class="text-center">Unit</th>
-                            <th class="text-center">Final</th>
-                            <th class="text-center">Re-Exam</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="fw-semibold">Thesis 400</td>
-                            <td>Thesis</td>
-                            <td class="text-center">2.0</td>
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-                            <td class="text-success fw-bold">* Enrolled</td>
-                        </tr>
-                        <tr>
-                            <td class="fw-semibold">CSPR 331</td>
-                            <td>CS Practicum</td>
-                            <td class="text-center">3.0</td>
-                            <td class="text-center">-</td>
-                            <td class="text-center">-</td>
-                            <td class="text-success fw-bold">* Enrolled</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                {{-- Footer Disclaimer & Date Stamp --}}
-                <div class="d-flex justify-content-between align-items-end mt-4 pt-3 border-top">
-                    <span class="badge bg-secondary bg-opacity-10 text-dark border px-2 py-1 small" style="font-size: 0.7rem;">
-                        STUDENT PORTAL portal.usep.edu.ph
-                    </span>
-                    <span class="small text-muted italic" style="font-size: 0.7rem;">
-                        *This is a system generated report. No signature required.
-                        <br>Date Generated: Tue Jan 23 2026
-                    </span>
-                </div>
+                @endif
             </div>
         </div>
     @endif

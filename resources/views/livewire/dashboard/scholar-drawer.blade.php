@@ -287,8 +287,8 @@ new class extends Component
                                             <div class="doc-mini-paper">
                                                 <div class="doc-mini-header">
                                                     <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">University of Southeastern Philippines</div>
-                                                    <div class="doc-mini-sub">REPORT OF GRADES</div>
+                                                    <div class="doc-mini-title">Amendatory Agreement</div>
+                                                    <div class="doc-mini-sub">Page 1</div>
                                                 </div>
                                                 <div class="doc-mini-body">
                                                     <div class="doc-mini-line"></div>
@@ -305,8 +305,8 @@ new class extends Component
                                             <div class="doc-mini-paper">
                                                 <div class="doc-mini-header">
                                                     <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">University of Southeastern Philippines</div>
-                                                    <div class="doc-mini-sub">REPORT OF GRADES</div>
+                                                    <div class="doc-mini-title">Amendatory Agreement</div>
+                                                    <div class="doc-mini-sub">Page 2</div>
                                                 </div>
                                                 <div class="doc-mini-body">
                                                     <div class="doc-mini-line"></div>
@@ -323,8 +323,8 @@ new class extends Component
                                             <div class="doc-mini-paper">
                                                 <div class="doc-mini-header">
                                                     <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">University of Southeastern Philippines</div>
-                                                    <div class="doc-mini-sub">REPORT OF GRADES</div>
+                                                    <div class="doc-mini-title">Amendatory Agreement</div>
+                                                    <div class="doc-mini-sub">Page 3</div>
                                                 </div>
                                                 <div class="doc-mini-body">
                                                     <div class="doc-mini-line"></div>
@@ -352,8 +352,8 @@ new class extends Component
                                             <div class="doc-mini-paper">
                                                 <div class="doc-mini-header">
                                                     <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">USeP Obrero Campus</div>
-                                                    <div class="doc-mini-sub">REPORT OF GRADES</div>
+                                                    <div class="doc-mini-title">Report of Grades</div>
+                                                    <div class="doc-mini-sub">Document File</div>
                                                 </div>
                                             </div>
                                         </div>
