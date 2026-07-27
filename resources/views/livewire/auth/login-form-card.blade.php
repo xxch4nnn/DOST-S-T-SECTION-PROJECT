@@ -2,17 +2,17 @@
     <!-- Logo & Title Header -->
     <div class="text-center mb-4">
         <img src="{{ asset('DostSEILogo.svg') }}" alt="DOST SEI Logo" class="img-fluid mb-2" style="height: 5rem; width: auto;">
-        <h1 class="fw-extrabold text-dark tracking-tight mb-0" style="font-size: 3rem; font-family: 'Zalando Sans', system-ui, sans-serif;">DOSTorage</h1>
+        <h1 class="fw-extrabold text-dark tracking-tight mb-0" style="font-size: 3rem;">DOSTorage</h1>
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-3" :status="session('status')" />
 
     <form wire:submit="login">
-        <!-- Employee ID / Email Address -->
+        <!-- Email Address -->
         <div class="mb-3">
-            <label for="email" class="form-label fw-semibold text-dark mb-1" style="font-size: 0.925rem;">Employee ID</label>
-            <input wire:model="form.email" id="email" type="email" name="email" class="form-control form-control-lg bg-white border-secondary-subtle fs-6 rounded-3" placeholder="DOSTSEI-12345" required autofocus autocomplete="username" />
+            <label for="email" class="form-label fw-semibold text-dark mb-1" style="font-size: 0.925rem;">Email Address</label>
+            <input wire:model="form.email" id="email" type="email" name="email" class="form-control form-control-lg bg-white border-secondary-subtle fs-6 rounded-3" placeholder="name@example.com" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('form.email')" class="mt-1" />
         </div>
 
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Log In Button -->
-        <button type="submit" class="btn btn-info w-100 py-2.5 text-white fw-bold fs-6 rounded-3 shadow-sm" style="background-color: #0099ff; border: none;">
+        <button type="submit" class="btn btn-info w-100 py-2 text-white fw-bold fs-6 rounded-3 shadow-sm border-0">
             {{ __('Log in') }}
         </button>
     </form>

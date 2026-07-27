@@ -6,10 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Zalando Sans – loaded directly so Vite/Sass cannot strip it --}}
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/zalando-sans">
-
-    {{-- Self-hosted fallback @font-face (for offline / faster loads) --}}
+    {{-- Self-hosted font @font-face --}}
     <style>
         @font-face {
             font-family: 'Zalando Sans';
