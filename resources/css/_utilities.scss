@@ -25,7 +25,8 @@ body {
     color: #ffffff !important;
 }
 
-// Typography Weight Utility Classes
+// Typography Weight & Spacing Utility Classes
 .fw-semibold { font-weight: 600 !important; }
 .fw-bold { font-weight: 700 !important; }
 .fw-extrabold { font-weight: 800 !important; }
+.tracking-tight { letter-spacing: -0.025em !important; }
