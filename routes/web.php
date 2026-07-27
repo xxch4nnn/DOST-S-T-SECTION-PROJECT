@@ -1,8 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\HealthController;
 use App\Livewire\AddFile;
+use App\Livewire\AdminRecords\Create as AdminRecordsCreate;
+use App\Livewire\AdminRecords\Edit as AdminRecordsEdit;
+use App\Livewire\AdminRecords\Index as AdminRecordsIndex;
+use App\Livewire\AdminRecords\Show as AdminRecordsShow;
+use App\Livewire\AuditLogs\Index as AuditLogsIndex;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
@@ -26,13 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/add-file', AddFile::class)->name('add-file.index');
 
     // Admin Records CRUD
-    Route::get('/admin-records', App\Livewire\AdminRecords\Index::class)->name('admin-records.index');
-    Route::get('/admin-records/create', App\Livewire\AdminRecords\Create::class)->name('admin-records.create');
-    Route::get('/admin-records/{record}', App\Livewire\AdminRecords\Show::class)->name('admin-records.show');
-    Route::get('/admin-records/{record}/edit', App\Livewire\AdminRecords\Edit::class)->name('admin-records.edit');
+    Route::get('/admin-records', AdminRecordsIndex::class)->name('admin-records.index');
+    Route::get('/admin-records/create', AdminRecordsCreate::class)->name('admin-records.create');
+    Route::get('/admin-records/{record}', AdminRecordsShow::class)->name('admin-records.show');
+    Route::get('/admin-records/{record}/edit', AdminRecordsEdit::class)->name('admin-records.edit');
 
     // Audit Logs
-    Route::get('/audit-logs', App\Livewire\AuditLogs\Index::class)->name('audit-logs.index');
+    Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
 
     // Document Download
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
