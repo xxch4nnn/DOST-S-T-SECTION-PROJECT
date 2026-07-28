@@ -14,8 +14,8 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $groups = [
-            ['name'=> 'Waks', 'email'=> 'maclangw26@gmail.com', 'password'=> 'Wakster2112'],
-            ['name'=> 'Admin', 'email'=> 'admin@admin', 'password'=> 'adminadmin'],
+            ['name'=> 'Waks', 'email'=> 'maclangw26@gmail.com', 'password'=> 'Wakster2112', 'email_verified_at' => now()],
+            ['name'=> 'Admin', 'email'=> 'admin@admin', 'password'=> 'adminadmin', 'email_verified_at' => now()],
         ];
 
         foreach($groups as $group){

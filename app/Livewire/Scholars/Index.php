@@ -32,7 +32,7 @@ class Index extends Component
     public function render()
     {
         $scholars = Scholar::query()
-            ->with(['scholarship', 'school', 'course', 'clearanceStatus'])
+            ->with(['scholarshipProgram', 'scholarshipProgramType', 'school', 'course', 'clearanceStatus'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('first_name', 'like', '%'.$this->search.'%')
@@ -41,7 +41,7 @@ class Index extends Component
                 });
             })
             ->when($this->spas_no, function ($query) {
-                $query->where('spas_no', 'like', '%'.$this->spas_no.'%');
+                $query->where('spas_number', 'like', '%'.$this->spas_no.'%');
             })
             ->when($this->school_id, function ($query) {
                 $query->where('school_id', $this->school_id);

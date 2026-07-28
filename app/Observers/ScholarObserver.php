@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Models\AuditLog;
 use App\Models\Scholar;
+use Illuminate\Support\Facades\Auth;
 
 class ScholarObserver
 {
@@ -11,7 +13,15 @@ class ScholarObserver
      */
     public function created(Scholar $scholar): void
     {
-        //
+        AuditLog::create([
+            'user_id' => Auth::id() ?? 2,
+            'action' => 'created',
+            'loggable_type' => Scholar::class,
+            'loggable_id' => $scholar->id,
+            'before_payload' => null,
+            'after_payload' => $scholar->toArray(),
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
@@ -19,7 +29,17 @@ class ScholarObserver
      */
     public function updated(Scholar $scholar): void
     {
-        //
+        if($scholar->wasChanged()){
+            AuditLog::create([
+                'user_id' => Auth::id() ?? 2,
+                'action' => 'updated',
+                'loggable_type' => Scholar::class,
+                'loggable_id' => $scholar->id,
+                'before_payload' => $scholar->getOriginal(),
+                'after_payload' => $scholar->getChanges(),
+                'ip_address' => request()->ip(),
+            ]);
+        }
     }
 
     public function saving(Scholar $scholar){
@@ -53,7 +73,15 @@ class ScholarObserver
      */
     public function deleted(Scholar $scholar): void
     {
-        //
+        AuditLog::create([
+            'user_id' => Auth::id() ?? 2,
+            'action' => 'deleted',
+            'loggable_type' => Scholar::class,
+            'loggable_id' => $scholar->id,
+            'before_payload' => $scholar->toArray(),
+            'after_payload' => null,
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
