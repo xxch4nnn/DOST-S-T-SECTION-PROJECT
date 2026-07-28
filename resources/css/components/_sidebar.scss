@@ -1,6 +1,6 @@
 // --- Main Canvas Floating Card Shadow ---
 .main-canvas {
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.03);
+    box-shadow: -10px 0 30px rgb(0, 0, 0, 0.05), 0 10px 30px rgb(0, 0, 0, 0.03);
 }
 
 // --- Sidebar Navigation ---
@@ -172,7 +172,7 @@
     font-weight: 500;
     padding: 0.35rem 0.75rem;
     border-radius: 0.5rem;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 14px rgb(0, 0, 0, 0.08), 0 1px 3px rgb(0, 0, 0, 0.04);
     border: 1px solid var(--gray-200);
     white-space: nowrap;
     pointer-events: none;

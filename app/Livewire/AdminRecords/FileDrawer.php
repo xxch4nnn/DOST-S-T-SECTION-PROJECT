@@ -23,6 +23,7 @@ class FileDrawer extends Component
 
         if (! $this->record) {
             $this->closeDrawer();
+
             return;
         }
 
