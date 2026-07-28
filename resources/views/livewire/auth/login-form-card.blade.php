@@ -9,10 +9,10 @@
     <x-auth-session-status class="mb-3" :status="session('status')" />
 
     <form wire:submit="login">
-        <!-- Email Address -->
+        <!-- Email / Username Address -->
         <div class="mb-3">
-            <label for="email" class="form-label fw-semibold text-dark mb-1" style="font-size: 0.925rem;">Email Address</label>
-            <input wire:model="form.email" id="email" type="email" name="email" class="form-control form-control-lg bg-white border-secondary-subtle fs-6 rounded-3" placeholder="name@example.com" required autofocus autocomplete="username" />
+            <label for="email" class="form-label fw-semibold text-dark mb-1" style="font-size: 0.925rem;">Email / Username</label>
+            <input wire:model="form.email" id="email" type="text" name="email" class="form-control form-control-lg bg-white border-secondary-subtle fs-6 rounded-3" placeholder="Enter your email or username" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('form.email')" class="mt-1" />
         </div>
 

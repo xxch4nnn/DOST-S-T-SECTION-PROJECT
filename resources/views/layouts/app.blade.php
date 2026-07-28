@@ -6,10 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'DOSTorage') }}</title>
 
-    {{-- Zalando Sans --}}
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/zalando-sans">
-
-    {{-- Self-hosted fallback @font-face --}}
+    {{-- Self-hosted Zalando Sans @font-face --}}
     <style>
         @font-face {
             font-family: 'Zalando Sans';
