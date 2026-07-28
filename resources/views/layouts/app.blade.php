@@ -4,33 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'DOSTorage') }}</title>
+
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
-<body class="text-body bg-light">
-    <div class="min-vh-100 d-flex flex-column">
-        <livewire:layout.navigation />
+<body style="margin: 0; padding: 0; min-height: 100vh; background-color: #ffffff; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow: hidden;">
 
-        @if (isset($header))
-            <header class="bg-white border-bottom border-primary border-opacity-25 shadow-sm">
-                <div class="container py-3">
-                    <div class="text-dost-dark-blue">
-                        {{ $header }}
-                    </div>
-                </div>
-            </header>
-        @endif
+    <div class="d-flex min-vh-100" style="margin: 0; padding: 0;">
+        {{-- Collapsible Sidebar --}}
+        <livewire:layout.sidebar />
 
-        <main class="flex-grow-1 py-4">
-            {{ $slot }}
-        </main>
+        {{-- Main Content Area with Background Layering --}}
+        <div class="main-canvas flex-grow-1 d-flex flex-column position-relative" style="min-width: 0; height: 100vh; overflow: hidden; background-color: #f8f9fa; border-top-left-radius: 36px; border-bottom-left-radius: 36px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+            {{-- Main Content Slot (Z-Index 10 so dropdowns float over background) --}}
+            <main class="flex-grow-1 overflow-auto position-relative" style="z-index: 10;">
+                {{ $slot }}
+            </main>
 
-        <footer class="border-top bg-white py-3 mt-auto">
-            <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <span class="small text-muted">{{ config('app.name', 'DOSTorage') }}</span>
-                <span class="small text-dost-dark-blue fw-semibold">DOST-SEI Davao Region</span>
+            {{-- Folder Footer Background Graphic (Positioned Absolutely as Background) --}}
+            <div style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 1; pointer-events: none; line-height: 0;">
+                <x-folder-background />
             </div>
-        </footer>
+        </div>
     </div>
+
 </body>
 </html>

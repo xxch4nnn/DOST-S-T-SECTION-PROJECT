@@ -5,21 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
+
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
-<body class="text-body bg-light">
-    <div class="min-vh-100 d-flex flex-column align-items-center justify-content-center py-5" style="background: linear-gradient(135deg, var(--blue-50) 0%, #ffffff 100%);">
-        <div class="mb-4 text-center">
-            <a href="/" wire:navigate class="text-decoration-none">
-                <x-application-logo style="width: 4.5rem; height: 4.5rem;" class="text-primary mb-2" />
-                <h4 class="fw-bold text-dost-dark-blue mb-0">DOSTorage V1</h4>
-                <small class="text-muted">Scholarship & Administrative Management System</small>
-            </a>
+<body style="margin: 0; padding: 0; min-height: 100vh; background-color: #f8f9fa; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden;">
+
+    <div class="d-flex flex-column min-vh-100">
+        {{-- Row 1: Login Form (takes remaining space, centers content) --}}
+        <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+            <div style="width: 100%; max-width: 26rem; padding: 2rem 1rem;">
+                {{ $slot }}
+            </div>
         </div>
 
-        <div class="w-100 mx-auto p-4 bg-white shadow-sm rounded-3 border-top border-4 border-primary" style="max-width: 26rem;">
-            {{ $slot }}
-        </div>
+        {{-- Row 2: Folder Footer Background Component --}}
+        <x-folder-background />
     </div>
+
 </body>
 </html>
+

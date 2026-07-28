@@ -1,13 +1,6 @@
-// Self-hosted Zalando Sans (OFL) — files in public/fonts/zalando-sans/
-@font-face {
-    font-family: 'Zalando Sans';
-    font-style: normal;
-    font-weight: 100 900;
-    font-display: swap;
-    src: local('Zalando Sans'),
-        url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2-variations'),
-        url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2');
-}
+// Typography & Icons: Self-hosted Offline Assets (Bundled by Vite)
+@import "fonts";
+@import "@phosphor-icons/web/regular";
 
 // Bootstrap 5 Variable Overrides (Before importing Bootstrap)
 $font-family-sans-serif: 'Zalando Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -31,102 +24,21 @@ $danger: #dc3545;     // Status: Not Cleared
 // Import Bootstrap 5
 @import "bootstrap/scss/bootstrap";
 
-// DOST-S-T Design System CSS Custom Properties (Tokens)
-:root {
-    --font-family-sans: 'Zalando Sans', system-ui, -apple-system, sans-serif;
+// System & Design Tokens
+@import "tokens";
+@import "utilities";
 
-    // Default
-    --color-white: #ffffff;
-    --color-black: #151515;
+// Component Partials
+@import "components/sidebar";
+@import "components/category-tabs";
+@import "components/file-search";
+@import "components/dashboard-main";
+@import "components/scholar-drawer";
+@import "components/document-viewer";
+@import "components/status-modal";
+@import "components/scholars-page";
+@import "components/admin-files";
+@import "components/add-file";
 
-    // Primary Brand Colors
-    --dost-dark-blue: #052c65;
-    --dost-blue: #0a58ca;
-    --dost-main-blue: #0099ff;
-    --dost-yellow: #e1ad03;
-
-    // Dark Blue Scale Tokens
-    --blue-50: #e6eaf0;
-    --blue-100: #b2becf;
-    --blue-200: #8c9eb8;
-    --blue-300: #587298;
-    --blue-400: #375684;
-    --blue-500: #052c65;
-    --blue-600: #05285c;
-    --blue-700: #041f48;
-    --blue-800: #031838;
-    --blue-900: #02122a;
-
-    // Main Blue Scale Tokens
-    --main-blue-50: #e6f5ff;
-    --main-blue-100: #b0dfff;
-    --main-blue-200: #8ad0ff;
-    --main-blue-300: #54bbff;
-    --main-blue-400: #33adff;
-    --main-blue-500: #0099ff;
-    --main-blue-600: #008be8;
-    --main-blue-700: #006db5;
-    --main-blue-800: #00548c;
-    --main-blue-900: #00406b;
-
-    // Yellow Scale Tokens
-    --yellow-50: #fcf7e6;
-    --yellow-100: #f6e6b1;
-    --yellow-200: #f1d98b;
-    --yellow-300: #ebc856;
-    --yellow-400: #e7bd35;
-    --yellow-500: #e1ad03;
-    --yellow-600: #cd9d03;
-    --yellow-700: #a07b02;
-    --yellow-800: #7c5f02;
-    --yellow-900: #5f4901;
-
-    // Neutral Grays
-    --gray-100: #f8f9fa;
-    --gray-200: #e9ecef;
-    --gray-300: #dee2e6;
-    --gray-400: #ced4da;
-    --gray-500: #adb5bd;
-    --gray-600: #6c757d;
-    --gray-700: #495057;
-    --gray-800: #343a40;
-    --gray-900: #212529;
-
-    // Status Colors
-    --status-cleared: #28a745;
-    --status-not-cleared: #dc3545;
-}
-
-body {
-    font-family: var(--font-family-sans);
-    min-height: 100vh;
-}
-
-// Utility Classes for DOST Design Tokens
-.bg-dost-dark-blue { background-color: var(--dost-dark-blue) !important; }
-.bg-dost-blue { background-color: var(--dost-blue) !important; }
-.bg-dost-main-blue { background-color: var(--dost-main-blue) !important; }
-.bg-dost-yellow { background-color: var(--dost-yellow) !important; }
-
-.text-dost-dark-blue { color: var(--dost-dark-blue) !important; }
-.text-dost-blue { color: var(--dost-blue) !important; }
-.text-dost-main-blue { color: var(--dost-main-blue) !important; }
-.text-dost-yellow { color: var(--dost-yellow) !important; }
-
-// Status Badges
-.badge-status-cleared {
-    background-color: var(--status-cleared) !important;
-    color: #ffffff !important;
-}
-
-.badge-status-not-cleared {
-    background-color: var(--status-not-cleared) !important;
-    color: #ffffff !important;
-}
-
-// Typography Weight Utility Classes
-.fw-semibold { font-weight: 600 !important; }
-.fw-bold { font-weight: 700 !important; }
-.fw-extrabold { font-weight: 800 !important; }
 
 
