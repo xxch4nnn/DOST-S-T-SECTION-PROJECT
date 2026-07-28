@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 #[ObservedBy(ScholarObserver::class)]
 class Scholar extends Model
 {
+    protected $casts = [
+        'birthdate' => 'date:Y-m-d',
+    ];
+
     public $timestamps=false;
     public function scholarshipProgram(){
         return $this->belongsTo(ScholarshipProgram::class, "scholarship_program_id");

@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 use App\Http\Controllers\DocumentController;
 // use App\Http\Controllers\HealthController;
-use App\Livewire\Scholars\Create;
+use App\Livewire\AddFile;
+use App\Livewire\AdminRecords\Create as AdminRecordsCreate;
+use App\Livewire\AdminRecords\Edit as AdminRecordsEdit;
+use App\Livewire\AdminRecords\Index as AdminRecordsIndex;
+use App\Livewire\AdminRecords\Show as AdminRecordsShow;
+use App\Livewire\Scholars\Create as Create;
+use App\Livewire\Scholars\Delete as Delete;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
@@ -22,6 +28,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scholars', Index::class)->name('scholars.index');
     Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
+    Route::post('/scholars/create', Create::class)->name('scholars.create');
+    Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
 
     // Add New File Wizard
     Route::get('/add-file', AddFile::class)->name('add-file.index');
@@ -32,8 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin-records/{record}', AdminRecordsShow::class)->name('admin-records.show');
     Route::get('/admin-records/{record}/edit', AdminRecordsEdit::class)->name('admin-records.edit');
 
-    // Audit Logs
-    Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    // // Audit Logs
+    // Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
 
     // Document Download
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');

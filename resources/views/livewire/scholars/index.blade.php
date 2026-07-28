@@ -1,147 +1,95 @@
-<div class="scholars-page">
-    {{-- Page Header --}}
-    <div class="scholars-page__header">
-        <h1>{{ __('Scholars File List') }}</h1>
+<x-slot name="header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h4 mb-0 fw-semibold">
+            {{ __('Scholars Directory') }}
+        </h2>
+        <a href="{{ route('scholars.create') }}" class="btn btn-primary btn-sm">
+            Add Scholar
+        </a>
     </div>
+</x-slot>
 
-    {{-- Search & Action Controls --}}
-    <div class="scholars-search-row">
-        <div class="scholars-search-input-group">
-            <i class="ph ph-magnifying-glass scholars-search-icon"></i>
-            <input 
-                wire:model.live.debounce.250ms="search" 
-                type="text" 
-                class="scholars-search-input" 
-                placeholder="Search Scholar file"
-            >
-        </div>
-
-        @php
-            $allSelected = count($allYears) > 0 && count($selectedYears) === count($allYears);
-        @endphp
-
-        <button 
-            type="button" 
-            class="scholars-select-all-btn {{ $allSelected ? 'scholars-select-all-btn--checked' : '' }}" 
-            title="{{ $allSelected ? 'Deselect All Years' : 'Select All Years' }}"
-            wire:click="{{ $allSelected ? 'deselectAllYears' : 'selectAllYears('.json_encode($allYears).')' }}"
-        >
-            @if($allSelected)
-                <i class="ph-fill ph-check-square"></i>
-            @else
-                <i class="ph ph-square"></i>
-            @endif
-        </button>
-    </div>
-
-
-    {{-- Batch Selection Toolbar (Screenshot 2) --}}
-    @if(count($selectedYears) > 0)
-        <div class="scholars-batch-bar">
-            <button type="button" class="batch-deselect-btn" wire:click="deselectAllYears" title="Deselect All">
-                <i class="ph ph-x"></i>
-            </button>
-
-            <span class="batch-count-label">{{ count($selectedYears) }} Selected</span>
-
-            <div class="batch-action-icons">
-                <button type="button" class="batch-icon-btn" title="Print Selected">
-                    <i class="ph ph-printer"></i>
-                </button>
-                <button type="button" class="batch-icon-btn" title="Download Selected">
-                    <i class="ph ph-download-simple"></i>
-                </button>
-                <button type="button" class="batch-icon-btn" title="Export Selected">
-                    <i class="ph ph-file-arrow-up"></i>
-                </button>
-                <button type="button" class="batch-icon-btn batch-icon-btn--danger" title="Delete Selected">
-                    <i class="ph ph-trash"></i>
-                </button>
-            </div>
-        </div>
-    @endif
-
-    {{-- Year Folders Stack --}}
-    <div class="year-folders-stack">
-        @foreach($groupedScholars as $year => $scholarsInYear)
-            @php
-                $isExpanded = in_array((string)$year, $expandedYears, true);
-                $isSelected = in_array((string)$year, $selectedYears, true);
-            @endphp
-
-            <div class="year-folder-item">
-                {{-- Folder Header Card --}}
-                <div 
-                    class="year-folder-header {{ $isSelected ? 'year-folder-header--selected' : '' }} {{ $isExpanded ? 'year-folder-header--expanded' : '' }}"
-                    wire:click="toggleYear('{{ $year }}')"
-                >
-                    <div class="year-folder-tab">
-                        <span class="year-folder-title">{{ $year }}</span>
-                    </div>
-
-                    <input 
-                        type="checkbox" 
-                        class="year-folder-checkbox" 
-                        wire:click.stop="toggleSelectYear('{{ $year }}')"
-                        @checked($isSelected)
-                    >
+<div class="container py-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search Name</label>
+                    <input wire:model.live.debounce.300ms="search" type="text" id="search" class="form-control" placeholder="Search first, middle, last name...">
                 </div>
-
-                {{-- Folder Body Content (Expanded) --}}
-                @if($isExpanded)
-                    <div class="year-folder-body">
-                        @if($scholarsInYear->isEmpty())
-                            <div class="text-center text-muted py-4">
-                                <i class="ph ph-folder-open display-6 mb-2 text-secondary"></i>
-                                <p class="mb-0 fs-6">No scholars found for year {{ $year }}.</p>
-                            </div>
-                        @else
-                            <div class="scholars-grid">
-                                @foreach($scholarsInYear as $scholar)
-                                    @php
-                                        $statusName = $scholar->clearanceStatus?->name ?? 'Not Cleared';
-                                        $isCleared = in_array($statusName, ['Clear', 'Cleared']);
-                                    @endphp
-
-                                    <div 
-                                        class="scholar-grid-card" 
-                                        wire:click="openScholar({{ $scholar->id }})"
-                                    >
-                                        <div class="scholar-grid-card__header">
-                                            <h3 class="scholar-name">
-                                                {{ $scholar->last_name }}, {{ $scholar->first_name }} {{ $scholar->middle_name ? substr($scholar->middle_name, 0, 1) . '.' : '' }}
-                                            </h3>
-                                            <span class="badge {{ $isCleared ? 'badge-status-cleared' : 'badge-status-not-cleared' }}">
-                                                {{ $statusName }}
-                                            </span>
-                                        </div>
-
-                                        <div class="scholar-grid-card__spas">
-                                            SPAS ID: {{ $scholar->spas_no }}
-                                        </div>
-
-                                        <div class="scholar-grid-card__meta-grid">
-                                            <div class="scholar-meta-sub">
-                                                <label>Scholarship Program</label>
-                                                <span>{{ $scholar->scholarship?->name ?? 'RA 10612' }}</span>
-                                            </div>
-
-                                            <div class="scholar-meta-sub">
-                                                <label>Scholarship Program Type</label>
-                                                <span>{{ $scholar->scholarshipType?->name ?? 'DOST - SEI Undergraduate Scholarship' }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                @endif
+                <div class="col-md-3">
+                    <label for="spas_no" class="form-label">SPAS No.</label>
+                    <input wire:model.live.debounce.300ms="spas_no" type="text" id="spas_no" class="form-control" placeholder="e.g. 2023-0001">
+                </div>
+                <div class="col-md-3">
+                    <label for="school" class="form-label">School</label>
+                    <select wire:model.live="school_id" id="school" class="form-select">
+                        <option value="">All Schools</option>
+                        @foreach($schools as $school)
+                            <option value="{{ $school->id }}">{{ $school->name }} ({{ $school->campus ?? 'Main' }})</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="course" class="form-label">Course</label>
+                    <select wire:model.live="course_id" id="course" class="form-select">
+                        <option value="">All Courses</option>
+                        @foreach($courses as $course)
+                            <option value="{{ $course->id }}">{{ $course->abbreviation }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
-        @endforeach
+        </div>
     </div>
 
-    {{-- Slide-over Drawer & Lightbox Viewer --}}
-    <livewire:dashboard.scholar-drawer />
-    <livewire:dashboard.document-viewer />
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>SPAS No.</th>
+                        <th>Name</th>
+                        <th>School &amp; Course</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($scholars as $scholar)
+                        <tr>
+                            <td class="fw-medium">{{ $scholar->spas_number ?? 'None' }}</td>
+                            <td>
+                                <div class="fw-semibold">{{ $scholar->last_name }}, {{ $scholar->first_name }} {{ $scholar->middle_name }} {{ $scholar->generational_suffix }}</div>
+                                <div class="small text-muted">{{ $scholar->scholarshipProgram->name ?? 'null' }} - {{ $scholar->year_of_award ?? 'null' }}</div>
+                            </td>
+                            <td>
+                                <div>{{ $scholar->school->name ?? 'null' }}</div>
+                                <div class="small text-muted">{{ $scholar->course?->abbreviation ?? 'null' }}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ $scholar->clearanceStatus->name ?? 'Not Cleared' }}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ route('scholars.show', $scholar->id) }}" class="btn btn-link btn-sm">View</a>
+                                <a href="{{ route('scholars.edit', $scholar->id) }}" class="btn btn-link btn-sm">Edit</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No scholars found matching your criteria.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer">
+            {{ $scholars->links() }}
+        </div>
+    </div>
 </div>

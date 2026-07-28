@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Scholars;
 
+use App\Models\Course;
 use App\Models\Scholar;
+use App\Models\School;
 use Livewire\Component;
 
 class Index extends Component
@@ -60,7 +62,7 @@ class Index extends Component
     public function render()
     {
         $query = Scholar::query()
-            ->with(['scholarshipProgram', 'scholarshipProgramType', 'scholarshipType', 'school', 'course', 'clearanceStatus'])
+            ->with(['scholarshipProgram', 'scholarshipProgramType', 'school', 'course', 'clearanceStatus'])
             ->when($this->search, function ($q) {
                 $q->where(function ($sub) {
                     $sub->where('first_name', 'like', '%'.$this->search.'%')
@@ -69,21 +71,27 @@ class Index extends Component
                         ->orWhere('spas_no', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->spas_no, function ($query) {
-                $query->where('spas_no', 'like', '%'.$this->spas_no.'%');
-            })
-            ->when($this->school_id, function ($query) {
-                $query->where('school_id', $this->school_id);
-            })
-            ->when($this->course_id, function ($query) {
-                $query->where('course_id', $this->course_id);
-            })
-            ->orderBy('last_name')
-            ->paginate(15);
+            ->orderBy('year_of_award', 'desc')
+            ->orderBy('last_name', 'asc');
+
+        $scholars = $query->get();
+
+        // Group scholars by year_of_award
+        $groupedScholars = $scholars->groupBy(function ($scholar) {
+            return (string) ($scholar->year_of_award ?? '2023');
+        });
+
+        // Ensure default year 2023 exists if DB is empty
+        if ($groupedScholars->isEmpty()) {
+            $groupedScholars = collect(['2023' => collect([])]);
+        }
 
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,
+            'scholars'=>Scholar::orderBy('last_name', 'asc')->paginate(15),
             'allYears' => $groupedScholars->keys()->toArray(),
+            'schools'=>School::orderBy('name', 'asc')->get(),
+            'courses'=>Course::orderBy('name', 'asc')->get()
         ])->layout('layouts.app');
     }
 }

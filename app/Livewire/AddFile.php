@@ -2,13 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\Scholarship;
-use App\Models\ScholarshipType;
+use App\Models\ScholarshipProgram;
+use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use Livewire\Component;
 
@@ -137,15 +136,15 @@ class AddFile extends Component
             'admin_description' => 'nullable|string',
         ]);
 
-        AdministrativeRecord::create([
-            'title' => $this->admin_title,
-            'record_type' => $this->adminCategory ?? 'Memorandum',
-            'series_number' => $this->admin_series_number,
-            'year' => (int) $this->admin_year,
-            'recipient' => $this->admin_recipient,
-            'description' => $this->admin_description,
-            'created_by' => auth()->id(),
-        ]);
+        // AdministrativeRecord::create([
+        //     'title' => $this->admin_title,
+        //     'record_type' => $this->adminCategory ?? 'Memorandum',
+        //     'series_number' => $this->admin_series_number,
+        //     'year' => (int) $this->admin_year,
+        //     'recipient' => $this->admin_recipient,
+        //     'description' => $this->admin_description,
+        //     'created_by' => auth()->id(),
+        // ]);
 
         session()->flash('status', 'Administrative record saved successfully!');
 
@@ -155,12 +154,12 @@ class AddFile extends Component
     public function render()
     {
         return view('livewire.add-file', [
-            'scholarships' => Scholarship::orderBy('name')->get(),
-            'scholarshipTypes' => ScholarshipType::orderBy('name')->get(),
+            'scholarships' => ScholarshipProgram::orderBy('name')->get(),
+            'scholarshipTypes' => ScholarshipProgramType::orderBy('name')->get(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'clearanceStatuses' => ClearanceStatus::orderBy('name')->get(),
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::get(),
         ])->layout('layouts.app');
     }
 }

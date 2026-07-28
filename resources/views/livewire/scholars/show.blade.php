@@ -23,7 +23,7 @@
                     <dl class="mb-0">
                         <div class="mb-3">
                             <dt class="small text-muted">SPAS No.</dt>
-                            <dd class="mb-0">{{ $scholar->spas_no ?? 'N/A' }}</dd>
+                            <dd class="mb-0">{{ $scholar->spas_number ?? 'N/A' }}</dd>
                         </div>
                         <div class="mb-3">
                             <dt class="small text-muted">Name</dt>
@@ -31,11 +31,11 @@
                         </div>
                         <div class="mb-3">
                             <dt class="small text-muted">Scholarship</dt>
-                            <dd class="mb-0">{{ $scholar->scholarship?->name }} ({{ $scholar->year_of_award }})</dd>
+                            <dd class="mb-0">{{ $scholar->scholarshipProgram?->name }} ({{ $scholar->year_of_award }})</dd>
                         </div>
                         <div class="mb-3">
                             <dt class="small text-muted">School &amp; Course</dt>
-                            <dd class="mb-0">{{ $scholar->school?->name }} - {{ $scholar->course?->abbreviation }}</dd>
+                            <dd class="mb-0">{{ $scholar->school?->name ?? 'null' }} - {{ $scholar->course?->abbreviation ?? 'null' }}</dd>
                         </div>
                         <div class="mb-3">
                             <dt class="small text-muted">Sex &amp; Birthdate</dt>

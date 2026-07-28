@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\File;
 use App\Models\Scholar;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
@@ -87,34 +88,48 @@ new class extends Component
 
     public function loadScholar(): void
     {
-        $dbScholar = Scholar::with(['scholarshipType', 'school', 'course', 'region', 'clearanceStatus'])
+        $dbScholar = Scholar::with(['scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])
             ->find($this->scholarId);
+        
+        $files = File::with('fileType')
+            ->whereHas('fileType', function ($query) {
+                $query->where('file_group_id', 1);
+            })
+            ->where('metadata->scholar_id', $this->scholarId)
+            ->whereNull('deleted_at')
+            ->get();
+        $this->groupedFiles = $files
+            ->groupBy('file_type_id')
+            ->toArray();
+
+        if (count($this->groupedFiles) > 0)
+            dd($this->groupedFiles);
 
         if ($dbScholar) {
             $this->scholarData = [
                 'name' => "{$dbScholar->last_name}, {$dbScholar->first_name} {$dbScholar->middle_name}",
-                'spas_id' => $dbScholar->spas_no ?? '2023-00855-2235',
-                'program' => $dbScholar->scholarshipType->code ?? 'RA 10612',
-                'program_type' => $dbScholar->scholarshipType->name ?? 'DOST - SEI Undergraduate Scholarship',
-                'year_of_award' => $dbScholar->year_of_award ?? '2023',
-                'clearance_date' => $dbScholar->clearance_date ? $dbScholar->clearance_date->format('d / m / Y') : '23 / 06 / 2027',
-                'course' => $dbScholar->course->name ?? 'BS in Computer Science Major in Data Science',
-                'university' => $dbScholar->school->name ?? 'University of Southeastern Philippines',
-                'address' => $dbScholar->barangay ? "{$dbScholar->barangay}, {$dbScholar->district}" : 'Brgy. 34 - D, C.M. Recto St. Poblacion District',
-                'municipality' => $dbScholar->municipality ?? 'Davao City',
-                'province' => $dbScholar->province ?? 'Davao del Sur',
-                'region' => $dbScholar->region->name ?? 'Region XI - Davao Region',
-                'email' => $dbScholar->email_address ?? 'maclangw26@gmail.com',
-                'contact' => $dbScholar->contact_number ?? '09762941445',
-                'birthdate' => $dbScholar->birthdate ? $dbScholar->birthdate->format('m / d / Y') : '08 / 23 / 2005',
-                'sex' => $dbScholar->sex ?? 'Male',
-                'status' => $dbScholar->clearanceStatus->name ?? 'Not Cleared',
+                'spas_id' => $dbScholar->spas_number ?? 'null',
+                'program' => $dbScholar->scholarshipProgram->name ??  'null',
+                'program_type' => $dbScholar->scholarshipProgramType->name ?? 'null',
+                'year_of_award' => $dbScholar->year_of_award ?? 'null',
+                'clearance_date' => $dbScholar->clearance_date ? \Carbon\Carbon::parse($dbScholar->clearance_date, 'Asia/Manila')->format('m / d / Y') : 'None (Not Cleared)',
+                'course' => $dbScholar->course->name ?? 'null',
+                'university' => $dbScholar->school->name ? ($dbScholar->school->abbreviation ? ($dbScholar->school->name . ' (' . $dbScholar->school->abbreviation . ')') : $dbScholar->school->name) : 'null',
+                'address' => $dbScholar->barangay ? "{$dbScholar->barangay}, {$dbScholar->district}" : 'null',
+                'municipality' => $dbScholar->municipality ?? 'null',
+                'province' => $dbScholar->province ?? 'null',
+                'region' => $dbScholar->region->name ?? 'null',
+                'email' => $dbScholar->email_address ?? 'null',
+                'contact' => $dbScholar->contact_number ?? 'null',
+                'birthdate' => $dbScholar->birthdate ? \Carbon\Carbon::parse($dbScholar->birthdate)->format('m / d / Y') : 'null',
+                'sex' => $dbScholar->sex ?? 'null',
+                'status' => $dbScholar->clearanceStatus->name ?? 'null',
             ];
         } else {
             // Demonstration mock data matching Screenshots 2 & 3
             $this->scholarData = [
                 'name' => 'Maclang, Wakin Cean C.',
-                'spas_id' => '2023-00855-2235',
+                'spas_id' => 'U-2023-00855-2235',
                 'program' => 'RA 10612',
                 'program_type' => 'DOST - SEI Undergraduate Scholarship',
                 'year_of_award' => '2023',
@@ -230,7 +245,7 @@ new class extends Component
                     </div>
 
                     <div class="scholar-meta-item">
-                        <label>Address</label>
+                        <label>Barangay/District</label>
                         <value>{{ $scholarData['address'] }}</value>
                     </div>
                     <div class="scholar-meta-item">

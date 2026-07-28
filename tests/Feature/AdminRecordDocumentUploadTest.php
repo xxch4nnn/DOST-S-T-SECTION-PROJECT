@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Livewire\AdminRecords\Show;
 use App\Models\AdministrativeRecord;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +22,16 @@ class AdminRecordDocumentUploadTest extends TestCase
     {
         // Avoid Storage::fake('local') — it breaks Livewire temporary upload metadata (LW4 + Flysystem).
         $user = User::factory()->create();
-        $fileType = FileType::firstOrCreate(['name' => 'Memorandum Circular', 'year' => '2023']);
+        $fileGroup = FileGroup::firstOrCreate([
+            'name' => 'Administrative Records',
+            'slug' => 'administrative_records'
+        ]);
+        $fileType = FileType::firstOrCreate([
+            'name' => 'Memorandum Circular',
+        ], [
+            'file_group_id' => $fileGroup->id,
+            'metadata_template' => [],
+        ]);
 
         $record = AdministrativeRecord::create([
             'record_type' => 'Memorandum',

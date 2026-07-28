@@ -88,7 +88,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="scholarship_id">Scholarship Program</label>
                         <select wire:model="scholarship_id" id="scholarship_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($scholarships as $sch)
                                 <option value="{{ $sch->id }}">{{ $sch->name }}</option>
                             @endforeach
@@ -98,7 +98,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="scholarship_type_id">Scholarship Program Type</label>
                         <select wire:model="scholarship_type_id" id="scholarship_type_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($scholarshipTypes as $st)
                                 <option value="{{ $st->id }}">{{ $st->name }}</option>
                             @endforeach
@@ -108,7 +108,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="school_id">University</label>
                         <select wire:model="school_id" id="school_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($schools as $school)
                                 <option value="{{ $school->id }}">{{ $school->name }}</option>
                             @endforeach
@@ -118,7 +118,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="course_id">Course</label>
                         <select wire:model="course_id" id="course_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->id }}">{{ $course->name }} ({{ $course->abbreviation }})</option>
                             @endforeach
@@ -128,7 +128,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="clearance_status_id">Clearance Status</label>
                         <select wire:model="clearance_status_id" id="clearance_status_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($clearanceStatuses as $cs)
                                 <option value="{{ $cs->id }}">{{ $cs->name }}</option>
                             @endforeach
@@ -165,7 +165,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="region_id">Region</label>
                         <select wire:model="region_id" id="region_id" class="form-select-custom">
-                            <option value="">Dropdown</option>
+                            <option value="" disabled>Dropdown</option>
                             @foreach($regions as $reg)
                                 <option value="{{ $reg->id }}">{{ $reg->name }}</option>
                             @endforeach
