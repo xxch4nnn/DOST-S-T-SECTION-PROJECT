@@ -1,3 +1,8 @@
+// --- Main Canvas Floating Card Shadow ---
+.main-canvas {
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
 // --- Sidebar Navigation ---
 .sidebar {
     width: 250px;
@@ -16,9 +21,10 @@
         width: 64px;
         padding: 0.75rem 0.5rem;
         align-items: center;
+        overflow: visible;
 
         .sidebar-label {
-            display: none;
+            display: none !important;
             opacity: 0;
             width: 0;
             overflow: hidden;
@@ -29,6 +35,16 @@
             padding: 0.625rem 0;
             width: 100%;
             gap: 0;
+            overflow: visible;
+
+            &:hover {
+                .sidebar-tooltip {
+                    display: block;
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(-50%) translateX(0);
+                }
+            }
         }
 
         .sidebar-icon {
@@ -49,21 +65,59 @@
     font-weight: 500;
     transition: background-color 0.15s ease, color 0.15s ease;
     white-space: nowrap;
-    overflow: hidden;
     border: none;
     cursor: pointer;
     background: transparent;
+    position: relative;
+
+    .sidebar-icon {
+        font-size: 1.35rem;
+        flex-shrink: 0;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--dost-main-blue);
+        transition: color 0.15s ease;
+    }
+
+    .sidebar-label {
+        opacity: 1;
+        transition: opacity 0.2s ease;
+        line-height: 1.2;
+        white-space: nowrap;
+        color: var(--dost-dark-blue);
+    }
 
     &:hover {
         background-color: var(--gray-100);
-        color: var(--dost-main-blue);
         text-decoration: none;
+
+        .sidebar-icon {
+            color: var(--dost-main-blue);
+        }
+
+        .sidebar-label {
+            color: var(--dost-dark-blue);
+        }
     }
 
     &--active {
         background-color: var(--main-blue-50);
-        color: var(--dost-main-blue);
+        color: var(--dost-dark-blue);
         font-weight: 600;
+
+        .sidebar-icon {
+            color: var(--dost-dark-blue);
+        }
+
+        .sidebar-label {
+            color: var(--dost-dark-blue);
+        }
+
+        &:hover {
+            background-color: var(--main-blue-50);
+        }
     }
 }
 
@@ -71,20 +125,61 @@
     margin-bottom: 0.25rem;
 }
 
-.sidebar-icon {
-    font-size: 1.35rem;
-    flex-shrink: 0;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.sidebar-logo-toggle {
+    position: relative;
+
+    .sidebar-collapsed-logo {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 1;
+        flex-shrink: 0;
+    }
+
+    .sidebar-hover-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+        color: var(--dost-main-blue);
+    }
+
+    &:hover {
+        .sidebar-collapsed-logo {
+            opacity: 0;
+        }
+
+        .sidebar-hover-icon {
+            opacity: 1;
+        }
+    }
 }
 
-.sidebar-label {
-    opacity: 1;
-    transition: opacity 0.2s ease;
-    line-height: 1.2;
+// Floating Pure CSS Tooltip for Collapsed Sidebar
+.sidebar-tooltip {
+    display: none;
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    background-color: var(--color-white);
+    color: var(--gray-800);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--gray-200);
     white-space: nowrap;
+    pointer-events: none;
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
 }
 
 .sidebar-separator {
@@ -92,3 +187,5 @@
     margin: 1.5rem 0;
     border: none;
 }
+
+
