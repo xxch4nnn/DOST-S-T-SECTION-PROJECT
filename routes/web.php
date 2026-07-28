@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\HealthController;
+// use App\Http\Controllers\HealthController;
 use App\Livewire\Scholars\Create;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
-Route::get('/health', HealthController::class)->name('health');
+// Route::get('/health', HealthController::class)->name('health');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

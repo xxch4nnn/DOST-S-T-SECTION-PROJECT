@@ -15,12 +15,6 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory()->create([
-            'name' => 'admin',
-            'email' => 'a@a',
-            'password' => 'admin',
-        ]);
-
         $this->call([
             FileGroupSeeder::class,
             RegionSeeder::class,
@@ -33,5 +27,18 @@ class DatabaseSeeder extends Seeder
             ScholarSeeder::class,
             FileTypeSeeder::class
         ]);
+        
+        // User::factory(10)->create();
+
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
     }
 }
+
+
+User::factory()->create([
+            'name' => 'Test Admin',
+            'email' => 'test@example.com',
+        ]);
