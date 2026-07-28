@@ -76,12 +76,18 @@ new class extends Component
         }
     }
 
-    public function openDocument(string $title, string $imageUrl = ''): void
+    public function openDocument(string $title, string $imageUrl = '', string $fileType = 'pdf', int $documentIndex = 1, int $totalPages = 1): void
     {
         $this->dispatch('open-document-viewer',
             title: $title,
-            imageUrl: $imageUrl ?: 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop',
-            scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.'
+            fileUrl: $imageUrl,
+            scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.',
+            fileType: $fileType,
+            documentIndex: $documentIndex,
+            extraData: [
+                'totalPages' => $totalPages,
+                'currentPage' => 1,
+            ]
         );
     }
 
@@ -272,96 +278,60 @@ new class extends Component
                         <span class="small text-muted fw-medium">Scanned Files</span>
                     </div>
 
-                    {{-- Accordion 1: Amendatory Agreement --}}
-                    <div class="folder-accordion">
-                        <button wire:click="toggleFolder('Amendatory Agreement')" type="button" class="folder-tab-btn">
-                            <span>Amendatory Agreement</span>
-                        </button>
+                    {{-- Dynamic Document Folders Array (Backend Handoff Ready with Test Cases A & B) --}}
+                    @php
+                        $fileGroups = [
+                            [
+                                'name' => 'Amendatory Agreement',
+                                'type' => 'pdf',
+                                'items' => [
+                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 10, 'url' => ''],
+                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 2', 'index' => 2, 'totalPages' => 10, 'url' => ''],
+                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 3', 'index' => 3, 'totalPages' => 10, 'url' => ''],
+                                ]
+                            ],
+                            [
+                                'name' => 'Report of Grades',
+                                'type' => 'pdf',
+                                'items' => [
+                                    ['title' => 'Report of Grades', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 1, 'url' => 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop'],
+                                ]
+                            ]
+                        ];
+                    @endphp
 
-                        @if(in_array('Amendatory Agreement', $expandedFolders, true))
-                            <div class="folder-accordion__content">
-                                <div class="d-flex gap-3 overflow-auto pb-2">
-                                    {{-- Thumbnail 1 --}}
-                                    <div wire:click="openDocument('Amendatory Agreement - Page 1')" class="doc-thumbnail-card" role="button">
-                                        <div class="doc-thumbnail-card__preview">
-                                            <div class="doc-mini-paper">
-                                                <div class="doc-mini-header">
-                                                    <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">Amendatory Agreement</div>
-                                                    <div class="doc-mini-sub">Page 1</div>
-                                                </div>
-                                                <div class="doc-mini-body">
-                                                    <div class="doc-mini-line"></div>
-                                                    <div class="doc-mini-line short"></div>
-                                                    <div class="doc-mini-table"></div>
+                    @foreach($fileGroups as $group)
+                        <div class="folder-accordion mb-2">
+                            <button wire:click="toggleFolder('{{ $group['name'] }}')" type="button" class="folder-tab-btn">
+                                <span>{{ $group['name'] }}</span>
+                            </button>
+
+                            @if(in_array($group['name'], $expandedFolders, true))
+                                <div class="folder-accordion__content">
+                                    <div class="d-flex gap-3 overflow-auto pb-2">
+                                        @foreach($group['items'] as $docItem)
+                                            <div wire:click="openDocument('{{ $docItem['title'] }}', '{{ $docItem['url'] }}', '{{ $group['type'] }}', {{ $docItem['index'] }}, {{ $docItem['totalPages'] }})" class="doc-thumbnail-card" role="button">
+                                                <div class="doc-thumbnail-card__preview">
+                                                    <div class="doc-mini-paper">
+                                                        <div class="doc-mini-header">
+                                                            <div class="doc-mini-logo"></div>
+                                                            <div class="doc-mini-title">{{ $docItem['title'] }}</div>
+                                                            <div class="doc-mini-sub">{{ $docItem['sub'] }}</div>
+                                                        </div>
+                                                        <div class="doc-mini-body">
+                                                            <div class="doc-mini-line"></div>
+                                                            <div class="doc-mini-line short"></div>
+                                                            <div class="doc-mini-table"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- Thumbnail 2 --}}
-                                    <div wire:click="openDocument('Amendatory Agreement - Page 2')" class="doc-thumbnail-card" role="button">
-                                        <div class="doc-thumbnail-card__preview">
-                                            <div class="doc-mini-paper">
-                                                <div class="doc-mini-header">
-                                                    <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">Amendatory Agreement</div>
-                                                    <div class="doc-mini-sub">Page 2</div>
-                                                </div>
-                                                <div class="doc-mini-body">
-                                                    <div class="doc-mini-line"></div>
-                                                    <div class="doc-mini-line short"></div>
-                                                    <div class="doc-mini-table"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- Thumbnail 3 --}}
-                                    <div wire:click="openDocument('Amendatory Agreement - Page 3')" class="doc-thumbnail-card" role="button">
-                                        <div class="doc-thumbnail-card__preview">
-                                            <div class="doc-mini-paper">
-                                                <div class="doc-mini-header">
-                                                    <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">Amendatory Agreement</div>
-                                                    <div class="doc-mini-sub">Page 3</div>
-                                                </div>
-                                                <div class="doc-mini-body">
-                                                    <div class="doc-mini-line"></div>
-                                                    <div class="doc-mini-line short"></div>
-                                                    <div class="doc-mini-table"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- Accordion 2: Report of Grades --}}
-                    <div class="folder-accordion mt-2">
-                        <button wire:click="toggleFolder('Report of Grades')" type="button" class="folder-tab-btn">
-                            <span>Report of Grades</span>
-                        </button>
-                        @if(in_array('Report of Grades', $expandedFolders, true))
-                            <div class="folder-accordion__content">
-                                <div class="d-flex gap-3 overflow-auto pb-2">
-                                    <div wire:click="openDocument('Report of Grades 2026')" class="doc-thumbnail-card" role="button">
-                                        <div class="doc-thumbnail-card__preview">
-                                            <div class="doc-mini-paper">
-                                                <div class="doc-mini-header">
-                                                    <div class="doc-mini-logo"></div>
-                                                    <div class="doc-mini-title">Report of Grades</div>
-                                                    <div class="doc-mini-sub">Document File</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
         @endif
