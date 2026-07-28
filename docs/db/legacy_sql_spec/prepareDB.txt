@@ -1,0 +1,7 @@
+Alter the .env data with the proper SQL server credentials (Create a new database as well.)
+
+Run the following commands to prepare your database
+1. php artisan migrate:fresh
+2. php artisan db:seed
+
+The two codes create the tables and populate the database
