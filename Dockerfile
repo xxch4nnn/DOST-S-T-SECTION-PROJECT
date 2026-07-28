@@ -27,6 +27,9 @@ WORKDIR /var/www/html
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN rm -f /etc/nginx/sites-enabled/default
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://127.0.0.1/ || exit 1
+
 EXPOSE 80
 
 CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]
