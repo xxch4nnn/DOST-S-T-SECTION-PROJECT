@@ -185,10 +185,63 @@
                         </select>
                     </div>
                 </div>
+            {{-- Section 4: Upload Scanned Files Extension (Screenshot Match) --}}
+            <div class="upload-file-form-card">
+                <h3 class="upload-file-form-card__title text-center mb-4">Upload Scanned Files</h3>
+
+                <div class="upload-scanned-stack d-flex flex-column gap-3">
+                    @foreach($scannedCategories as $catIndex => $cat)
+                        <div class="scanned-file-box">
+                            <div class="scanned-file-box__header d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-1">
+                                    <input type="text" 
+                                           wire:model.live="scannedCategories.{{ $catIndex }}.name" 
+                                           class="scanned-file-box__editable-label" 
+                                           title="Click to rename category">
+                                    <i class="ph ph-pencil-simple text-muted small"></i>
+                                </div>
+                                @if(count($scannedCategories) > 1)
+                                    <button type="button" wire:click="removeScannedCategory({{ $catIndex }})" class="btn btn-link text-danger p-0 border-0 shadow-none text-decoration-none me-2" title="Remove Category">
+                                        <i class="ph ph-trash fs-6"></i>
+                                    </button>
+                                @endif
+                            </div>
+
+                            @if(empty($cat['files']))
+                                {{-- Empty Dropzone State --}}
+                                <div class="upload-dropzone">
+                                    <div class="upload-dropzone__icon">
+                                        <i class="ph ph-tray"></i>
+                                    </div>
+                                    <h6 class="upload-dropzone__title">Click or drag file to this area to upload</h6>
+                                    <p class="upload-dropzone__subtitle">Support for a single or bulk upload. Maximum file size 2MB.</p>
+                                </div>
+                            @else
+                                {{-- Staged File Preview Grid --}}
+                                <div class="scanned-file-box__preview-grid d-flex gap-3 flex-wrap p-2">
+                                    @foreach($cat['files'] as $file)
+                                        <div class="staged-file-card">
+                                            <img src="{{ $file['url'] ?? 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=300&auto=format&fit=crop' }}" alt="Scanned file" class="img-fluid rounded">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+
+                    {{-- Centered + Add Scanned File Category Button --}}
+                    <div class="text-center mt-2">
+                        <button type="button" wire:click="addScannedCategory" class="btn-add-category-custom">
+                            <i class="ph ph-plus me-1"></i> Add Scanned File Category
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-actions-bar">
-                <button type="submit" class="btn-submit-custom">Save Scholar File</button>
+            {{-- Form Bottom Action Bar (Discard + Upload File Green Button) --}}
+            <div class="form-actions-bar d-flex align-items-center justify-content-end gap-3 mt-4">
+                <button type="button" wire:click="discard" class="btn-discard-custom">Discard</button>
+                <button type="submit" class="btn-success-custom">Upload File</button>
             </div>
         </form>
     @elseif($fileType === 'admin' && !$adminCategory)

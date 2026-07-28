@@ -6,22 +6,52 @@ use Livewire\Volt\Component;
 new class extends Component
 {
     public bool $isOpen = false;
+    public ?string $fileType = 'pdf'; // 'pdf', 'image', or null
     public string $title = 'Amendatory Agreement';
+    public int $documentIndex = 1;
     public string $scholarName = '';
-    public string $imageUrl = '';
+    public string $fileUrl = '';
     public int $zoom = 100;
+    public int $rotation = 0;
     public int $currentPage = 1;
     public int $totalPages = 10;
+    public array $thumbnails = [];
+    public array $images = [];
+    public int $currentImageIndex = 0;
 
     #[On('open-document-viewer')]
-    public function openViewer(string $title, string $imageUrl = '', string $scholarName = ''): void
-    {
+    public function openViewer(
+        string $title = 'Amendatory Agreement',
+        string $fileUrl = '',
+        string $scholarName = '',
+        ?string $fileType = null,
+        int $documentIndex = 1,
+        array $extraData = []
+    ): void {
         $this->title = $title;
-        $this->imageUrl = $imageUrl;
+        $this->fileUrl = $fileUrl;
         $this->scholarName = $scholarName;
+        $this->documentIndex = $documentIndex;
+        
+        // Auto-detect fileType if not explicitly passed or if fileUrl is an image format
+        if (!$fileType) {
+            $extension = strtolower(pathinfo(parse_url($fileUrl, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+            if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'], true)) {
+                $fileType = 'image';
+            } else {
+                $fileType = 'pdf';
+            }
+        }
+        
+        $this->fileType = strtolower($fileType);
         $this->isOpen = true;
         $this->zoom = 100;
-        $this->currentPage = 1;
+        $this->rotation = 0;
+        $this->currentPage = $extraData['currentPage'] ?? 1;
+        $this->totalPages = $extraData['totalPages'] ?? 10;
+        $this->thumbnails = $extraData['thumbnails'] ?? [];
+        $this->images = $extraData['images'] ?? ($fileUrl ? [$fileUrl] : []);
+        $this->currentImageIndex = $extraData['currentImageIndex'] ?? 0;
     }
 
     #[On('close-document-viewer')]
@@ -34,6 +64,36 @@ new class extends Component
     {
         if ($page >= 1 && $page <= $this->totalPages) {
             $this->currentPage = $page;
+        }
+    }
+
+    public function prevPage(): void
+    {
+        if ($this->currentPage > 1) {
+            $this->currentPage--;
+        }
+    }
+
+    public function nextPage(): void
+    {
+        if ($this->currentPage < $this->totalPages) {
+            $this->currentPage++;
+        }
+    }
+
+    public function prevImage(): void
+    {
+        if (count($this->images) > 0) {
+            $this->currentImageIndex = ($this->currentImageIndex - 1 + count($this->images)) % count($this->images);
+            $this->fileUrl = $this->images[$this->currentImageIndex] ?? $this->fileUrl;
+        }
+    }
+
+    public function nextImage(): void
+    {
+        if (count($this->images) > 0) {
+            $this->currentImageIndex = ($this->currentImageIndex + 1) % count($this->images);
+            $this->fileUrl = $this->images[$this->currentImageIndex] ?? $this->fileUrl;
         }
     }
 
@@ -51,66 +111,93 @@ new class extends Component
         }
     }
 
-    public function prevPage(): void
+    public function rotate(): void
     {
-        if ($this->currentPage > 1) {
-            $this->currentPage--;
-        }
+        $this->rotation = ($this->rotation + 90) % 360;
     }
 
-    public function nextPage(): void
+    public function printDocument(): void
     {
-        if ($this->currentPage < $this->totalPages) {
-            $this->currentPage++;
-        }
+        $this->dispatch('print-requested', url: $this->fileUrl);
+    }
+
+    public function downloadDocument(): void
+    {
+        $this->dispatch('download-requested', url: $this->fileUrl);
+    }
+
+    public function uploadFile(): void
+    {
+        $this->dispatch('trigger-file-upload');
+    }
+
+    public function deleteDocument(): void
+    {
+        $this->dispatch('delete-requested', fileUrl: $this->fileUrl);
     }
 }; ?>
 
 <div>
     @if($isOpen)
-        {{-- Overlay Backdrop (z-index 1045: behind Scholar Drawer) --}}
+        {{-- Overlay Backdrop --}}
         <div wire:click="closeViewer" class="doc-viewer-backdrop"></div>
 
-        {{-- Top Left Close Button --}}
-        <button wire:click="closeViewer" type="button" class="btn btn-link text-white p-2 border-0 shadow-none doc-viewer-close-btn" title="Close Viewer">
-            <i class="ph ph-x fs-3"></i>
+        {{-- Top Left Close Button (Always visible at top-left) --}}
+        <button wire:click="closeViewer" type="button" class="doc-viewer-close-btn" title="Close Viewer">
+            <i class="ph ph-x fs-2"></i>
         </button>
 
-        {{-- Far Left Page Thumbnails Sidebar --}}
-        <div class="doc-viewer-sidebar">
-            <div wire:click="setPage(1)" class="doc-viewer-thumb {{ $currentPage === 1 ? 'doc-viewer-thumb--active' : '' }}" role="button">
-                <div class="thumb-mini-paper">
-                    <div class="thumb-mini-logo"></div>
-                    <div class="thumb-mini-line"></div>
-                    <div class="thumb-mini-line"></div>
-                </div>
-                <span class="thumb-num">1</span>
+        {{-- ========================================================= --}}
+        {{-- LEFT SIDEBAR: PAGE THUMBNAILS CONTAINER                   --}}
+        {{-- Rendered ONLY for Multi-Page PDFs (totalPages > 1)        --}}
+        {{-- Hidden for Single-Page PDFs & Images                      --}}
+        {{-- ========================================================= --}}
+        @if($fileType === 'pdf' && $totalPages > 1)
+            <div class="doc-viewer-sidebar">
+                @if(count($thumbnails) > 0)
+                    @foreach($thumbnails as $index => $thumb)
+                        @php $pageNum = $thumb['page'] ?? ($index + 1); @endphp
+                        <div wire:click="setPage({{ $pageNum }})" class="doc-viewer-thumb {{ $currentPage === $pageNum ? 'doc-viewer-thumb--active' : '' }}" role="button">
+                            @if(isset($thumb['url']) && $thumb['url'])
+                                <img src="{{ $thumb['url'] }}" alt="Page {{ $pageNum }}" class="img-fluid rounded">
+                            @else
+                                <div class="thumb-mini-paper">
+                                    <div class="thumb-mini-logo"></div>
+                                    <div class="thumb-mini-line"></div>
+                                    <div class="thumb-mini-line short"></div>
+                                </div>
+                            @endif
+                            <span class="thumb-num">{{ $pageNum }}</span>
+                        </div>
+                    @endforeach
+                @else
+                    {{-- Default dynamic thumbnail list (larger size matching reference) --}}
+                    @for($i = 1; $i <= min(3, max(1, $totalPages)); $i++)
+                        <div wire:click="setPage({{ $i }})" class="doc-viewer-thumb {{ $currentPage === $i ? 'doc-viewer-thumb--active' : '' }}" role="button">
+                            <div class="thumb-mini-paper">
+                                <div class="thumb-mini-logo"></div>
+                                <div class="thumb-mini-line"></div>
+                                <div class="thumb-mini-line short"></div>
+                            </div>
+                            <span class="thumb-num">{{ $i }}</span>
+                        </div>
+                    @endfor
+                @endif
             </div>
+        @endif
 
-            <div wire:click="setPage(2)" class="doc-viewer-thumb {{ $currentPage === 2 ? 'doc-viewer-thumb--active' : '' }}" role="button">
-                <div class="thumb-mini-paper">
-                    <div class="thumb-mini-logo"></div>
-                    <div class="thumb-mini-line"></div>
-                    <div class="thumb-mini-line"></div>
-                </div>
-                <span class="thumb-num">2</span>
-            </div>
+        {{-- ========================================================= --}}
+        {{-- TOP CONTROL TOOLBAR                                       --}}
+        {{-- ========================================================= --}}
+        <div class="doc-viewer-toolbar {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-toolbar--collapsed-sidebar' : '' }}">
+            
+            {{-- MULTI-PAGE PDF ONLY: Page Counter ("Page X / Y") --}}
+            @if($fileType === 'pdf' && $totalPages > 1)
+                <span class="small fw-semibold text-secondary me-2">Page {{ $currentPage }} / {{ $totalPages }}</span>
+                <div class="doc-viewer-toolbar__divider me-1"></div>
+            @endif
 
-            <div wire:click="setPage(3)" class="doc-viewer-thumb {{ $currentPage === 3 ? 'doc-viewer-thumb--active' : '' }}" role="button">
-                <div class="thumb-mini-paper">
-                    <div class="thumb-mini-logo"></div>
-                    <div class="thumb-mini-line"></div>
-                    <div class="thumb-mini-line"></div>
-                </div>
-                <span class="thumb-num">3</span>
-            </div>
-        </div>
-
-        {{-- Top Control Toolbar --}}
-        <div class="doc-viewer-toolbar">
-            <span class="small fw-semibold text-secondary me-2">Page {{ $currentPage }} / {{ $totalPages }}</span>
-            <span class="text-muted opacity-25 me-1">|</span>
-
+            {{-- Zoom Controls --}}
             <div class="doc-viewer-toolbar__group me-1">
                 <button wire:click="zoomOut" type="button" class="btn btn-link text-dark p-0 border-0 shadow-none me-1" title="Zoom Out">
                     <i class="ph ph-minus fs-6"></i>
@@ -123,50 +210,92 @@ new class extends Component
 
             <div class="doc-viewer-toolbar__divider me-1"></div>
 
-            <button type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Print Document">
+            {{-- Action Tools: Print, Download, Upload, Delete --}}
+            <button wire:click="printDocument" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Print">
                 <i class="ph ph-printer fs-5"></i>
             </button>
-            <button type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Download Document">
+            <button wire:click="downloadDocument" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Download">
                 <i class="ph ph-download-simple fs-5"></i>
             </button>
-            <button type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Rotate Document">
-                <i class="ph ph-arrow-clockwise fs-5"></i>
+            <button wire:click="uploadFile" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Upload / Add File">
+                <i class="ph ph-file-arrow-up fs-5"></i>
             </button>
-            <button type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete Document">
+            <button wire:click="deleteDocument" type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
                 <i class="ph ph-trash fs-5"></i>
             </button>
 
-            <div class="doc-viewer-toolbar__divider mx-1"></div>
-
-            <button wire:click="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
-                <i class="ph ph-caret-left fs-5"></i>
-            </button>
-            <button wire:click="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
-                <i class="ph ph-caret-right fs-5"></i>
-            </button>
+            {{-- MULTI-PAGE PDF ONLY: Page Stepping Arrows (< >) --}}
+            @if($fileType === 'pdf' && $totalPages > 1)
+                <div class="doc-viewer-toolbar__divider mx-1"></div>
+                <button wire:click="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
+                    <i class="ph ph-caret-left fs-5"></i>
+                </button>
+                <button wire:click="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
+                    <i class="ph ph-caret-right fs-5"></i>
+                </button>
+            @endif
         </div>
 
-        {{-- Document Display Paper Canvas --}}
-        <div class="doc-viewer-canvas" style="transform: scale({{ $zoom / 100 }});">
-            <div class="doc-viewer-paper shadow-lg d-flex flex-column align-items-center justify-content-center text-center">
-                @if($imageUrl && $imageUrl !== 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop')
-                    <img src="{{ $imageUrl }}" alt="{{ $title }}" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
-                @else
-                    {{-- Blank Slate Container Placeholder for Document Files --}}
-                    <div class="my-auto py-5 text-secondary">
-                        <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 4.5rem; height: 4.5rem;">
-                            <i class="ph ph-file-pdf display-4 text-muted"></i>
-                        </div>
-                        <h5 class="fw-bold text-dark mb-1">{{ $title ?: 'Document Container' }}</h5>
-                        <p class="text-muted small mb-3">Blank slate container for document files</p>
-                        <span class="badge bg-light text-secondary border px-3 py-2 fw-medium" style="font-size: 0.75rem;">
-                            <i class="ph ph-files me-1"></i> Ready for document upload / preview
-                        </span>
+        {{-- FLOATING OVERLAY CHEVRONS (< >) ON CANVAS FLANKS --}}
+        <button wire:click="{{ $fileType === 'image' ? 'prevImage' : 'prevPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--left" title="Previous">
+            <i class="ph ph-caret-left fs-2 text-white"></i>
+        </button>
+        <button wire:click="{{ $fileType === 'image' ? 'nextImage' : 'nextPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--right" title="Next">
+            <i class="ph ph-caret-right fs-2 text-white"></i>
+        </button>
+
+        {{-- ========================================================= --}}
+        {{-- MAIN CANVAS DISPLAY AREA                                  --}}
+        {{-- ========================================================= --}}
+        <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-canvas-wrapper--full' : '' }}">
+            
+            {{-- OPTION 1: IMAGE FILE MODE --}}
+            @if($fileType === 'image')
+                <div class="doc-viewer-image-container">
+                    <div class="doc-viewer-image-paper shadow-lg" style="transform: scale({{ $zoom / 100 }}) rotate({{ $rotation }}deg); transition: transform 0.2s ease;">
+                        @if($fileUrl)
+                            <img src="{{ $fileUrl }}" alt="{{ $title }}" class="img-fluid">
+                        @else
+                            <div class="my-auto py-5 text-secondary text-center">
+                                <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 4.5rem; height: 4.5rem;">
+                                    <i class="ph ph-image-square display-4 text-muted"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">{{ $title ?: 'Scanned Image' }} - Image {{ ($currentImageIndex ?: 0) + 1 }}</h5>
+                                <p class="text-muted small mb-3">Blank slate container for image files</p>
+                                <span class="badge bg-light text-secondary border px-3 py-2 fw-medium" style="font-size: 0.75rem;">
+                                    <i class="ph ph-image me-1"></i> Ready for image upload / preview
+                                </span>
+                            </div>
+                        @endif
                     </div>
-                @endif
-            </div>
+                </div>
+
+            {{-- OPTION 2: PDF MODE WITH PREVIEW --}}
+            @elseif($fileType === 'pdf' && $fileUrl)
+                <div class="doc-viewer-canvas" style="transform: scale({{ $zoom / 100 }}); transform-origin: top left;">
+                    <div class="doc-viewer-paper shadow-lg text-center">
+                        <img src="{{ $fileUrl }}" alt="{{ $title }}" class="img-fluid rounded shadow-sm" style="max-height: 100%;">
+                    </div>
+                </div>
+
+            {{-- OPTION 3: PDF MODE BLANK SLATE FALLBACK --}}
+            @else
+                <div class="doc-viewer-canvas" style="transform: scale({{ $zoom / 100 }}); transform-origin: top left;">
+                    <div class="doc-viewer-paper shadow-lg text-center">
+                        <div class="my-auto py-5 text-secondary">
+                            <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 4.5rem; height: 4.5rem;">
+                                <i class="ph ph-file-pdf display-4 text-muted"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">{{ $title ?: 'Amendatory Agreement' }} - Document {{ $documentIndex ?: 1 }}</h5>
+                            <p class="text-muted small mb-3">Blank slate container for document files</p>
+                            <span class="badge bg-light text-secondary border px-3 py-2 fw-medium" style="font-size: 0.75rem;">
+                                <i class="ph ph-files me-1"></i> Ready for document upload / preview
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
         </div>
     @endif
 </div>
-
-

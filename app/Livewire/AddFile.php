@@ -75,6 +75,34 @@ class AddFile extends Component
         'Communications',
     ];
 
+    public array $scannedCategories = [
+        ['id' => 1, 'name' => 'Scanned Files #1', 'files' => []],
+    ];
+
+    public function addScannedCategory(): void
+    {
+        $count = count($this->scannedCategories) + 1;
+        $this->scannedCategories[] = [
+            'id' => $count,
+            'name' => "Scanned Files #{$count}",
+            'files' => [],
+        ];
+    }
+
+    public function removeScannedCategory(int $index): void
+    {
+        if (isset($this->scannedCategories[$index]) && count($this->scannedCategories) > 1) {
+            unset($this->scannedCategories[$index]);
+            $this->scannedCategories = array_values($this->scannedCategories);
+        }
+    }
+
+    public function discard(): void
+    {
+        $this->fileType = null;
+        $this->adminCategory = null;
+    }
+
     public function selectFileType(?string $type): void
     {
         $this->fileType = $type;
