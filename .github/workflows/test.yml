@@ -44,6 +44,43 @@ jobs:
       - run: php artisan test
       - run: php artisan migrate:rollback --force
 
+  backup-restore-smoke:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: dostorage_test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, zip, pdo_mysql
+      - run: composer install --no-interaction --no-progress --prefer-dist
+      - run: cp .env.example .env
+      - run: echo "APP_KEY=base64:placeholder" >> .env
+      - run: echo "DB_HOST=127.0.0.1" >> .env
+      - run: echo "DB_PORT=3306" >> .env
+      - run: echo "DB_DATABASE=dostorage_test" >> .env
+      - run: echo "DB_USERNAME=test" >> .env
+      - run: echo "DB_PASSWORD=password" >> .env
+      - run: php artisan key:generate --force
+      - run: php artisan migrate --force
+      - run: mkdir -p archive_local
+      - run: mysqldump -h 127.0.0.1 -u test -ppassword dostorage_test > archive_local/backup_smoke.sql
+      - run: mysql -h 127.0.0.1 -u test -ppassword dostorage_test < archive_local/backup_smoke.sql
+
   lint:
     runs-on: ubuntu-latest
     steps:
