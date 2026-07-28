@@ -1,0 +1,167 @@
+// ===================================================================
+// Full-Screen Document Lightbox Viewer Modal
+// ===================================================================
+.doc-viewer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgb(0, 0, 0, 0.4);
+    z-index: 1045;
+}
+
+.doc-viewer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50vw;
+    height: 100vh;
+    z-index: 1060;
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
+}
+
+.doc-viewer-sidebar {
+    position: fixed;
+    top: 0;
+    left: 1.75rem;
+    width: 64px;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4.5rem;
+    gap: 1.5rem;
+    z-index: 1070;
+    pointer-events: auto;
+
+    .doc-viewer-thumb {
+        width: 44px;
+        height: 58px;
+        background: #ffffff;
+        border-radius: 6px;
+        position: relative;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        padding: 3px;
+        box-shadow: 0 2px 8px rgb(0, 0, 0, 0.25);
+
+        &--active {
+            border-color: #0099ff;
+            box-shadow: 0 0 0 3px rgb(0, 153, 255, 0.4);
+        }
+
+        .thumb-num {
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .thumb-mini-paper {
+            width: 100%;
+            height: 100%;
+            background: #f8f9fa;
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+
+            .thumb-mini-logo {
+                width: 7px;
+                height: 7px;
+                background: #0099ff;
+                border-radius: 50%;
+            }
+
+            .thumb-mini-line {
+                width: 80%;
+                height: 2px;
+                background: #ced4da;
+                border-radius: 1px;
+            }
+        }
+    }
+}
+
+.doc-viewer-close-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1.75rem;
+    z-index: 1080;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.doc-viewer-toolbar {
+    position: fixed;
+    top: 1.25rem;
+    left: 6.5rem;
+    background: rgb(255, 255, 255, 0.95);
+    border: 1px solid var(--gray-300);
+    border-radius: 24px;
+    padding: 0.35rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 20px rgb(0, 0, 0, 0.15);
+    z-index: 1070;
+
+    button, a, span, i {
+        text-decoration: none !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+
+        &:hover, &:focus, &:active {
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+    }
+}
+
+.doc-viewer-toolbar__group {
+    display: flex;
+    align-items: center;
+}
+
+.doc-viewer-toolbar__divider {
+    width: 1px;
+    height: 18px;
+    background: var(--gray-300);
+}
+
+.doc-viewer-canvas {
+    position: fixed;
+    top: 4.75rem;
+    left: 6.5rem;
+    width: calc(50vw - 7.5rem);
+    max-width: 530px;
+    height: calc(100vh - 5.5rem);
+    overflow-y: auto;
+    z-index: 1060;
+    display: flex;
+    justify-content: flex-start;
+    padding-bottom: 2rem;
+}
+
+.doc-viewer-paper {
+    width: 480px;
+    min-height: 640px;
+    background: var(--color-white);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 10px 30px rgb(0, 0, 0, 0.15);
+}

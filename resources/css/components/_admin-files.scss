@@ -1,0 +1,184 @@
+// ===================================================================
+// Administrative Files Page Styles (Figma Match)
+// ===================================================================
+
+.admin-files-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+}
+
+.admin-files-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--color-black);
+        margin: 0;
+        font-family: var(--font-family-sans);
+    }
+}
+
+// Breadcrumb Navigation (Screen 2)
+.admin-breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+
+    .admin-back-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-black);
+        font-size: 1.35rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0.2rem;
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: var(--dost-main-blue);
+        }
+    }
+
+    .admin-breadcrumb-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-black);
+        font-family: var(--font-family-sans);
+    }
+
+    .admin-breadcrumb-sep {
+        font-size: 1.25rem;
+        color: var(--gray-400);
+    }
+
+    .admin-breadcrumb-active {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--gray-600);
+    }
+}
+
+// Category Overview Folder Cards Stack (Screen 1)
+.admin-category-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.admin-category-card {
+    background: var(--color-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 1.25rem 1.75rem;
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.04);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    position: relative;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgb(0, 0, 0, 0.08);
+        border-color: var(--main-blue-300);
+        background-color: var(--gray-100);
+    }
+
+    .admin-category-card__title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-black);
+        margin: 0;
+        font-family: var(--font-family-sans);
+    }
+
+    .admin-category-card__count {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--dost-main-blue);
+        background: var(--main-blue-50);
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+    }
+}
+
+// Admin File Card (Inside Expanded Year Folder - Screen 3 & 4)
+.admin-file-card {
+    background: var(--color-white);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgb(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgb(0, 153, 255, 0.12);
+        border-color: var(--main-blue-300);
+    }
+
+    &--selected {
+        border-color: var(--dost-main-blue) !important;
+        box-shadow: 0 0 0 3px rgb(0, 153, 255, 0.25) !important;
+        background-color: var(--main-blue-50) !important;
+    }
+}
+
+.admin-file-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+
+    .admin-file-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: var(--color-black);
+        line-height: 1.25;
+        margin: 0;
+    }
+}
+
+.admin-file-card__series {
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.admin-file-card__meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+
+    .admin-meta-sub {
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-size: 0.6875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.1rem;
+            font-weight: 500;
+        }
+
+        span {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--color-black);
+            line-height: 1.2;
+        }
+    }
+}

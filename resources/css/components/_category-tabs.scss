@@ -1,0 +1,38 @@
+// --- Category Tabs ---
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2rem;
+}
+
+.category-tab {
+    padding: 0.625rem 1.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border: 2px solid var(--dost-main-blue);
+    background: var(--color-white);
+    color: var(--dost-main-blue);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    outline: none;
+
+    &:first-child {
+        border-radius: 8px 0 0 8px;
+        border-right: 1px solid var(--dost-main-blue);
+    }
+
+    &:last-child {
+        border-radius: 0 8px 8px 0;
+        border-left: 1px solid var(--dost-main-blue);
+    }
+
+    &:hover:not(.category-tab--active) {
+        background-color: var(--main-blue-50);
+    }
+
+    &--active {
+        background-color: var(--dost-main-blue);
+        color: var(--color-white);
+    }
+}
