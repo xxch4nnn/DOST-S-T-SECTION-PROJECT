@@ -1,6 +1,6 @@
-// Typography: Zalando Sans
-// Font loading is handled in layouts/guest.blade.php via <link> and <style> tags
-// to prevent Vite/Sass from stripping or misresolving the font URLs at build time.
+// Typography & Icons: Self-hosted Offline Assets (Bundled by Vite)
+@import "fonts";
+@import "@phosphor-icons/web/regular";
 
 // Bootstrap 5 Variable Overrides (Before importing Bootstrap)
 $font-family-sans-serif: 'Zalando Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

@@ -6,20 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Self-hosted font @font-face --}}
-    <style>
-        @font-face {
-            font-family: 'Zalando Sans';
-            font-style: normal;
-            font-weight: 100 900;
-            font-display: swap;
-            src: url('/fonts/zalando-sans/ZalandoSans-Variable.woff2') format('woff2');
-        }
-    </style>
-
-    {{-- Phosphor Icons --}}
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
 <body style="margin: 0; padding: 0; min-height: 100vh; background-color: #f8f9fa; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden;">

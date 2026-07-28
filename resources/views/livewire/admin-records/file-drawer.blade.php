@@ -32,10 +32,6 @@
 
                     @if($showActionMenu)
                         <div class="scholar-action-dropdown">
-                            <button type="button" class="dropdown-item-btn" wire:click="openStatusModal">
-                                <i class="ph ph-sliders"></i>
-                                <span>Change Status</span>
-                            </button>
                             <button type="button" class="dropdown-item-btn dropdown-item-btn--danger" wire:click="closeDrawer">
                                 <i class="ph ph-x-circle"></i>
                                 <span>Close Drawer</span>
@@ -54,16 +50,9 @@
         {{-- Main White Card Body --}}
         <div class="scholar-drawer__white-card">
             @if($record)
-                @php
-                    $isCleared = in_array($status, ['Clear', 'Cleared']);
-                @endphp
-
-                {{-- Record Title & Status Badge --}}
+                {{-- Record Title --}}
                 <div class="d-flex align-items-start justify-content-between mb-1">
-                    <h2 class="scholar-drawer__title">{{ $record->title ?? 'Administrative File Record' }}</h2>
-                    <span class="badge {{ $isCleared ? 'badge-status-cleared' : 'badge-status-not-cleared' }} px-3 py-2">
-                        {{ $status }}
-                    </span>
+                    <h2 class="scholar-drawer__title">{{ $record->title }}</h2>
                 </div>
 
                 <div class="scholar-drawer__spas mb-4">
@@ -74,22 +63,22 @@
                 <div class="scholar-drawer__grid">
                     <div class="scholar-meta-item">
                         <label>Record Type / Category</label>
-                        <value>{{ $record->record_type ?? 'Financial Report' }}</value>
+                        <value>{{ $record->record_type }}</value>
                     </div>
 
                     <div class="scholar-meta-item">
                         <label>Fiscal Year / Series</label>
-                        <value>{{ $record->year ?? 2023 }}</value>
+                        <value>{{ $record->year }}</value>
                     </div>
 
                     <div class="scholar-meta-item">
                         <label>Recipient / Office</label>
-                        <value>{{ $record->recipient ?? 'DOST Regional Office XI' }}</value>
+                        <value>{{ $record->recipient }}</value>
                     </div>
 
                     <div class="scholar-meta-item">
                         <label>Date Logged / Created</label>
-                        <value>{{ $record->created_at ? $record->created_at->format('Y-m-d') : '2023-08-15' }}</value>
+                        <value>{{ $record->created_at ? $record->created_at->format('Y-m-d') : '' }}</value>
                     </div>
                 </div>
 
@@ -108,7 +97,7 @@
                                         <div class="doc-mini-header">
                                             <div class="doc-mini-logo"></div>
                                             <div class="doc-mini-title">OFFICIAL RECORD</div>
-                                            <div class="doc-mini-sub">{{ $record->series_number ?? 'AFR-2023' }}</div>
+                                            <div class="doc-mini-sub">{{ $record->series_number }}</div>
                                         </div>
                                         <div class="doc-mini-body">
                                             <div class="doc-mini-line"></div>
@@ -140,33 +129,4 @@
             @endif
         </div>
     </div>
-
-    {{-- Update Status Modal --}}
-    @if($showStatusModal)
-        <div class="status-modal-backdrop" wire:click="closeStatusModal">
-            <div class="status-modal-card" wire:click.stop>
-                <div class="status-modal__header">
-                    <h5>Update File Status</h5>
-                    <button type="button" class="btn-close" wire:click="closeStatusModal"></button>
-                </div>
-
-                <div class="status-modal__actions">
-                    <button 
-                        type="button" 
-                        class="btn-status-option btn-status-option--not-cleared" 
-                        wire:click="updateStatus('Not Cleared')"
-                    >
-                        Not Cleared
-                    </button>
-                    <button 
-                        type="button" 
-                        class="btn-status-option btn-status-option--clear" 
-                        wire:click="updateStatus('Clear')"
-                    >
-                        Clear
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endif
 </div>
