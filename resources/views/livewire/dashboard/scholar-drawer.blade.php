@@ -18,11 +18,16 @@ new class extends Component
     public bool $showStatusModal = false;
 
     #[On('open-scholar-drawer')]
-    public function openDrawer(int|string $scholarId): void
+    public function openDrawer($scholarId, ?array $scholarData = null): void
     {
         $this->scholarId = (int) $scholarId;
         $this->isOpen = true;
-        $this->loadScholar();
+        
+        if ($scholarData) {
+            $this->scholarData = $scholarData;
+        } else {
+            $this->loadScholar();
+        }
     }
 
     public function closeDrawer(): void
@@ -83,6 +88,8 @@ new class extends Component
             title: $title,
             fileUrl: $imageUrl,
             scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.',
+            scholarId: $this->scholarId ?? 1,
+            fileId: 4, // Mock File ID for now
             fileType: $fileType,
             documentIndex: $documentIndex,
             extraData: [
@@ -202,7 +209,7 @@ new class extends Component
                                         </button>
                                         <button type="button" class="dropdown-item-btn">
                                             <i class="ph ph-pencil-simple fs-6 text-secondary"></i>
-                                            <span>Edit File</span>
+                                            <span>Edit Scholar</span>
                                         </button>
                                         <button type="button" class="dropdown-item-btn dropdown-item-btn--danger">
                                             <i class="ph ph-trash fs-6 text-danger"></i>

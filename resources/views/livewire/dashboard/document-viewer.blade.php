@@ -19,6 +19,9 @@ new class extends Component
     public array $images = [];
     public int $currentImageIndex = 0;
 
+    public int $scholarId = 1;
+    public int $fileId = 4;
+
     #[On('open-document-viewer')]
     public function openViewer(
         string $title = 'Amendatory Agreement',
@@ -26,12 +29,16 @@ new class extends Component
         string $scholarName = '',
         ?string $fileType = null,
         int $documentIndex = 1,
+        int $scholarId = 1,
+        int $fileId = 4,
         array $extraData = []
     ): void {
         $this->title = $title;
         $this->fileUrl = $fileUrl;
         $this->scholarName = $scholarName;
         $this->documentIndex = $documentIndex;
+        $this->scholarId = $scholarId;
+        $this->fileId = $fileId;
         
         // Auto-detect fileType if not explicitly passed or if fileUrl is an image format
         if (!$fileType) {
@@ -126,9 +133,11 @@ new class extends Component
         $this->dispatch('download-requested', url: $this->fileUrl);
     }
 
-    public function uploadFile(): void
+    public function editFile(): void
     {
-        $this->dispatch('trigger-file-upload');
+        $currentUrl = request()->header('referer') ?? '/scholars';
+        $returnUrl = parse_url($currentUrl, PHP_URL_PATH) ?? '/scholars';
+        $this->redirect("/scholars/{$this->scholarId}/files/{$this->fileId}/edit?return_url=" . urlencode($returnUrl));
     }
 
     public function deleteDocument(): void
@@ -217,8 +226,8 @@ new class extends Component
             <button wire:click="downloadDocument" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Download">
                 <i class="ph ph-download-simple fs-5"></i>
             </button>
-            <button wire:click="uploadFile" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Upload / Add File">
-                <i class="ph ph-file-arrow-up fs-5"></i>
+            <button wire:click="editFile" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Edit File">
+                <i class="ph ph-pencil-simple fs-5"></i>
             </button>
             <button wire:click="deleteDocument" type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
                 <i class="ph ph-trash fs-5"></i>

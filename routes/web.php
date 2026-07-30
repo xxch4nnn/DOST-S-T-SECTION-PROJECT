@@ -30,6 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
     Route::post('/scholars/create', Create::class)->name('scholars.create');
     Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
+    // MOCK Edit File UI
+    Route::get('/scholars/{scholar}/files/{file}/edit', \App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
 
     // Add New File Wizard
     Route::get('/add-file', AddFile::class)->name('add-file.index');
