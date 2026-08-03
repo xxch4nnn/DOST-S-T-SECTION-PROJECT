@@ -1,0 +1,225 @@
+# GitHub Issues — DOSTorage V1 Audit Register
+
+Copy/paste ready. Labels suggested: `security`, `backend`, `frontend`, `docs`, `qa`.
+
+## Filed on 2026-08-04
+
+| Pack # | GitHub | Owner |
+|--------|--------|-------|
+| 1 | [#36](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/36) Spatie route permissions | @WakenMac |
+| 2 | [#37](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/37) Document download auth | @WakenMac |
+| 3 | [#38](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/38) Offline queue | @WakenMac |
+| 4 | [#39](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/39) Retire TASKS_DETECTED_payload | @xxch4nnn |
+| 5 | [#40](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/40) QA responsive evidence | Miguel (handle TBD) |
+| 6 | [#41](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/41) Global search | @WakenMac + Rui |
+| 7 | [#42](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/42) Strike-off/restore UX | Rui (handle TBD) |
+| 8 | [#43](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/43) Audit-log user-deletion policy | @WakenMac |
+| 9 | [#44](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/44) phpunit/CI evidence | @xxch4nnn |
+| 10 | [#45](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/45) Super Admin seed guarantee | @WakenMac |
+
+Next team sync: **2026-08-06 10:00 AM** — confirm Rui/Miguel GitHub handles (`Mushimuche`?).
+
+---
+
+## Issue 1: Enforce Spatie permissions on all protected routes
+
+**Labels:** `security`, `backend`  
+**Assignee:** Wakin  
+**Priority:** P0
+
+### Description
+The Bible contract requires route-level permission enforcement for document and admin flows. Currently `routes/web.php` only uses `auth`/`verified`; no Spatie gates or role middleware are applied.
+
+### Acceptance Criteria
+- All document, scholar, admin-record, and audit-log routes require appropriate Spatie permissions.
+- Unauthorized users receive 403; unauthorized roles cannot reach controllers/components.
+- `permission.php` cache behavior verified after role/permission changes.
+
+### Checklist
+- [ ] Add middleware/gate enforcement in `routes/web.php`
+- [ ] Verify Super Admin / Admin / Encoder behavior per `SPATIE_ROLES_BASELINE.md`
+- [ ] Add/update feature test for forbidden access
+
+---
+
+## Issue 2: Authorize document downloads by role
+
+**Labels:** `security`, `backend`  
+**Assignee:** Wakin  
+**Priority:** P0
+
+### Description
+`DocumentController::download` currently returns files based only on filesystem existence. It does not check whether the authenticated user may download the document.
+
+### Acceptance Criteria
+- Encoder/Admin/Super Admin download paths are explicit.
+- Unauthorized attempts return 403 before filesystem access.
+- Signed-download requirement from checklist is implemented or explicitly deferred with rationale.
+
+### Checklist
+- [ ] Add authorization gate to `documents/{document}/download`
+- [ ] Add download permission test
+- [ ] Confirm 403 behavior manually
+
+---
+
+## Issue 3: Add offline queue / mutation table
+
+**Labels:** `backend`  
+**Assignee:** Wakin  
+**Priority:** P1
+
+### Description
+Checklist §8 expects an offline-first mutation queue. No offline queue migration/model exists in `database/migrations`.
+
+### Acceptance Criteria
+- `offline_queue` migration created with required fields.
+- Model + queued replay scaffold present.
+- Offline path is functional enough for V1 demo.
+
+### Checklist
+- [ ] Create migration
+- [ ] Create model
+- [ ] Add replay job/command stub
+- [ ] Seed/manual test mutation replay
+
+---
+
+## Issue 4: Retire deprecated `TASKS_DETECTED_payload.md` from workflows
+
+**Labels:** `docs`  
+**Assignee:** Chan  
+**Priority:** P1
+
+### Description
+`planning/TASKS_DETECTED_payload.md` is deprecated by `bible_keeper.py`. It should not be used for current status.
+
+### Acceptance Criteria
+- No active reporting, standup, or Bible sync flow depends on the payload file.
+- References in docs/readme/AGENTS.md updated to point to checklist + CSV task lists.
+
+### Checklist
+- [ ] Remove/replace references in planning docs
+- [ ] Confirm Bible Keeper mode no longer emits task payload
+- [ ] Communicate change to team
+
+---
+
+## Issue 5: Add QA evidence for responsive/browser coverage
+
+**Labels:** `qa`  
+**Assignee:** Miguel  
+**Priority:** P1
+
+### Description
+Bible expects QA evidence for responsive and browser coverage. No explicit QA artifact set was found.
+
+### Acceptance Criteria
+- Evidence saved under `planning/exports/` or `qa/`.
+- Covers login, scholar index, admin create, upload wizard, strike-off flow.
+
+### Checklist
+- [ ] Capture screenshots/records
+- [ ] Save phpunit output
+- [ ] Attach evidence to QA checklist
+
+---
+
+## Issue 6: Implement global search UX and backend action
+
+**Labels:** `frontend`, `backend`  
+**Assignee:** Rui / Wakin  
+**Priority:** P2
+
+### Description
+Bible expects grouped search results by record type and per-tab search. This is not yet evidenced in routes or Livewire components.
+
+### Acceptance Criteria
+- Backend search endpoint returns grouped results.
+- Frontend shows grouped results with highlighting.
+- Per-tab search works inside Scholar 201 / Admin Records.
+
+### Checklist
+- [ ] Backend search action
+- [ ] Frontend search view/component
+- [ ] Validation test for result grouping
+
+---
+
+## Issue 7: Implement strike-off/restore UX
+
+**Labels:** `frontend`  
+**Assignee:** Rui  
+**Priority:** P2
+
+### Description
+Strike-off/restore interactions are expected in Bible but not evidenced in implemented UI.
+
+### Acceptance Criteria
+- Admin-only strike-off confirm dialog.
+- Restore modal/action available.
+- Audit log captures state transitions.
+
+### Checklist
+- [ ] Strike-off UI
+- [ ] Restore UI
+- [ ] Permission check on both actions
+
+---
+
+## Issue 8: Decide audit-log user-deletion policy
+
+**Labels:** `backend`  
+**Assignee:** Wakin  
+**Priority:** P2
+
+### Description
+`audit_logs.user_id` uses `restrictOnDelete`. Bible expects immutable audit history, but this may block user lifecycle cleanup.
+
+### Acceptance Criteria
+- Policy documented in backend checklist or README.
+- Migration/model behavior matches policy.
+
+### Checklist
+- [ ] Document decision
+- [ ] Adjust migration if needed
+
+---
+
+## Issue 9: Verify phpunit suite and CI execution evidence
+
+**Labels:** `qa`, `backend`  
+**Assignee:** Chan / Wakin  
+**Priority:** P2
+
+### Description
+Bible baseline expects PHPUnit suites and CI evidence. No test execution evidence was found in the audited local project path.
+
+### Acceptance Criteria
+- `phpunit.xml` present and valid.
+- `./vendor/bin/phpunit` runs cleanly.
+- CI job runs tests and stores artifact.
+
+### Checklist
+- [ ] Confirm phpunit config
+- [ ] Run tests locally
+- [ ] Add CI step if missing
+
+---
+
+## Issue 10: Guarantee default Super Admin seed state
+
+**Labels:** `backend`  
+**Assignee:** Wakin  
+**Priority:** P2
+
+### Description
+`RolesAndPermissionsSeeder` assigns Super Admin only if `test@example.com` exists. If that user is missing, Super Admin role may be unassigned after seeding.
+
+### Acceptance Criteria
+- Seeder creates/ensures at least one Super Admin user.
+- Seeder is idempotent.
+
+### Checklist
+- [ ] Update seeder logic
+- [ ] Verify fresh database seed

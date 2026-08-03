@@ -1,75 +1,44 @@
 # AGENTIC_CHANGELOG.md
 
-Purpose: record every meaningful repo push/pull on both mother and Wakin repos so we can trace stitch decisions to actual code changes. References to changes in Wakin’s GitHub repo use `WakenMac/DOST-RXI-OJT_SQL-Files` CHANGELOG-style entries. References to changes in the mother repo use `xxch4nnn/DOST-S-T-SECTION-PROJECT`.
+Purpose: record every meaningful repo push/pull, audit, and handoff artifact event on mother and related repos so decisions are traceable to actual artifacts/commits.
 
 ## Format
 
 - Date + YYYY-MM-DD
-- Actor (Chan / Wakin / Hermes / AGY / Antigravity)
+- Actor: Chan / Wakin / Hermes / AGY / Antigravity / Miguel / Rui
 - Repo + branch
-- Action: commit / pull / push / PR merged
-- Commit or PR link
+- Action: commit / pull / push / PR merged / audit / docs update
+- Commit or PR link, or N/A
 - One-line summary
-- Linked planning artifact (file path)
+- Linked planning artifact(s)
 
 ---
 
 ## 2026-08-04
 
 - **Date:** 2026-08-04
-- **Actor:** Composer
-- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/be-stitch-backend-to-mother`
-- **Action:** plan + port (PR-A/C)
-- **Commit/PR:** `4f93791` (pushing PR from `feat/be-stitch-backend-to-mother`)
-- **Summary:** Reconfirmed Wakin pin `b3510d9`; rejected blind merge of `origin/db-integration` (flat `files`); locked additive taxonomy migrations + seeders; institutionalised changelogs; reviewed Dependabot PRs #29–#34.
-- **Linked:** `planning/STITCH_IMPLEMENTATION_PLAN.md`, `planning/PR_REVIEW_OPEN_2026-08-04.md`, `CHANGELOG.md`
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/handoff-and-be-02-fixtures`
+- **Action:** docs update + port + issues filed
+- **Commit/PR:** pending
+- **Summary:** Published handoff pack; filed GH #36–#45; retired payload SoT; added `database/sample_pdfs` + `SamplePdfFixture`/`DocumentFixtureSeeder` (PR-B); phpunit 34/34 evidence in `planning/exports/phpunit_2026-08-04.txt`; scheduled sync 2026-08-06 10:00.
+- **Linked:** `planning/HANDOFF_GUIDE.md`, `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/HANDOFF_COVERAGE_MATRIX.md`, `planning/exports/`
 
-## 2026-07-29
-
-- **Date:** 2026-07-29
-- **Actor:** Chan
-- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/fe-08-fullstack-hardening-v2`
-- **Action:** pull
-- **Commit:** `db34ff9` — chore(fullstack): FS-08/FS-09/FS-14/FS-15 hardening + handoff runbook
-- **Summary:** Latest mother pull before backend-to-mother stitch.
-- **Linked:** this file, `planning/project_bible_v02_extracted.md`
-
----
-
-## 2026-07-29
-
-- **Date:** 2026-07-29
-- **Actor:** Chan
-- **Repo:** `WakenMac/DOST-RXI-OJT_SQL-Files` @ `main`
-- **Action:** recheck/pin baseline
-- **Commit:** `b3510d9` — Created Observers
-- **Summary:** Pinned Wakin baseline before AGY re-investigation per handoff.
-- **Linked:** this file, `_backend_scratch/wakin/`
-
----
-
-## 2026-07-28
-
-- **Date:** 2026-07-28
-- **Actor:** Chan
+- **Date:** 2026-08-04
+- **Actor:** Chan / Hermes
 - **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
-- **Action:** local clone investigation
-- **Commit:** N/A
-- **Summary:** Backend-to-Mother Stitch review pack sent to Wakin (PDF embedded Q1–Q12).
-- **Linked:** `planning/project_bible_v02_extracted.md`
+- **Action:** audit + docs update
+- **Commit/PR:** N/A (local audit → this branch)
+- **Summary:** Completed Project Bible vs implementation audit. Split handoff into Chan-scoped guide and issue-tracked work for Wakin, Rui, Miguel. Retired `TASKS_DETECTED_payload.md` from active workflows; checklist + CSV task lists are now the source of truth.
+- **Linked:** `planning/HANDOFF_GUIDE.md`, `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/HANDOFF_COVERAGE_MATRIX.md`
 
----
-
-## 2026-07-29
-
-- **Date:** 2026-07-29
-- **Actor:** AGY
-- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` & `_backend_scratch/wakin`
-- **Action:** backend-to-mother stitch investigation & planning
-- **Commit:** N/A (Investigation & Plan execution only)
-- **Summary:** Executed AGY_HANDOFF_BACKEND_STITCH.md. Verified non-shallow Wakin clone, audited schema diffs between Wakin lab (`files`, `file_groups`, `file_types`, `FileObserver`, `ScholarObserver`, `sample_pdfs`) and Mother repo (`documents`, `document_versions`, `DocumentController`). Produced canonical IMPLEMENTATION_PLAN_AGY.md with 7 PR slices.
-- **Linked:** `planning/AGY_HANDOFF_BACKEND_STITCH.md`, `planning/IMPLEMENTATION_PLAN_AGY.md`, `planning/_backend_stitch_components.md`, `planning/jspdf_versioning.md`
-
+- **Date:** 2026-08-04
+- **Actor:** Composer
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** PR merged
+- **Commit/PR:** #35 → `bc75495`
+- **Summary:** Squash-merged stitch PR-A/C (taxonomy + changelogs). Dependabot #29/#30/#32/#33/#34 merged; #31 concurrently held.
+- **Linked:** `planning/STITCH_IMPLEMENTATION_PLAN.md`
 
 ---
 
@@ -82,3 +51,39 @@ Purpose: record every meaningful repo push/pull on both mother and Wakin repos s
 - **Commit:** N/A (Plan settlement)
 - **Summary:** Reconciled `IMPLEMENTATION_PLAN_HERMES.md` and `IMPLEMENTATION_PLAN_AGY.md` section by section. Produced canonical `FINAL_SETTLED_IMPLEMENTATION_PLAN.md` enforcing 5 hard constraints (`documents` + `document_versions` canonical, drop `files` table, drop DomPDF, keep 3-way duplicate modal, versioned save on every write).
 - **Linked:** `planning/FINAL_SETTLED_IMPLEMENTATION_PLAN.md`, `planning/IMPLEMENTATION_PLAN_HERMES.md`, `planning/IMPLEMENTATION_PLAN_AGY.md`
+
+---
+
+## 2026-07-29
+
+- **Date:** 2026-07-29
+- **Actor:** AGY
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` & `_backend_scratch/wakin`
+- **Action:** backend-to-mother stitch investigation & planning
+- **Commit:** N/A
+- **Summary:** Executed `AGY_HANDOFF_BACKEND_STITCH.md`. Verified non-shallow Wakin clone, audited schema diffs between Wakin lab and Mother repo, produced canonical `IMPLEMENTATION_PLAN_AGY.md` with 7 PR slices.
+- **Linked:** `planning/AGY_HANDOFF_BACKEND_STITCH.md`, `planning/IMPLEMENTATION_PLAN_AGY.md`, `planning/_backend_stitch_components.md`
+
+---
+
+## 2026-07-29
+
+- **Date:** 2026-07-29
+- **Actor:** Chan
+- **Repo:** `WakenMac/DOST-RXI-OJT_SQL-Files` @ `main`
+- **Action:** recheck/pin baseline
+- **Commit:** `b3510d9`
+- **Summary:** Pinned Wakin baseline before AGY re-investigation per handoff.
+- **Linked:** `_backend_scratch/wakin/`
+
+---
+
+## 2026-07-28
+
+- **Date:** 2026-07-28
+- **Actor:** Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** local clone investigation
+- **Commit:** N/A
+- **Summary:** Backend-to-Mother Stitch review pack sent to Wakin.
+- **Linked:** `planning/project_bible_v02_extracted.md`

@@ -50,8 +50,19 @@
 - Leave pointers when moving or superseding artifacts
 
 ## Changelog (required)
-- **Product changelog:** update root [`CHANGELOG.md`](CHANGELOG.md) under `[Unreleased]` for any PR that changes behavior, schema, seeders, public UI, or CI (`Added` / `Changed` / `Deprecated` / `Removed` / `Fixed` / `Security`).
-- **Agent/ops trail:** append [`planning/AGENTIC_CHANGELOG.md`](planning/AGENTIC_CHANGELOG.md) for investigations, pins of external repos (e.g. Wakin lab), and stitch ports.
-- **Stitch execution:** while running the backend-to-mother stitch, also append [`planning/STITCH_EXECUTION_LOG.md`](planning/STITCH_EXECUTION_LOG.md).
-- Reviewers: request a changelog amendment before squash-merge if a behavior-changing PR omits it.
+This project uses three complementary changelog mechanisms. All are mandatory for the respective actors; skipping any of them is a review blocker.
+
+### Product/behavior changelog
+- Update root [`CHANGELOG.md`](CHANGELOG.md) under `[Unreleased]` for any PR that changes behavior, schema, seeders, public UI, or CI.
+- Use conventional sections: `Added` / `Changed` / `Deprecated` / `Removed` / `Fixed` / `Security`.
+
+### Agent/ops trail
+- Append [`planning/AGENTIC_CHANGELOG.md`](planning/AGENTIC_CHANGELOG.md) for investigations, pins of external repos, stitch ports, audits, and handoff artifact creation.
+- Required fields: Date, Actor, Repo + branch, Action, Commit/PR, Summary, Linked artifact.
+
+### Stitch execution log
+- While running backend-to-mother stitch work, also append [`planning/STITCH_EXECUTION_LOG.md`](planning/STITCH_EXECUTION_LOG.md).
+
+### Review enforcement
+- Reviewers must request a changelog amendment before squash-merge if a behavior-changing PR omits one of the above.
 - Canonical stitch plan: [`planning/STITCH_IMPLEMENTATION_PLAN.md`](planning/STITCH_IMPLEMENTATION_PLAN.md).

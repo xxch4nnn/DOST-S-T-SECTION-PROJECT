@@ -18,12 +18,19 @@ Append-only. Do not rewrite history.
 
 ## 2026-08-04
 
+- **Date:** 2026-08-04 ~02:20 (local)
+- **Actor:** Composer
+- **Slice:** PR-B + handoff publish
+- **Action:** done (local → PR)
+- **Detail:** Copied 23 sample PDFs from Wakin lab; added SamplePdfFixture + DocumentFixtureSeeder; published HANDOFF_* pack; filed GH #36–#45; retired payload SoT; phpunit 34 passed evidence saved.
+- **Commit:** pending
+
 - **Date:** 2026-08-04 ~01:30 (local)
 - **Actor:** Composer
 - **Slice:** preflight / PR-A / PR-C
-- **Action:** started → done (local)
+- **Action:** started → done (merged #35)
 - **Detail:** Branch reset onto `origin/master` (`142b90f`) + cherry-pick stitch docs. Added additive `file_groups` / `file_types` / `documents.metadata` migrations, FileGroup model, FileGroup+FileType seeders, schema docs. Did not commit FileObserver or empty sample_pdfs dirs. Documented Dependabot merge plan; blocked `db-integration`.
-- **Commit:** `4f93791`
+- **Commit:** `bc75495` (#35)
 
 ## 2026-07-29
 

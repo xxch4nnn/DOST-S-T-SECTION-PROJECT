@@ -34,6 +34,8 @@ Use these rules whenever this repo is the working directory.
 - Do not build backend models/migrations unless explicitly asked
 - Prefer modifying planning/docs artifacts inside `planning\`
 - Keep Bible Center clean: archive resolved items, avoid duplicate findings
+- Do **not** use `planning/TASKS_DETECTED_payload.md` for current status (retired 2026-08-04); use checklist + `planning/team_*.csv`
+- Chan handoff actions: `planning/HANDOFF_GUIDE.md`; cross-role work: `planning/HANDOFF_GITHUB_ISSUES.md`
 
 ## Changelog (mandatory for agents)
 - After any behavior/schema/seeder/CI change, update root `CHANGELOG.md` `[Unreleased]`.
