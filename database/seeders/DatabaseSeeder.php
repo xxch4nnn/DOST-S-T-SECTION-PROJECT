@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             RegionSeeder::class,
             ClearanceStatusSeeder::class,
+            FileGroupSeeder::class,
             FileTypeSeeder::class,
         ]);
     }
