@@ -48,3 +48,10 @@
 - Update `README.md` and planning docs when behavior changes
 - Record client-facing decisions in the source-of-truth doc
 - Leave pointers when moving or superseding artifacts
+
+## Changelog (required)
+- **Product changelog:** update root [`CHANGELOG.md`](CHANGELOG.md) under `[Unreleased]` for any PR that changes behavior, schema, seeders, public UI, or CI (`Added` / `Changed` / `Deprecated` / `Removed` / `Fixed` / `Security`).
+- **Agent/ops trail:** append [`planning/AGENTIC_CHANGELOG.md`](planning/AGENTIC_CHANGELOG.md) for investigations, pins of external repos (e.g. Wakin lab), and stitch ports.
+- **Stitch execution:** while running the backend-to-mother stitch, also append [`planning/STITCH_EXECUTION_LOG.md`](planning/STITCH_EXECUTION_LOG.md).
+- Reviewers: request a changelog amendment before squash-merge if a behavior-changing PR omits it.
+- Canonical stitch plan: [`planning/STITCH_IMPLEMENTATION_PLAN.md`](planning/STITCH_IMPLEMENTATION_PLAN.md).

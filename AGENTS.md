@@ -35,6 +35,13 @@ Use these rules whenever this repo is the working directory.
 - Prefer modifying planning/docs artifacts inside `planning\`
 - Keep Bible Center clean: archive resolved items, avoid duplicate findings
 
+## Changelog (mandatory for agents)
+- After any behavior/schema/seeder/CI change, update root `CHANGELOG.md` `[Unreleased]`.
+- After any investigation, external-repo pin, or stitch port session, append `planning/AGENTIC_CHANGELOG.md` (Date, Actor, Repo@branch, Action, Commit/PR, Summary, Linked).
+- During backend-to-mother stitch execution, also append `planning/STITCH_EXECUTION_LOG.md`.
+- Do not skip changelog updates “until later”; treat them as part of the same turn as the code/docs change.
+- Stitch SoT plan: `planning/STITCH_IMPLEMENTATION_PLAN.md` (supersedes ad-hoc Antigravity/AGY drafts when they conflict — prefer additive migrations).
+
 ## Cursor Cloud specific instructions
 
 The Cloud VM runs this Laravel 13 / Livewire 4 app **natively with SQLite**. Docker is not installed on the Cloud VM (local Windows/WAMP and Docker/CI MySQL remain separate paths). PHP 8.3 + Composer and Node 22 are present. The startup update script only refreshes dependencies (`composer install`, `npm install`); everything below is NOT run automatically and must be done manually in a fresh workspace.
