@@ -1,3 +1,5 @@
+> **[RETIRED — 2026-08-04]** Do **not** use this file for standup, Bible sync, or current status. Source of truth: Project Checklist + `planning/team_*.csv`. Kept as historical archive only. `bible_keeper.py` no longer emits or refreshes this payload.
+
 > **[DEPRECATED] This file is no longer maintained by `bible_keeper.py`.** Tasks mode has been removed from the canonical Keeper; `--tasks` no longer generates or refreshes this payload.
 
 {

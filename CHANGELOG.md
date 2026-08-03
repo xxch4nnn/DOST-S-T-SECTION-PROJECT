@@ -10,18 +10,24 @@ Versioning follows team release tags when cut; until then use `[Unreleased]`.
 ### Added
 - Stitch implementation plan locked from Wakin Q1–Q12 answers (`planning/STITCH_IMPLEMENTATION_PLAN.md`); Hermes comparison + `db-integration` reject note (2026-08-04).
 - Agentic / stitch trail changelog process (`planning/AGENTIC_CHANGELOG.md`) institutionalised in CONTRIBUTING + AGENTS.
-- `file_groups` taxonomy table + `FileGroup` model; `file_types.file_group_id` / `metadata_template`; `documents.metadata` (BE-03).
+- `file_groups` taxonomy table + `FileGroup` model; `file_types.file_group_id` / `metadata_template`; `documents.metadata` (BE-03 / #35).
 - Schema map + Q9 primary-key draft (`docs/db/SCHEMA_MAPPING.md`, `docs/db/METADATA_PRIMARY_KEYS.md`).
 - Open PR review snapshot (`planning/PR_REVIEW_OPEN_2026-08-04.md`).
+- Project Bible audit handoff pack: `planning/HANDOFF_GUIDE.md`, `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/HANDOFF_COVERAGE_MATRIX.md` (2026-08-04).
+- Sample PDF fixtures under `database/sample_pdfs/` (PR-B) with relative-path loader helper.
+- QA evidence capture path `planning/exports/phpunit_YYYY-MM-DD.txt` for handoff Issue 9.
 
 ### Changed
 - File type seeder expanded to Wakin taxonomy (groups resolved by slug); DatabaseSeeder seeds FileGroup before FileType.
 - Upload feature tests no longer set removed `file_types.year`.
-- (stitch in progress) Backend-to-mother port on `feat/be-stitch-backend-to-mother` from `master@142b90f`.
+- Backend-to-mother stitch continues after #35; next slices PR-B+ on feature branches from `master`.
+- Changelog policy enforced in CONTRIBUTING.md with review blocker rule for behavior-changing PRs.
+- Active task SoT is checklist + `planning/team_*.csv` (not `TASKS_DETECTED_payload.md`).
 
 ### Removed
 - Unused `file_types.year` column (metadata carries year where needed).
 - DomPDF targeted for removal as part of stitch (do not reintroduce).
+- `TASKS_DETECTED_payload.md` retired from standup/reporting/Bible sync; kept only as archived reference.
 
 ### Fixed
 - None yet beyond test alignment for taxonomy.

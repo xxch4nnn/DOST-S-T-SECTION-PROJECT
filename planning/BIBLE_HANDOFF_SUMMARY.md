@@ -1,5 +1,7 @@
 # DOSTorage V1 — Bible Keeper `TASKS DETECTED` Handoff Summary
-**Date:** 2026-07-18  
+**Date:** 2026-07-18 · **Retirement:** 2026-08-04  
+**Status:** Historical only — `planning/TASKS_DETECTED_payload.md` is **retired**. Use checklist + `planning/team_*.csv` for current work. Do not paste this payload into Bible Center for standup.
+
 **Chat duration:** Extended debugging session  
 **Primary blocker:** Google Docs API cannot target secondary tabs from this Windows/Hermes client  
 **Status at handoff:** Live-write mode restored in `bible_keeper.py`; `--tasks` currently writes to `Bible Center` by default  
