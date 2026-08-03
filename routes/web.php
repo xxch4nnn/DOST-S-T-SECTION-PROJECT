@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\DocumentController;
-// use App\Http\Controllers\HealthController;
 use App\Livewire\AddFile;
 use App\Livewire\AdminRecords\Create as AdminRecordsCreate;
 use App\Livewire\AdminRecords\Edit as AdminRecordsEdit;
@@ -14,6 +13,7 @@ use App\Livewire\Scholars\Delete as Delete;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
+use App\Models\Scholar;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 

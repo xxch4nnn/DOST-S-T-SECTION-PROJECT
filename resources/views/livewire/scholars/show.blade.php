@@ -61,7 +61,7 @@
                                     {{ $scholar->clearanceStatus?->name ?? 'Active' }}
                                 </span>
                                 @if($scholar->clearance_date)
-                                    <div class="small text-muted mt-1">Cleared: {{ $scholar->clearance_date->format('M d, Y') }}</div>
+                                <div class="small text-muted mt-1">Cleared: {{ $scholar->clearance_date->format('M d, Y') }}</div>
                                 @endif
                             </dd>
                         </div>
@@ -69,9 +69,9 @@
                             <dt class="small text-muted">Disposal Status</dt>
                             <dd class="mb-0">
                                 @if($scholar->for_disposal)
-                                    <span class="badge bg-danger">Eligible for Disposal</span>
+                                <span class="badge bg-danger">Eligible for Disposal</span>
                                 @else
-                                    <span class="badge bg-success">Retained</span>
+                                <span class="badge bg-success">Retained</span>
                                 @endif
                             </dd>
                         </div>
@@ -89,9 +89,9 @@
                     <h3 class="h5 mb-3">Upload New Document</h3>
 
                     @if (session()->has('message'))
-                        <div class="alert alert-success">
-                            {{ session('message') }}
-                        </div>
+                    <div class="alert alert-success">
+                        {{ session('message') }}
+                    </div>
                     @endif
 
                     <form wire:submit="uploadDocument">
@@ -101,7 +101,7 @@
                                 <select wire:model="file_type_id" class="form-select" required>
                                     <option value="">Select type...</option>
                                     @foreach($fileTypes as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }} ({{ $type->year }})</option>
+                                    <option value="{{ $type->id }}">{{ $type->name }} ({{ $type->year }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -139,41 +139,41 @@
                         </thead>
                         <tbody>
                             @forelse ($documents as $doc)
-                                <tr class="{{ $doc->trashed() ? 'table-danger opacity-50' : '' }}">
-                                    <td class="fw-medium">
-                                        {{ $doc->fileType?->name }}
-                                        @if($doc->trashed())
-                                            <span class="badge bg-danger ms-1">Struck Off</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-muted">
-                                        {{ Str::limit($doc->original_filename, 30) }}
-                                    </td>
-                                    <td class="text-muted">
-                                        {{ $doc->file_size_kb }} KB
-                                    </td>
-                                    <td class="text-muted">
-                                        {{ $doc->created_at->format('M d, Y') }}
-                                    </td>
-                                    <td class="text-end">
-                                        @if(!$doc->trashed())
-                                            <a href="{{ route('documents.download', $doc->id) }}" class="btn btn-link btn-sm" target="_blank">Download</a>
-                                            @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
-                                                <button wire:click="strikeOff({{ $doc->id }})" wire:confirm="Are you sure you want to strike off this document? This soft-delete can be undone." class="btn btn-link btn-sm text-danger">Strike Off</button>
-                                            @endif
-                                        @else
-                                            @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
-                                                <button wire:click="undoStrikeOff({{ $doc->id }})" class="btn btn-link btn-sm text-success">Undo Strike Off</button>
-                                            @endif
-                                        @endif
-                                    </td>
-                                </tr>
+                            <tr class="{{ $doc->trashed() ? 'table-danger opacity-50' : '' }}">
+                                <td class="fw-medium">
+                                    {{ $doc->fileType?->name }}
+                                    @if($doc->trashed())
+                                    <span class="badge bg-danger ms-1">Struck Off</span>
+                                    @endif
+                                </td>
+                                <td class="text-muted">
+                                    {{ Str::limit($doc->original_filename, 30) }}
+                                </td>
+                                <td class="text-muted">
+                                    {{ $doc->file_size_kb }} KB
+                                </td>
+                                <td class="text-muted">
+                                    {{ $doc->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="text-end">
+                                    @if(!$doc->trashed())
+                                    <a href="{{ route('documents.download', $doc->id) }}" class="btn btn-link btn-sm" target="_blank">Download</a>
+                                    @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
+                                    <button wire:click="strikeOff({{ $doc->id }})" wire:confirm="Are you sure you want to strike off this document? This soft-delete can be undone." class="btn btn-link btn-sm text-danger">Strike Off</button>
+                                    @endif
+                                    @else
+                                    @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
+                                    <button wire:click="undoStrikeOff({{ $doc->id }})" class="btn btn-link btn-sm text-success">Undo Strike Off</button>
+                                    @endif
+                                    @endif
+                                </td>
+                            </tr>
                             @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
-                                        No documents uploaded yet.
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    No documents uploaded yet.
+                                </td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -186,32 +186,32 @@
 
 <!-- Duplicate Modal (Priority 2 Step 6) -->
 @if($showDuplicateModal)
-    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title h5 mb-0">Duplicate Document Detected</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="mb-2">
-                        An active document of type <strong>{{ $duplicateDocument->fileType?->name }}</strong> already exists for this record:
-                    </p>
-                    <p class="small text-muted mb-0">
-                        Existing file: {{ $duplicateDocument->original_filename }} (Uploaded on {{ $duplicateDocument->created_at->format('M d, Y') }})
-                    </p>
-                </div>
-                <div class="modal-footer flex-column align-items-stretch gap-2">
-                    <button wire:click="resolveDuplicate('keep_history')" class="btn btn-primary">
-                        Keep History (Archive current, upload new as active)
-                    </button>
-                    <button wire:click="resolveDuplicate('overwrite')" class="btn btn-warning">
-                        Overwrite (Physically delete current, replace metadata)
-                    </button>
-                    <button wire:click="resolveDuplicate('cancel')" class="btn btn-outline-secondary">
-                        Cancel (Keep current file untouched)
-                    </button>
-                </div>
+<div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title h5 mb-0">Duplicate Document Detected</h4>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">
+                    An active document of type <strong>{{ $duplicateDocument->fileType?->name }}</strong> already exists for this record:
+                </p>
+                <p class="small text-muted mb-0">
+                    Existing file: {{ $duplicateDocument->original_filename }} (Uploaded on {{ $duplicateDocument->created_at->format('M d, Y') }})
+                </p>
+            </div>
+            <div class="modal-footer flex-column align-items-stretch gap-2">
+                <button wire:click="resolveDuplicate('keep_history')" class="btn btn-primary">
+                    Keep History (Archive current, upload new as active)
+                </button>
+                <button wire:click="resolveDuplicate('overwrite')" class="btn btn-warning">
+                    Overwrite (Physically delete current, replace metadata)
+                </button>
+                <button wire:click="resolveDuplicate('cancel')" class="btn btn-outline-secondary">
+                    Cancel (Keep current file untouched)
+                </button>
             </div>
         </div>
     </div>
+</div>
 @endif

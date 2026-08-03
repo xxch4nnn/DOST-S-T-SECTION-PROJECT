@@ -5,6 +5,7 @@ namespace App\Livewire\Scholars;
 use App\Models\Course;
 use App\Models\Scholar;
 use App\Models\School;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Index extends Component
@@ -58,28 +59,29 @@ class Index extends Component
     {
         $scholarId = (int) $scholarId;
         // Find the scholar in DB, or fallback to mock data
-        $scholar = Scholar::with(['scholarshipType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
+        $scholar = Scholar::with(['scholarshipProgram', 'scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
         
         $scholarData = null;
         if ($scholar) {
             $scholarData = [
                 'name' => "{$scholar->last_name}, {$scholar->first_name} {$scholar->middle_name}",
-                'spas_id' => $scholar->spas_no,
-                'program' => $scholar->scholarshipType->code ?? 'RA 10612',
-                'program_type' => $scholar->scholarshipType->name ?? 'DOST - SEI Undergraduate Scholarship',
-                'year_of_award' => $scholar->year_of_award ?? '2023',
-                'clearance_date' => $scholar->clearance_date ? $scholar->clearance_date->format('d / m / Y') : '23 / 06 / 2027',
-                'course' => $scholar->course->name ?? 'BS in Computer Science Major in Data Science',
-                'university' => $scholar->school->name ?? 'University of Southeastern Philippines',
-                'address' => $scholar->barangay ? "{$scholar->barangay}, {$scholar->district}" : 'Brgy. 34 - D, C.M. Recto St. Poblacion District',
-                'municipality' => $scholar->municipality ?? 'Davao City',
-                'province' => $scholar->province ?? 'Davao del Sur',
-                'region' => $scholar->region->name ?? 'Region XI - Davao Region',
-                'email' => $scholar->email_address ?? 'example@gmail.com',
-                'contact' => $scholar->contact_number ?? '09000000000',
-                'birthdate' => $scholar->birthdate ? $scholar->birthdate->format('m / d / Y') : '01 / 01 / 2000',
-                'sex' => $scholar->sex ?? 'Male',
+                'spas_id' => $scholar->spas_number ?? 'null',
+                'program' => $scholar->scholarshipProgram->name ?? 'null',
+                'program_type' => $scholar->scholarshipProgramType->name ?? 'null',
+                'year_of_award' => $scholar->year_of_award ?? 'null',
+                'clearance_date' => $scholar->clearance_date ? $scholar->clearance_date->format('d / m / Y') : 'null',
+                'course' => $scholar->course->name ?? 'null',
+                'university' => $scholar->school->name ?? 'null',
+                'address' => $scholar->barangay ? "{$scholar->barangay}, {$scholar->district}" : 'null',
+                'municipality' => $scholar->municipality ?? 'null',
+                'province' => $scholar->province ?? 'null',
+                'region' => $scholar->region->name ?? 'null',
+                'email' => $scholar->email_address ?? 'null',
+                'contact' => $scholar->contact_number ?? 'null',
+                'birthdate' => $scholar->birthdate ? $scholar->birthdate->format('m / d / Y') : 'null',
+                'sex' => $scholar->sex ?? 'null',
                 'status' => $scholar->clearanceStatus->name ?? 'Not Cleared',
+                'clearance_date'=>$scholar->clearanceDate ?? 'None (Not Cleared)'
             ];
         } else {
             // Find in mock data
@@ -113,35 +115,56 @@ class Index extends Component
 
     public function render()
     {
-        $query = Scholar::query()
-            ->with(['scholarshipProgram', 'scholarshipProgramType', 'school', 'course', 'clearanceStatus'])
-            ->when($this->search, function ($q) {
-                $q->where(function ($sub) {
-                    $sub->where('first_name', 'like', '%'.$this->search.'%')
-                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
-                        ->orWhere('middle_name', 'like', '%'.$this->search.'%')
-                        ->orWhere('spas_no', 'like', '%'.$this->search.'%');
-                });
-            })
-            ->orderBy('year_of_award', 'desc')
-            ->orderBy('last_name', 'asc');
+        $searchTerm = '%' . $this->search . '%';
 
-        $scholars = $query->get();
+        // 2. Create the array of 11 bindings for the WHERE clause
+        $bindings = array_fill(0, 11, $searchTerm);
 
-        // Group scholars by year_of_award
+        // 3. Execute and hydrate the Scholar models
+        $scholars = Scholar::fromQuery("
+            SELECT 
+                s.*,
+                clearance_statuses.name as clearance_status,
+                schools.name as school,
+                courses.name as course,
+                scholarship_programs.name as scholarship_program,
+                scholarship_program_types.name as scholarship_program_type,
+                regions.name as region
+            FROM scholars as s
+            INNER JOIN schools ON s.school_id = schools.id
+            INNER JOIN scholarship_program_types ON s.scholarship_program_type_id = scholarship_program_types.id
+            INNER JOIN scholarship_programs ON s.scholarship_program_id = scholarship_programs.id
+            INNER JOIN courses ON s.course_id = courses.id
+            INNER JOIN regions ON s.region_id = regions.id
+            INNER JOIN clearance_statuses ON s.clearance_status_id = clearance_statuses.id
+            WHERE (
+                s.last_name LIKE ? 
+                OR s.first_name LIKE ? 
+                OR s.middle_name LIKE ? 
+                OR s.generational_suffix LIKE ? 
+                OR s.spas_number LIKE ? 
+                OR scholarship_program_types.name LIKE ? 
+                OR scholarship_programs.name LIKE ? 
+                OR s.contact_number LIKE ? 
+                OR s.email_address LIKE ? 
+                OR schools.name LIKE ? 
+                OR courses.name LIKE ?
+            )
+            ORDER BY year_of_award DESC, last_name ASC
+            LIMIT 10
+        ", $bindings);
+
+        // Group scholars by year_of_award for the new Folder UI
         $groupedScholars = $scholars->groupBy(function ($scholar) {
             return (string) ($scholar->year_of_award ?? '2023');
         });
 
-        // Ensure default year 2023 exists if DB is empty
         if ($groupedScholars->isEmpty()) {
-            $mockScholars = $this->getMockScholars();
-            $groupedScholars = collect(['2023' => $mockScholars]);
+            $groupedScholars = collect(['2023' => collect([])]);
         }
 
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,
-            'scholars'=>Scholar::orderBy('last_name', 'asc')->paginate(15),
             'allYears' => $groupedScholars->keys()->toArray(),
             'schools'=>School::orderBy('name', 'asc')->get(),
             'courses'=>Course::orderBy('name', 'asc')->get()

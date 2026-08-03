@@ -87,8 +87,8 @@ new class extends Component
         $this->dispatch('open-document-viewer',
             title: $title,
             fileUrl: $imageUrl,
-            scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.',
-            scholarId: $this->scholarId ?? 1,
+            scholarName: $this->scholarData['name'] ?? 'null',
+            scholarId: $this->scholarId ?? -1,
             fileId: 4, // Mock File ID for now
             fileType: $fileType,
             documentIndex: $documentIndex,
@@ -104,6 +104,10 @@ new class extends Component
         $dbScholar = Scholar::with(['scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])
             ->find($this->scholarId);
         
+        // load all files
+
+        // file_type_id, file_name, file_path, last_modified
+
         $files = File::with('fileType')
             ->whereHas('fileType', function ($query) {
                 $query->where('file_group_id', 1);

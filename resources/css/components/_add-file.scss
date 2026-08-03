@@ -31,11 +31,11 @@
     gap: 1.75rem;
     margin-top: 1rem;
 
-    @media (width <= 992px) {
+    @media (width <=992px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (width <= 576px) {
+    @media (width <=576px) {
         grid-template-columns: 1fr;
     }
 }
@@ -97,7 +97,8 @@
             border-color: var(--dost-main-blue);
             background: var(--main-blue-50);
 
-            .file-type-card__icon, .file-type-card__label {
+            .file-type-card__icon,
+            .file-type-card__label {
                 color: var(--dost-main-blue);
             }
         }
@@ -163,7 +164,8 @@
         }
     }
 
-    .form-control-custom, .form-select-custom {
+    .form-control-custom,
+    .form-select-custom {
         width: 100%;
         padding: 0.65rem 1rem;
         font-size: 0.925rem;
@@ -210,7 +212,8 @@
         transition: all 0.2s ease;
         min-width: 160px;
 
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             border-color: #cbd5e1;
             background: #f8fafc;
         }

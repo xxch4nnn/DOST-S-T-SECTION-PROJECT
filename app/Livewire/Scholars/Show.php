@@ -43,7 +43,7 @@ class Show extends Component
                 $query->where('file_group_id', 1);
             })
             ->where('metadata->scholar_id', $this->scholar->id)
-            ->where('deleted_at', null)
+            ->whereNull('deleted_at')
             ->get();
     }
 
