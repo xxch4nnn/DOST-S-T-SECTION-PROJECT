@@ -28,7 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
     // MOCK Edit File UI
-    Route::get('/scholars/{scholar}/files/{file}/edit', \App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
+    Route::get('/scholars/{scholar}/files/{file}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
 
     // Add New File Wizard
     Route::get('/add-file', AddFile::class)->name('add-file.index');

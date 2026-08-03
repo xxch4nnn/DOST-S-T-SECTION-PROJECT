@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Scholars;
 
+use App\Models\ClearanceStatus;
 use App\Models\Scholar;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use Livewire\Component;
 
 class Index extends Component
@@ -57,10 +60,11 @@ class Index extends Component
         $scholarId = (int) $scholarId;
         // Find the scholar in DB, or fallback to mock data
         $scholar = Scholar::with(['scholarshipType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
-        
+
         $scholarData = null;
         if ($scholar) {
             $scholarData = [
+                'id' => $scholar->id,
                 'name' => "{$scholar->last_name}, {$scholar->first_name} {$scholar->middle_name}",
                 'spas_id' => $scholar->spas_no,
                 'program' => $scholar->scholarshipType->code ?? 'RA 10612',
@@ -85,6 +89,7 @@ class Index extends Component
             $mockScholar = $mockScholars->firstWhere('id', $scholarId);
             if ($mockScholar) {
                 $scholarData = [
+                    'id' => $mockScholar->id,
                     'name' => "{$mockScholar->last_name}, {$mockScholar->first_name} {$mockScholar->middle_name}",
                     'spas_id' => $mockScholar->spas_no,
                     'program' => $mockScholar->scholarship->name,
@@ -163,7 +168,7 @@ class Index extends Component
                 'first_name' => $name['first'],
                 'last_name' => $name['last'],
                 'middle_name' => $name['mid'],
-                'spas_no' => '2023-00855-' . (2235 + $index),
+                'spas_no' => '2023-00855-'.(2235 + $index),
                 'year_of_award' => '2023',
             ]);
             $scholar->id = $index + 1;
@@ -171,9 +176,9 @@ class Index extends Component
             $programName = $index % 2 === 0 ? 'RA 10612' : 'RA 7687';
             $statusName = $index % 3 === 0 ? 'Cleared' : 'Not Cleared';
 
-            $scholarship = new \App\Models\Scholarship(['name' => $programName]);
-            $scholarshipType = new \App\Models\ScholarshipType(['name' => 'DOST - SEI Undergraduate Scholarship']);
-            $clearanceStatus = new \App\Models\ClearanceStatus(['name' => $statusName]);
+            $scholarship = new Scholarship(['name' => $programName]);
+            $scholarshipType = new ScholarshipType(['name' => 'DOST - SEI Undergraduate Scholarship']);
+            $clearanceStatus = new ClearanceStatus(['name' => $statusName]);
 
             $scholar->setRelation('scholarship', $scholarship);
             $scholar->setRelation('scholarshipType', $scholarshipType);

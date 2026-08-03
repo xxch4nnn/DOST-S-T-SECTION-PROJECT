@@ -11,6 +11,7 @@ class Document extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'documentable_type', 'documentable_id',
         'file_type_id', 'original_filename', 'stored_filename',
         'mime_type', 'file_size_kb', 'status', 'uploaded_by',
     ];
