@@ -25,12 +25,22 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-05
 
 - **Date:** 2026-08-05
+- **Time:** 00:40:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/ci-staging-smoke-and-aws-prompt`
+- **Action:** docs update + CI
+- **Commit/PR:** pending
+- **Summary:** Path 3 sequenced: AWS prompt as design SoT; CI synthetic-smoke + ProductionSmokeTest; gated deploy.yml; AGENTS deploy note. No AWS provision.
+- **Linked:** `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`, `.github/workflows/test.yml`, `.github/workflows/deploy.yml`, `tests/Feature/ProductionSmokeTest.php`
+
+- **Date:** 2026-08-05
 - **Time:** 00:30:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Composer / Chan
 - **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/agents-improvements-and-concurrently`
 - **Action:** docs update + PR merged
-- **Commit/PR:** #31 → `fdba7d8` (concurrently); AGENTS improvements PR pending
+- **Commit/PR:** #31 → `fdba7d8` (concurrently); #63 → `f196abe`
 - **Summary:** Smoke Path A/C for concurrently 10 (build/dev clean; pail/pcntl Windows note); admin-merged #31; updated Bible pointer, Dependabot/CODEOWNER policy, shell matrix, handoff ownership, changelog examples; re-pinned TECH_STACK_DOCS concurrently 10.0.4.
 - **Linked:** `AGENTS.md`, `CONTRIBUTING.md`, `docs/TECH_STACK_DOCS.md`, `CHANGELOG.md`
 

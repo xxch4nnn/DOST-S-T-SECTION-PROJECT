@@ -20,6 +20,9 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — AWS production deployment design prompt (planning SoT only; Decision Gate before provision) (`planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`).
+- **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — CI Path 3: `synthetic-smoke` job (PHPUnit `@group smoke` + live `/health`/`/login` curl) and gated manual `deploy.yml` (staging/prod; requires `confirm_aws_gates=APPROVED`).
+- **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — `ProductionSmokeTest` covering health, auth, upload, download forbid/allow (`tests/Feature/ProductionSmokeTest.php`).
 - **2026-08-05 00:13:37 +08:00** · **Chan** (`@xxch4nnn` / `xxch4nnn <johned623@gmail.com>`) — Changelog bullets now require date-time + user (this policy); see “How to update”.
 - **2026-08-05 00:11:00 +08:00** · **Chan** (`@xxch4nnn`) — Version-pinned official tech-stack documentation index (`docs/TECH_STACK_DOCS.md`) + Cursor rule `.cursor/rules/tech-stack-docs.mdc` for agentic coding (#61).
 - **2026-08-04 16:00:00 +08:00** · **Chan** (`@xxch4nnn`) — Draft technical specification + user manual under `docs/` (PM review before client share) (#53).

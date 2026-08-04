@@ -58,6 +58,11 @@ Use these rules whenever this repo is the working directory.
 - After Dependabot/manual upgrades, **update `docs/TECH_STACK_DOCS.md` in the same PR** as the lockfile bump (or immediately after squash-merge if Dependabot cannot edit docs).
 - Cursor always-on rule: `.cursor/rules/tech-stack-docs.mdc`
 
+## Deploy / AWS (sequenced)
+- AWS design SoT only until Decision Gate: `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md` — **do not provision** without PM/DOST approval.
+- CI synthetic smoke (required): job `synthetic-smoke` in `.github/workflows/test.yml` + `php artisan test --group=smoke`.
+- Gated remote staging/prod: manual `.github/workflows/deploy.yml` (`confirm_aws_gates=APPROVED`; staging needs `STAGING_URL`).
+
 ## Dependabot policy
 - **Minor/patch:** prefer Path A — local smoke (`npm install`, `npm run build`, `npm run dev`; for PHP bumps also `composer install` + `php artisan test`) then CODEOWNER approve + squash-merge when CI is green.
 - **Major bumps:** **hold by default**. Do not auto-merge. Require explicit smoke (Path A) against the major line and a `docs/TECH_STACK_DOCS.md` re-pin in the same follow-up PR.
