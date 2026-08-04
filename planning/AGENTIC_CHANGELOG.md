@@ -16,11 +16,19 @@ Purpose: record every meaningful repo push/pull, audit, and handoff artifact eve
 
 ## 2026-08-04
 
+- **Date:** 2026-08-04 (late)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/docs-and-stitch-backlog`
+- **Action:** docs update + PR review + new issues
+- **Commit/PR:** pending
+- **Summary:** Committed tech spec/user manual/Bible Keeper prompt/DTR notes; Dependabot review (merge #47–#51, hold #31); filed stitch backlog issues PR-D/E/F + DomPDF + db-integration remediation.
+- **Linked:** `planning/PR_REVIEW_OPEN_2026-08-04_late.md`, `docs/technical_specification.md`, `docs/user_manual.md`
+
 - **Date:** 2026-08-04
 - **Actor:** Composer / Chan
 - **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/be-spatie-gates-and-offline-queue`
 - **Action:** port + tests
-- **Commit/PR:** pending
+- **Commit/PR:** #52 → `a870290`
 - **Summary:** Chan-scoped Spatie route gates (#36), document download authorize (#37), offline_queue scaffold (#38). Confirmed FS-07 policies never reached master (stuck on fe-08-fullstack-hardening); ported + aligned to expanded permission matrix. Verified 403 for Encoder on audit-logs/admin create.
 - **Linked:** `routes/web.php`, `app/Policies/*`, `planning/SPATIE_ROLES_BASELINE.md`
 

@@ -2,22 +2,24 @@
 
 Copy/paste ready. Labels suggested: `security`, `backend`, `frontend`, `docs`, `qa`.
 
-## Filed on 2026-08-04
+## Filed on 2026-08-04 (updated late)
 
-| Pack # | GitHub | Owner |
-|--------|--------|-------|
-| 1 | [#36](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/36) Spatie route permissions | @WakenMac |
-| 2 | [#37](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/37) Document download auth | @WakenMac |
-| 3 | [#38](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/38) Offline queue | @WakenMac |
-| 4 | [#39](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/39) Retire TASKS_DETECTED_payload | @xxch4nnn |
-| 5 | [#40](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/40) QA responsive evidence | Miguel (handle TBD) |
-| 6 | [#41](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/41) Global search | @WakenMac + Rui |
-| 7 | [#42](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/42) Strike-off/restore UX | Rui (handle TBD) |
-| 8 | [#43](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/43) Audit-log user-deletion policy | @WakenMac |
-| 9 | [#44](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/44) phpunit/CI evidence | @xxch4nnn |
-| 10 | [#45](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/45) Super Admin seed guarantee | @WakenMac |
+| Pack # | GitHub | Owner | Status |
+|--------|--------|-------|--------|
+| 1 | [#36](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/36) Spatie route permissions | Chan (#52) | ✅ Closed |
+| 2 | [#37](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/37) Document download auth | Chan (#52) | ✅ Closed |
+| 3 | [#38](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/38) Offline queue | Chan (#52) | ✅ Closed |
+| 4 | [#39](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/39) Retire TASKS_DETECTED_payload | @xxch4nnn | ✅ Closed |
+| 5 | [#40](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/40) QA responsive evidence | Miguel (handle TBD) | Open |
+| 6 | [#41](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/41) Global search | @WakenMac + Rui | Open (also stitch PR-G) |
+| 7 | [#42](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/42) Strike-off/restore UX | Rui (handle TBD) | Open |
+| 8 | [#43](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/43) Audit-log user-deletion policy | @WakenMac | Open |
+| 9 | [#44](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/44) phpunit/CI evidence | @xxch4nnn | ✅ Closed |
+| 10 | [#45](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/45) Super Admin seed guarantee | @WakenMac | Open |
 
 Next team sync: **2026-08-06 10:00 AM** — confirm Rui/Miguel GitHub handles (`Mushimuche`?).
+
+See also stitch backlog issues filed 2026-08-04 late (PR-D/E/F, DomPDF, db-integration) in AGENTIC_CHANGELOG / GitHub.
 
 ---
 
