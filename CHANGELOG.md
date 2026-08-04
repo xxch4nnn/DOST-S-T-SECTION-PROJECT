@@ -20,6 +20,8 @@ Versioning follows team release tags when cut; until then use `[Unreleased]`.
 - Document download authorization via `DocumentPolicy::download` (#37).
 - `offline_queue` table + `OfflineQueueItem` model + `offline:replay` scaffold command (#38).
 - Feature tests: `RoutePermissionGateTest`, `OfflineQueueScaffoldTest`.
+- Draft technical specification + user manual under `docs/` (PM review before client share).
+- Bible Keeper execution prompt + DTR backfill notes under `planning/`.
 
 ### Security
 - Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit).
