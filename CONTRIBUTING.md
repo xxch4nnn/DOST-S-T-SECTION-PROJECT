@@ -52,10 +52,13 @@ This project uses three complementary changelog mechanisms. All are mandatory fo
 ### Product/behavior changelog
 - Update root [`CHANGELOG.md`](CHANGELOG.md) under `[Unreleased]` for any PR that changes behavior, schema, seeders, public UI, or CI.
 - Use conventional sections: `Added` / `Changed` / `Deprecated` / `Removed` / `Fixed` / `Security`.
+- **Every bullet must include date-time and user:**  
+  `**YYYY-MM-DD HH:mm:ss +08:00** · **Name** (`@github` or `git:name <email>`) — summary`  
+  Default timezone Asia/Manila (`+08:00`).
 
 ### Agent/ops trail
 - Append [`planning/AGENTIC_CHANGELOG.md`](planning/AGENTIC_CHANGELOG.md) for investigations, pins of external repos, stitch ports, audits, and handoff artifact creation.
-- Required fields: Date, Actor, Repo + branch, Action, Commit/PR, Summary, Linked artifact.
+- Required fields: **Date**, **Time** (`HH:mm:ss +08:00`), **User** (human), **Actor** (executor/agent), Repo + branch, Action, Commit/PR, Summary, Linked artifact.
 
 ### Stitch execution log
 - While running backend-to-mother stitch work, also append [`planning/STITCH_EXECUTION_LOG.md`](planning/STITCH_EXECUTION_LOG.md).
