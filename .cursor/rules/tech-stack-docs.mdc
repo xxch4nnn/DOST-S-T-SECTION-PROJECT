@@ -1,0 +1,15 @@
+---
+description: Anchor agentic coding to version-pinned official tech stack docs
+alwaysApply: true
+---
+
+# Tech stack docs (version-pinned)
+
+Before writing or changing code that depends on PHP, Laravel, Livewire, Volt, Spatie Permission, Bootstrap, Vite, PHPUnit, MySQL, Node, or Docker:
+
+1. Read [`docs/TECH_STACK_DOCS.md`](docs/TECH_STACK_DOCS.md) and use the **official versioned URLs** listed there.
+2. Match APIs to **locked** versions in `composer.lock` / `package-lock.json` / CI (not “latest” blog posts).
+3. Do **not** use patterns from older majors (Laravel ≤12, Livewire ≤3, Spatie Permission ≤7, Bootstrap ≤4) unless this repo’s locks say so.
+4. After a dependency bump PR, update the Locked column / links in `docs/TECH_STACK_DOCS.md` in the **same** change set.
+
+Primary pins today: PHP **8.3**, Laravel **13.x** (`v13.23.0`), Livewire **4.x** (`v4.3.4`), Spatie Permission **v8** (`8.3.0`), Bootstrap **5.3** (`5.3.8`), Vite **8.2.0**, PHPUnit **12.5**, MySQL **8.4** (CI), Node **22** (CI).

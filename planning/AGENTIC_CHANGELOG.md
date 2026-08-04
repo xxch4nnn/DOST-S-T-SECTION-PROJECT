@@ -14,6 +14,16 @@ Purpose: record every meaningful repo push/pull, audit, and handoff artifact eve
 
 ---
 
+## 2026-08-05
+
+- **Date:** 2026-08-05
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/tech-stack-docs-pin`
+- **Action:** docs update
+- **Commit/PR:** pending
+- **Summary:** Added `docs/TECH_STACK_DOCS.md` with lockfile-pinned official doc URLs (Laravel 13.23 / Livewire 4.3.4 / Spatie Permission 8.3 / Bootstrap 5.3.8 / Vite 8.2 / PHPUnit 12.5 / MySQL 8.4 / Node 22) and always-on Cursor rule; wired into AGENTS.md + CONTRIBUTING.md + README.
+- **Linked:** `docs/TECH_STACK_DOCS.md`, `.cursor/rules/tech-stack-docs.mdc`
+
 ## 2026-08-04
 
 - **Date:** 2026-08-04 (late)

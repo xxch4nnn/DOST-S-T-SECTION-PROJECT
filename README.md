@@ -12,12 +12,8 @@ Offline-first Laravel application for digitizing and managing DOST-SEI scholar r
 
 ## Tech stack
 
-- Laravel
-- Livewire
-- Bootstrap
-- Spatie permissions
-- MySQL
-- Docker
+- Laravel 13 · Livewire 4 · Bootstrap 5.3 · Spatie Permission v8 · MySQL 8.4 · Docker · PHP 8.3
+- **Official docs (version-pinned for agents):** [`docs/TECH_STACK_DOCS.md`](docs/TECH_STACK_DOCS.md)
 
 ## V1 scope
 
@@ -33,7 +29,8 @@ V1 covers Scholar 201 Records and Administrative Records only. Financial Ledger 
 
 ## Documentation
 
-See `planning/` for current project docs, task board, team workflow, and MCP server registry.
+See `planning/` for current project docs, task board, team workflow, and MCP server registry.  
+Stack API reference for coding agents: [`docs/TECH_STACK_DOCS.md`](docs/TECH_STACK_DOCS.md).
 
 ## Local setup
 
