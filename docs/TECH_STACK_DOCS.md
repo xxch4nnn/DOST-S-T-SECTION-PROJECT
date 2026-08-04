@@ -10,7 +10,7 @@
 
 **How to re-pin after upgrades:** Update the “Locked” column from lockfiles, then fix doc URLs if the major line changed. Record the bump in `CHANGELOG.md` and `planning/AGENTIC_CHANGELOG.md`.
 
-**Last verified:** 2026-08-05 against `origin/master` locks.
+**Last verified:** 2026-08-05 (post-#31 concurrently 10.0.4) against `origin/master` locks.
 
 ---
 
@@ -53,7 +53,7 @@ Project Spatie baseline (roles matrix, not upstream): `planning/SPATIE_ROLES_BAS
 | laravel-vite-plugin | **3.1.3** | `^3.1` | [Laravel Vite (13.x)](https://laravel.com/docs/13.x/vite) · [plugin README](https://github.com/laravel/vite-plugin) |
 | sass | **1.102.0** | `^1.102.0` | [Sass documentation](https://sass-lang.com/documentation/) |
 | axios | **1.19.0** | `^1.19.0` | [Axios docs](https://axios-http.com/docs/intro) |
-| concurrently | **9.2.4** | `^9.0.1` | [concurrently (npm)](https://www.npmjs.com/package/concurrently) — **do not assume v10 APIs** while #31 is held |
+| concurrently | **10.0.4** | `^10.0.4` | [concurrently (npm)](https://www.npmjs.com/package/concurrently) · [GitHub releases](https://github.com/open-cli-tools/concurrently/releases) — use v10 docs after #31 |
 | @popperjs/core | (Bootstrap peer) | `^2.11.8` | [Popper docs](https://popper.js.org/docs/v2/) |
 | stylelint | (see lock) | `^17.14.1` | [Stylelint docs](https://stylelint.io/user-guide/) |
 

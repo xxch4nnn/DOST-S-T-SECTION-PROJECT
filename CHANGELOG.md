@@ -39,6 +39,8 @@ Every bullet **must** start with:
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit) (#52).
 
 ### Changed
+- **2026-08-05 00:30:00 +08:00** · **Chan** (`@xxch4nnn`) — `AGENTS.md` / `CONTRIBUTING.md`: migrated Bible doc ID, Dependabot Paths A/B/C, CODEOWNER hold-release, Windows shell matrix, handoff ownership, changelog examples; re-pin concurrently **10.0.4** in `docs/TECH_STACK_DOCS.md` after #31 smoke.
+- **2026-08-05 00:27:19 +08:00** · **Chan** (`@xxch4nnn`) — Bump `concurrently` 9.2.4 → 10.0.4 (Dependabot #31; local smoke Path A/C).
 - **2026-08-05 00:13:37 +08:00** · **Chan** (`@xxch4nnn`) — Changelog policy: every `[Unreleased]` bullet must include date-time (+08:00) and user identity.
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Roles/permissions matrix expanded with scholar + admin-record CRUD; Encoder view-only for admin records (#52).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — File type seeder expanded to Wakin taxonomy; DatabaseSeeder seeds FileGroup before FileType (#35).
