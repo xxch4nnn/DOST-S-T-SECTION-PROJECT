@@ -14,9 +14,11 @@
 | 2 | Publish `HANDOFF_GITHUB_ISSUES.md` to repo and assign owners | ✅ Issues filed (see GH links in AGENTIC_CHANGELOG) |
 | 3 | Verify Bible Keeper runtime: Apps Script API enabled, `PROJECT_TASKS_TAB_ID=t.cm79ati3cwhz` set, live-write mode active | Day 5 |
 | 4 | Verify CI/test execution evidence exists and is current | ✅ `planning/exports/phpunit_2026-08-04.txt` + CI on #35 |
-| 5 | Add offline-queue migration/model scaffold if not completed by Wakin | Day 3 (tracked as GH issue → Wakin) |
-| 6 | Review permission-gate patch before merge; confirm 403 behavior | Day 1 (tracked as GH issues → Wakin) |
+| 5 | Add offline-queue migration/model scaffold if not completed by Wakin | ✅ Done 2026-08-04 (Chan fallback; #38) |
+| 6 | Review permission-gate patch before merge; confirm 403 behavior | ✅ Implemented + tested on Chan scope (#36/#37) |
 | 7 | Schedule next sync: 2026-08-06 10:00 AM | ✅ Scheduled |
+
+**Note (2026-08-04):** Spatie route gates, document download auth, and offline_queue scaffold are **Chan-owned** for this slice (not waiting on Wakin).
 
 ---
 
@@ -38,9 +40,9 @@ Do **not** track these items only in chat or local notes. They must be entered a
 |------|-----------|--------|
 | Phase 1 complete | 40h learning per member done | ✅ Verified |
 | Phase 2 start | All members through learning gate | ✅ Verified |
-| P0 security | Route-level permission enforcement | ⏳ Pending patch |
+| P0 security | Route-level permission enforcement | ✅ Done 2026-08-04 |
 | P0 docs | Deprecated payload retired from workflows | ✅ Done 2026-08-04 |
-| P1 offline | Offline queue table exists | ⏳ Pending (GH issue → Wakin) |
+| P1 offline | Offline queue table exists | ✅ Scaffold done 2026-08-04 |
 | P1 QA | phpunit run + responsive evidence saved | 🟡 phpunit evidence saved; responsive still Miguel |
 
 ---

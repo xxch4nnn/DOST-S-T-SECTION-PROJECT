@@ -6,6 +6,7 @@ use App\Livewire\AdminRecords\Show;
 use App\Models\AdministrativeRecord;
 use App\Models\FileType;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,9 @@ class AdminRecordDocumentUploadTest extends TestCase
     public function test_allows_users_to_upload_admin_documents_with_uuid_hashing()
     {
         // Avoid Storage::fake('local') — it breaks Livewire temporary upload metadata (LW4 + Flysystem).
+        $this->seed(RolesAndPermissionsSeeder::class);
         $user = User::factory()->create();
+        $user->assignRole('Admin');
         $fileType = FileType::firstOrCreate(
             ['name' => 'Memorandum Circular'],
             ['metadata_template' => null, 'file_group_id' => null]
