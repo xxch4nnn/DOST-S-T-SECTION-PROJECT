@@ -25,12 +25,22 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-05
 
 - **Date:** 2026-08-05
+- **Time:** 00:30:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/agents-improvements-and-concurrently`
+- **Action:** docs update + PR merged
+- **Commit/PR:** #31 → `fdba7d8` (concurrently); AGENTS improvements PR pending
+- **Summary:** Smoke Path A/C for concurrently 10 (build/dev clean; pail/pcntl Windows note); admin-merged #31; updated Bible pointer, Dependabot/CODEOWNER policy, shell matrix, handoff ownership, changelog examples; re-pinned TECH_STACK_DOCS concurrently 10.0.4.
+- **Linked:** `AGENTS.md`, `CONTRIBUTING.md`, `docs/TECH_STACK_DOCS.md`, `CHANGELOG.md`
+
+- **Date:** 2026-08-05
 - **Time:** 00:13:37 +08:00
 - **User:** Chan (`@xxch4nnn` / `xxch4nnn <johned623@gmail.com>`)
 - **Actor:** Composer
 - **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/changelog-datetime-user`
 - **Action:** docs update
-- **Commit/PR:** pending
+- **Commit/PR:** #62 → `89920fd`
 - **Summary:** Required date-time + user on root CHANGELOG bullets and AGENTIC entries; backfilled Unreleased bullets with Chan identity.
 - **Linked:** `CHANGELOG.md`, `CONTRIBUTING.md`, `AGENTS.md`
 
