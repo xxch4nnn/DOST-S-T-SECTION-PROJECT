@@ -4,24 +4,44 @@ Purpose: record every meaningful repo push/pull, audit, and handoff artifact eve
 
 ## Format
 
-- Date + YYYY-MM-DD
-- Actor: Chan / Wakin / Hermes / AGY / Antigravity / Miguel / Rui
-- Repo + branch
-- Action: commit / pull / push / PR merged / audit / docs update
-- Commit or PR link, or N/A
-- One-line summary
-- Linked planning artifact(s)
+Required fields on every entry (newest first under the day heading):
+
+```
+- **Date:** YYYY-MM-DD
+- **Time:** HH:mm:ss +08:00
+- **User:** Display name (`@github` and/or `git:name <email>`) — human accountable for the change
+- **Actor:** Chan | Wakin | Rui | Miguel | Hermes | AGY | Antigravity | Composer | Dependabot (who/what executed the work)
+- **Repo:** `org/repo` @ `branch`
+- **Action:** commit | pull | push | PR merged | audit | docs update | …
+- **Commit/PR:** sha, PR URL, or N/A
+- **Summary:** one line
+- **Linked:** planning/code artifact path(s)
+```
+
+Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
 ## 2026-08-05
 
 - **Date:** 2026-08-05
-- **Actor:** Composer / Chan
-- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/tech-stack-docs-pin`
+- **Time:** 00:13:37 +08:00
+- **User:** Chan (`@xxch4nnn` / `xxch4nnn <johned623@gmail.com>`)
+- **Actor:** Composer
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/changelog-datetime-user`
 - **Action:** docs update
 - **Commit/PR:** pending
-- **Summary:** Added `docs/TECH_STACK_DOCS.md` with lockfile-pinned official doc URLs (Laravel 13.23 / Livewire 4.3.4 / Spatie Permission 8.3 / Bootstrap 5.3.8 / Vite 8.2 / PHPUnit 12.5 / MySQL 8.4 / Node 22) and always-on Cursor rule; wired into AGENTS.md + CONTRIBUTING.md + README.
+- **Summary:** Required date-time + user on root CHANGELOG bullets and AGENTIC entries; backfilled Unreleased bullets with Chan identity.
+- **Linked:** `CHANGELOG.md`, `CONTRIBUTING.md`, `AGENTS.md`
+
+- **Date:** 2026-08-05
+- **Time:** 00:11:40 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** PR merged
+- **Commit/PR:** #61 → `56e80a2`
+- **Summary:** Added `docs/TECH_STACK_DOCS.md` with lockfile-pinned official doc URLs and always-on Cursor rule; wired into AGENTS.md + CONTRIBUTING.md + README.
 - **Linked:** `docs/TECH_STACK_DOCS.md`, `.cursor/rules/tech-stack-docs.mdc`
 
 ## 2026-08-04

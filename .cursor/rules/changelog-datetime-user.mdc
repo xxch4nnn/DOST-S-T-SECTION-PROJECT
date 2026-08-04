@@ -1,0 +1,16 @@
+---
+description: Changelog bullets must include date-time and user
+alwaysApply: true
+---
+
+# Changelog identity fields
+
+When updating `CHANGELOG.md` or `planning/AGENTIC_CHANGELOG.md`:
+
+1. **Root `CHANGELOG.md`:** every `[Unreleased]` bullet must start with  
+   `**YYYY-MM-DD HH:mm:ss +08:00** · **Name** (`@github` or `git:name <email>`) — …`
+2. **`planning/AGENTIC_CHANGELOG.md`:** every entry must include **Date**, **Time** (`HH:mm:ss +08:00`), and **User** (human), plus Actor/Repo/Action/Summary/Linked.
+3. Default timezone: Asia/Manila (`+08:00`). Use the human principal (e.g. Chan / `@xxch4nnn`) even when an agent executes the edit.
+4. Review blocker: omit date-time or user → request amendment before squash-merge.
+
+See format blocks in those files and `CONTRIBUTING.md`.

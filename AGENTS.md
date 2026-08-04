@@ -45,9 +45,9 @@ Use these rules whenever this repo is the working directory.
 - Cursor always-on rule: `.cursor/rules/tech-stack-docs.mdc`
 
 ## Changelog (mandatory for agents)
-- After any behavior/schema/seeder/CI change, update root `CHANGELOG.md` `[Unreleased]`.
-- After any investigation, external-repo pin, or stitch port session, append `planning/AGENTIC_CHANGELOG.md` (Date, Actor, Repo@branch, Action, Commit/PR, Summary, Linked).
-- During backend-to-mother stitch execution, also append `planning/STITCH_EXECUTION_LOG.md`.
+- After any behavior/schema/seeder/CI change, update root `CHANGELOG.md` `[Unreleased]` with **date-time (+08:00)** and **user** on every bullet (see format in that file).
+- After any investigation, external-repo pin, or stitch port session, append `planning/AGENTIC_CHANGELOG.md` with **Date**, **Time**, **User**, Actor, Repo@branch, Action, Commit/PR, Summary, Linked.
+- During backend-to-mother stitch execution, also append `planning/STITCH_EXECUTION_LOG.md` (include Date + time + Actor).
 - Do not skip changelog updates “until later”; treat them as part of the same turn as the code/docs change.
 - Stitch SoT plan: `planning/STITCH_IMPLEMENTATION_PLAN.md` (supersedes ad-hoc Antigravity/AGY drafts when they conflict — prefer additive migrations).
 

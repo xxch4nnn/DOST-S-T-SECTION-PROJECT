@@ -177,10 +177,10 @@ Confirm: no `files` table; `file_groups` + `metadata_template` + `documents.meta
 
 ## 7. Changelog institutionalization
 
-- **`CHANGELOG.md`** — product Keep-a-Changelog `[Unreleased]`
-- **`planning/AGENTIC_CHANGELOG.md`** — agent/ops trail
-- **`planning/STITCH_EXECUTION_LOG.md`** — stitch steps
-- Rules live in `CONTRIBUTING.md`, `AGENTS.md`, `.cursorrules`
+- **`CHANGELOG.md`** — product Keep-a-Changelog `[Unreleased]`; **each bullet includes date-time (`+08:00`) and user**
+- **`planning/AGENTIC_CHANGELOG.md`** — agent/ops trail; required **Date**, **Time**, **User**, Actor, …
+- **`planning/STITCH_EXECUTION_LOG.md`** — stitch steps (date + time + actor)
+- Rules live in `CONTRIBUTING.md`, `AGENTS.md`, `.cursor/rules/changelog-datetime-user.mdc`
 
 ---
 
