@@ -18,9 +18,17 @@ Purpose: record every meaningful repo push/pull, audit, and handoff artifact eve
 
 - **Date:** 2026-08-04
 - **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/be-spatie-gates-and-offline-queue`
+- **Action:** port + tests
+- **Commit/PR:** pending
+- **Summary:** Chan-scoped Spatie route gates (#36), document download authorize (#37), offline_queue scaffold (#38). Confirmed FS-07 policies never reached master (stuck on fe-08-fullstack-hardening); ported + aligned to expanded permission matrix. Verified 403 for Encoder on audit-logs/admin create.
+- **Linked:** `routes/web.php`, `app/Policies/*`, `planning/SPATIE_ROLES_BASELINE.md`
+
+- **Date:** 2026-08-04
+- **Actor:** Composer / Chan
 - **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `chore/handoff-and-be-02-fixtures`
 - **Action:** docs update + port + issues filed
-- **Commit/PR:** pending
+- **Commit/PR:** #46 → `5e6cf5d`
 - **Summary:** Published handoff pack; filed GH #36–#45; retired payload SoT; added `database/sample_pdfs` + `SamplePdfFixture`/`DocumentFixtureSeeder` (PR-B); phpunit 34/34 evidence in `planning/exports/phpunit_2026-08-04.txt`; scheduled sync 2026-08-06 10:00.
 - **Linked:** `planning/HANDOFF_GUIDE.md`, `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/HANDOFF_COVERAGE_MATRIX.md`, `planning/exports/`
 

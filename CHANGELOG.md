@@ -16,8 +16,16 @@ Versioning follows team release tags when cut; until then use `[Unreleased]`.
 - Project Bible audit handoff pack: `planning/HANDOFF_GUIDE.md`, `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/HANDOFF_COVERAGE_MATRIX.md` (2026-08-04).
 - Sample PDF fixtures under `database/sample_pdfs/` (PR-B) with relative-path loader helper.
 - QA evidence capture path `planning/exports/phpunit_YYYY-MM-DD.txt` for handoff Issue 9.
+- Route-level Spatie role/permission gates on scholars, admin-records, audit-logs, add-file, dashboard (#36); policies + `AuthServiceProvider` (FS-07 finally on master).
+- Document download authorization via `DocumentPolicy::download` (#37).
+- `offline_queue` table + `OfflineQueueItem` model + `offline:replay` scaffold command (#38).
+- Feature tests: `RoutePermissionGateTest`, `OfflineQueueScaffoldTest`.
+
+### Security
+- Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit).
 
 ### Changed
+- Roles/permissions matrix expanded with scholar + admin-record CRUD permissions; Encoder view-only for admin records.
 - File type seeder expanded to Wakin taxonomy (groups resolved by slug); DatabaseSeeder seeds FileGroup before FileType.
 - Upload feature tests no longer set removed `file_types.year`.
 - Backend-to-mother stitch continues after #35; next slices PR-B+ on feature branches from `master`.
