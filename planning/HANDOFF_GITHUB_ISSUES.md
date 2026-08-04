@@ -225,3 +225,15 @@ Bible baseline expects PHPUnit suites and CI evidence. No test execution evidenc
 ### Checklist
 - [ ] Update seeder logic
 - [ ] Verify fresh database seed
+
+## Filed 2026-08-04 (late) — stitch backlog
+
+| GitHub | Title | Owner |
+|--------|-------|-------|
+| [#54](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/54) | PR-D metadata hard-abort | @xxch4nnn |
+| [#55](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/55) | PR-E jsPDF + SortableJS | Rui + Chan/Wakin |
+| [#56](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/56) | PR-F observers → audit_logs | @WakenMac |
+| [#57](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/57) | DomPDF purge confirm | @xxch4nnn |
+| [#58](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/58) | Remediate db-integration | @xxch4nnn |
+| [#59](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/59) | offline_queue action handlers | @WakenMac |
+
