@@ -22,6 +22,7 @@ Versioning follows team release tags when cut; until then use `[Unreleased]`.
 - Feature tests: `RoutePermissionGateTest`, `OfflineQueueScaffoldTest`.
 - Draft technical specification + user manual under `docs/` (PM review before client share).
 - Bible Keeper execution prompt + DTR backfill notes under `planning/`.
+- Version-pinned official tech-stack documentation index (`docs/TECH_STACK_DOCS.md`) + Cursor rule `.cursor/rules/tech-stack-docs.mdc` for agentic coding.
 
 ### Security
 - Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit).

@@ -1,12 +1,9 @@
 # DOSTorage V1 — Coding Standards
 
 ## Stack
-- Laravel
-- Livewire
-- Bootstrap
-- Spatie permissions
-- MySQL
-- Docker
+- Laravel **13.x** · Livewire **4.x** · Volt · Spatie Permission **v8** · Bootstrap **5.3** · Vite **8** · MySQL **8.4** (CI) · PHP **8.3** · Docker
+- **Version-pinned official documentation:** [`docs/TECH_STACK_DOCS.md`](docs/TECH_STACK_DOCS.md) — agents and humans must use those URLs (not unversioned “latest” guides).
+- Re-pin that file whenever `composer.lock` / `package-lock.json` / CI runtime versions change.
 
 ## Git workflow
 - Branch naming: `feat/<task-id>-<short-desc>` and `fix/<task-id>-<short-desc>`

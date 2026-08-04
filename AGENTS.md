@@ -37,6 +37,13 @@ Use these rules whenever this repo is the working directory.
 - Do **not** use `planning/TASKS_DETECTED_payload.md` for current status (retired 2026-08-04); use checklist + `planning/team_*.csv`
 - Chan handoff actions: `planning/HANDOFF_GUIDE.md`; cross-role work: `planning/HANDOFF_GITHUB_ISSUES.md`
 
+## Tech stack documentation (mandatory for agents)
+- Before implementing against any library in this repo, open the **version-pinned official docs** in [`docs/TECH_STACK_DOCS.md`](docs/TECH_STACK_DOCS.md).
+- Authority: lockfiles (`composer.lock`, `package-lock.json`, CI pins) → that file’s URLs → `CONTRIBUTING.md` conventions.
+- Do not code against older major docs (Laravel 10/11, Livewire 2/3, Spatie Permission v5–v7, Bootstrap 4).
+- After Dependabot/manual upgrades, update `docs/TECH_STACK_DOCS.md` in the same PR.
+- Cursor always-on rule: `.cursor/rules/tech-stack-docs.mdc`
+
 ## Changelog (mandatory for agents)
 - After any behavior/schema/seeder/CI change, update root `CHANGELOG.md` `[Unreleased]`.
 - After any investigation, external-repo pin, or stitch port session, append `planning/AGENTIC_CHANGELOG.md` (Date, Actor, Repo@branch, Action, Commit/PR, Summary, Linked).
