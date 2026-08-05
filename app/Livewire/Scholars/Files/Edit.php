@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Scholars\Files;
 
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -10,21 +11,26 @@ class Edit extends Component
     use WithFileUploads;
 
     public $scholar_id;
+
     public $file_id;
-    
-    #[\Livewire\Attributes\Url]
+
+    #[Url]
     public $return_url = '/scholars';
-    
+
     // Mock Data models
     public $fileTypes = [];
+
     public $file;
-    
+
     // Form fields
     public $file_type_id = '';
+
     public $file_name = '';
+
     public $mime_type = '';
+
     public $file_size = '';
-    
+
     public $compiledFile;
 
     public function mount($scholar, $file)
@@ -34,20 +40,20 @@ class Edit extends Component
 
         // Mock data
         $this->fileTypes = collect([
-            (object)['id' => 1, 'name' => 'Grades', 'file_group_id' => 1],
-            (object)['id' => 2, 'name' => 'Registration Form', 'file_group_id' => 1],
-            (object)['id' => 3, 'name' => 'Clearance', 'file_group_id' => 2],
+            (object) ['id' => 1, 'name' => 'Grades', 'file_group_id' => 1],
+            (object) ['id' => 2, 'name' => 'Registration Form', 'file_group_id' => 1],
+            (object) ['id' => 3, 'name' => 'Clearance', 'file_group_id' => 2],
         ]);
-        
-        $this->file = (object)[
+
+        $this->file = (object) [
             'id' => $file,
             'file_name' => '1st_sem_grades.pdf',
             'file_type_id' => 1,
             'mime_type' => 'application/pdf',
             'file_size' => 1024,
-            'fileType' => (object)['file_group_id' => 1]
+            'fileType' => (object) ['file_group_id' => 1],
         ];
-        
+
         $this->file_type_id = $this->file->file_type_id;
         $this->file_name = $this->file->file_name;
         $this->mime_type = $this->file->mime_type;
@@ -67,11 +73,11 @@ class Edit extends Component
         // $this->compiledFile->storeAs('scholars/files', $this->file_name);
 
         session()->flash('success', 'File compiled and uploaded successfully via Livewire!');
-        
+
         // Return or redirect
         return redirect()->route('scholars.files.edit', [
-            'scholar' => $this->scholar_id, 
-            'file' => $this->file_id
+            'scholar' => $this->scholar_id,
+            'file' => $this->file_id,
         ]);
     }
 

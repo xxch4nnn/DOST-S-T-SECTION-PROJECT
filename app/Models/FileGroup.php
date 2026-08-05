@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
-use App\Models\FileType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['name', 'slug'])]
 class FileGroup extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
 
-    public function fileType(){
+    protected $fillable = ['name', 'slug'];
+
+    public function fileTypes()
+    {
         return $this->hasMany(FileType::class, 'file_group_id');
     }
 }

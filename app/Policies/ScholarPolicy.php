@@ -9,27 +9,27 @@ class ScholarPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('viewScholars');
     }
 
     public function view(User $user, Scholar $scholar): bool
     {
-        return $user->can('viewScholars') || $user->hasRole('Super Admin');
+        return $user->can('viewScholars');
     }
 
     public function create(User $user): bool
     {
-        return $user->can('createScholars') || $user->hasRole('Super Admin');
+        return $user->can('createScholars');
     }
 
     public function update(User $user, Scholar $scholar): bool
     {
-        return $user->can('editScholars') || $user->hasRole('Super Admin');
+        return $user->can('editScholars');
     }
 
     public function delete(User $user, Scholar $scholar): bool
     {
-        return $user->can('deleteScholars') || $user->hasRole('Super Admin');
+        return $user->can('deleteScholars');
     }
 
     public function restore(User $user, Scholar $scholar): bool

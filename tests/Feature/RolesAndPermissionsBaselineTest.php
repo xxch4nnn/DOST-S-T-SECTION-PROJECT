@@ -35,6 +35,14 @@ class RolesAndPermissionsBaselineTest extends TestCase
             'editDocumentMetadata',
             'strikeOffDocuments',
             'viewReports',
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'deleteScholars',
+            'viewAdminRecords',
+            'createAdminRecords',
+            'editAdminRecords',
+            'deleteAdminRecords',
         ];
 
         $this->assertEqualsCanonicalizing(
@@ -59,10 +67,14 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
         $this->assertTrue($encoder->hasPermissionTo('uploadDocuments'));
         $this->assertTrue($encoder->hasPermissionTo('editDocumentMetadata'));
+        $this->assertTrue($encoder->hasPermissionTo('viewScholars'));
+        $this->assertTrue($encoder->hasPermissionTo('viewAdminRecords'));
         $this->assertFalse($encoder->hasPermissionTo('manageUsers'));
         $this->assertFalse($encoder->hasPermissionTo('strikeOffDocuments'));
         $this->assertFalse($encoder->hasPermissionTo('viewAuditLogs'));
-        $this->assertFalse($encoder->hasPermissionTo('viewReports'));
+        $this->assertFalse($encoder->hasPermissionTo('createAdminRecords'));
+        $this->assertFalse($encoder->hasPermissionTo('deleteScholars'));
+        $this->assertFalse($encoder->hasPermissionTo('deleteAdminRecords'));
     }
 
     public function test_seeded_test_admin_user_is_super_admin(): void

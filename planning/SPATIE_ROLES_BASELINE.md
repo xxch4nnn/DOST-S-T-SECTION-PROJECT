@@ -1,29 +1,42 @@
 # DOSTorage V1 — Spatie Roles / Permissions Baseline
-Verification Date: 2026-07-22
+Verification Date: 2026-08-04 (route gates + expanded matrix)
 
 ## Scope
-Baseline for checklist items:
 - Seed roles: Super Admin, Admin, Encoder
 - Seed V1 permission matrix and attach to roles
-- Encoder lacks `manageUsers`; Super Admin has all
+- Route-level Spatie middleware in `routes/web.php`
+- Policies registered via `AuthServiceProvider` (+ Super Admin `Gate::before`)
+- Encoder lacks `manageUsers`, `strikeOffDocuments`, `viewAuditLogs`, admin create/edit/delete, scholar delete
 
 ## Roles
 | Role | Permissions |
 |------|-------------|
-| Super Admin | viewAuditLogs, manageUsers, uploadDocuments, editDocumentMetadata, strikeOffDocuments, viewReports |
-| Admin | same as Super Admin (V1) |
-| Encoder | uploadDocuments, editDocumentMetadata |
+| Super Admin | all (also Gate::before bypass) |
+| Admin | all seeded permissions |
+| Encoder | uploadDocuments, editDocumentMetadata, viewReports, viewScholars, createScholars, editScholars, viewAdminRecords |
+
+## Route gates (summary)
+| Area | Middleware |
+|------|------------|
+| dashboard | `role:Super Admin\|Admin\|Encoder` |
+| scholars index/show | `permission:viewScholars` |
+| scholars edit | `permission:editScholars` |
+| add-file | `permission:uploadDocuments` |
+| admin-records index/show | `permission:viewAdminRecords` |
+| admin-records create | `permission:createAdminRecords` |
+| admin-records edit | `permission:editAdminRecords` |
+| audit-logs | `permission:viewAuditLogs` |
+| documents download | `DocumentPolicy::download` (403 if denied) |
 
 ## Seeded user
 - `test@example.com` → Super Admin (from `DatabaseSeeder`)
 
 ## Verification
 ```bash
-docker compose exec app php artisan migrate:fresh --force --seed
-docker compose exec app php artisan test --filter=RolesAndPermissionsBaselineTest
+php artisan test --filter=RolesAndPermissionsBaselineTest
+php artisan test --filter=RoutePermissionGateTest
+php artisan permission:cache-clear
 ```
 
-## Result
-- Feature test: `Tests\Feature\RolesAndPermissionsBaselineTest` — **5 passed**
-- Full suite after change: **33 passed**
-- Docker seed: `RolesAndPermissionsSeeder` completes; `test@example.com` assigned Super Admin
+## Note
+FS-07 policies were merged to `feat/fe-08-fullstack-hardening` (#24) but were **not** on `master` until this stitch slice.

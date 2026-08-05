@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\File;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Download the specified document.
      */
@@ -25,25 +28,17 @@ class DocumentController extends Controller
 
     public function viewFile(File $file)
     {
-        $path = null;
+        $this->authorize('download', $file);
 
-        if (!empty($file->file_path) && file_exists($file->file_path)) {
-            $path = $file->file_path;
-        } elseif (!empty($file->file_path) && Storage::disk('local')->exists($file->file_path)) {
-            $path = Storage::disk('local')->path($file->file_path);
-        } elseif (!empty($file->file_path) && Storage::disk('public')->exists($file->file_path)) {
-            $path = Storage::disk('public')->path($file->file_path);
-        }
-
-        if (! $path || ! file_exists($path)) {
+        if (! Storage::disk('local')->exists('documents/'.$file->file_name)) {
             abort(404, 'File not found on server.');
         }
 
-        $mimeType = $file->mime_type ?? (function_exists('mime_content_type') ? @mime_content_type($path) : null) ?? 'application/pdf';
+        $mimeType = $file->mime_type ?? (function_exists('mime_content_type') ? @mime_content_type($file->file_path) : null) ?? 'application/pdf';
 
-        return response()->file($path, [
+        return response()->file($file->file_path, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . ($file->file_name ?? basename($path)) . '"',
+            'Content-Disposition' => 'inline; filename="' . ($file->file_name ?? basename($file->file_path)) . '"',
         ]);
     }
 }

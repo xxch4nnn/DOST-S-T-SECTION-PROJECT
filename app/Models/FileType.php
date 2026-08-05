@@ -9,13 +9,23 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 #[Fillable(['file_group_id', 'name', 'metadata_template'])]
 class FileType extends Model
 {
-    public $timestamps=false;
-    protected $casts = [
-        'metadata_template'=>'array'
+    use HasFactory;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'file_group_id',
+        'name',
+        'metadata_template',
     ];
-    
-    public function fileGroup(){
-        return $this->belongsTo(FileGroup::class, 'file_group_id');
+
+    protected $casts = [
+        'metadata_template' => 'array',
+    ];
+
+    public function fileGroup()
+    {
+        return $this->belongsTo(FileGroup::class);
     }
 
     public function file(){

@@ -9,7 +9,7 @@ class AuditLogPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->can('viewAuditLogs') || $user->hasRole('Super Admin');
+        return $user->can('viewAuditLogs');
     }
 
     public function view(User $user, AuditLog $log): bool

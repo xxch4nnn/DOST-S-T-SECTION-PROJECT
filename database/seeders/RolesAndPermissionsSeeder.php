@@ -10,6 +10,8 @@ use Spatie\Permission\PermissionRegistrar;
 class RolesAndPermissionsSeeder extends Seeder
 {
     /**
+     * V1 baseline roles + permission matrix.
+     * Super Admin bypasses via Gate::before; Encoder must not receive manageUsers / strikeOff / audit.
      * Run the database seeds.
      */
     public function run(): void
@@ -19,12 +21,23 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Define baseline permissions
         $permissions = [
+            // Documents / ops
             'viewAuditLogs',
             'manageUsers',
             'uploadDocuments',
             'editDocumentMetadata',
             'strikeOffDocuments',
             'viewReports',
+            // Scholars
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'deleteScholars',
+            // Admin records
+            'viewAdminRecords',
+            'createAdminRecords',
+            'editAdminRecords',
+            'deleteAdminRecords',
         ];
 
         // Create permissions
@@ -35,6 +48,8 @@ class RolesAndPermissionsSeeder extends Seeder
         // Create roles and assign permissions
         $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdmin->syncPermissions($permissions);
+        $admin->syncPermissions($permissions);
+
 
         $admin = Role::firstOrCreate(['name' => 'Admin']);
         $admin->syncPermissions($permissions);
@@ -43,6 +58,21 @@ class RolesAndPermissionsSeeder extends Seeder
         $encoder->syncPermissions([
             'uploadDocuments',
             'editDocumentMetadata',
+            'viewReports',
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'viewAdminRecords',
+            // Scholars
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'deleteScholars',
+            // Admin records
+            'viewAdminRecords',
+            'createAdminRecords',
+            'editAdminRecords',
+            'deleteAdminRecords',
         ]);
     }
 }

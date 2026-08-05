@@ -9,27 +9,27 @@ class AdminRecordPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('viewAdminRecords');
     }
 
     public function view(User $user, AdministrativeRecord $record): bool
     {
-        return $user->can('viewAdminRecords') || $user->hasRole('Super Admin');
+        return $user->can('viewAdminRecords');
     }
 
     public function create(User $user): bool
     {
-        return $user->can('createAdminRecords') || $user->hasRole('Super Admin');
+        return $user->can('createAdminRecords');
     }
 
     public function update(User $user, AdministrativeRecord $record): bool
     {
-        return $user->can('editAdminRecords') || $user->hasRole('Super Admin');
+        return $user->can('editAdminRecords');
     }
 
     public function delete(User $user, AdministrativeRecord $record): bool
     {
-        return $user->can('deleteAdminRecords') || $user->hasRole('Super Admin');
+        return $user->can('deleteAdminRecords');
     }
 
     public function restore(User $user, AdministrativeRecord $record): bool

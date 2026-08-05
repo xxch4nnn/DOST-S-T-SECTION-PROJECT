@@ -81,6 +81,65 @@ jobs:
       - run: mysqldump -h 127.0.0.1 -u test -ppassword dostorage_test > archive_local/backup_smoke.sql
       - run: mysql -h 127.0.0.1 -u test -ppassword dostorage_test < archive_local/backup_smoke.sql
 
+  # Path 3 live-prod testing: synthetic HTTP + PHPUnit @group smoke (health/auth/upload/download).
+  # Remote staging curl lives in .github/workflows/deploy.yml (manual, Decision Gate required).
+  synthetic-smoke:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: dostorage_test
+          MYSQL_USER: test
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -ppassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, zip, pdo_mysql
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: composer install --no-interaction --no-progress --prefer-dist
+      - run: npm ci
+      - run: npm run build
+      - run: cp .env.example .env
+      - run: echo "APP_KEY=base64:placeholder" >> .env
+      - run: echo "DB_CONNECTION=mysql" >> .env
+      - run: echo "DB_HOST=127.0.0.1" >> .env
+      - run: echo "DB_PORT=3306" >> .env
+      - run: echo "DB_DATABASE=dostorage_test" >> .env
+      - run: echo "DB_USERNAME=test" >> .env
+      - run: echo "DB_PASSWORD=password" >> .env
+      - run: php artisan key:generate --force
+      - run: php artisan migrate --force
+      - run: php artisan test --group=smoke
+      - name: Boot app and curl /health + /login
+        run: |
+          set -euo pipefail
+          php artisan serve --host=127.0.0.1 --port=8000 > /tmp/artisan-serve.log 2>&1 &
+          echo $! > /tmp/artisan-serve.pid
+          for i in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:8000/health" -o /tmp/health.json; then
+              break
+            fi
+            sleep 1
+          done
+          cat /tmp/health.json
+          grep -E '"status"\s*:\s*"ok"' /tmp/health.json
+          curl -fsS -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:8000/login" | grep -E '^(200|302)$'
+          kill "$(cat /tmp/artisan-serve.pid)" || true
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +155,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm

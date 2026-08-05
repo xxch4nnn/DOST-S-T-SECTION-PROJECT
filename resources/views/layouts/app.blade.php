@@ -15,7 +15,7 @@
         <livewire:layout.sidebar />
 
         {{-- Main Content Area with Background Layering --}}
-        <div class="main-canvas flex-grow-1 d-flex flex-column position-relative" style="min-width: 0; height: 100vh; overflow: hidden; background-color: {{ request()->routeIs('dashboard') ? '#f8f9fa' : '#ffffff' }}; border-top-left-radius: 36px; border-bottom-left-radius: 36px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
+        <div class="main-canvas flex-grow-1 d-flex flex-column position-relative" style="min-width: 0; height: 100vh; overflow: hidden; background-color: #f4f6fa; border-top-left-radius: 36px; border-bottom-left-radius: 36px; border-top-right-radius: 0; border-bottom-right-radius: 0;">
             {{-- Main Content Slot (Z-Index 10 so dropdowns float over background) --}}
             <main class="flex-grow-1 overflow-auto position-relative" style="z-index: 10;">
                 {{ $slot }}
@@ -29,6 +29,9 @@
             @endif
         </div>
     </div>
+
+    {{-- Global Right-Corner Alert / Toast Notification System --}}
+    <x-notification-toast />
 
 </body>
 </html>
