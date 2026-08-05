@@ -22,6 +22,20 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-06
+
+- **Date:** 2026-08-06
+- **Time:** 01:45:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `docs/pr65-review-and-wakin-adoption`
+- **Action:** docs update + PR review
+- **Commit/PR:** #65 request-changes; docs PR pending
+- **Summary:** Independent review of Rui PR #65; cross-check vs PR65_REVIEW summary (additional High blockers: placeholder bytes, delete auth, mocks, FileType year, no versions/metadata); wrote Wakin Q1–Q12 side-by-side adoption guide.
+- **Linked:** `planning/PR65_REVIEW_2026-08-06.md`, `planning/WAKIN_Q12_VS_IMPLEMENTATION_2026-08-06.md`
+
+---
+
 ## 2026-08-05
 
 - **Date:** 2026-08-05

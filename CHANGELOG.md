@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-06 01:45:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin Q1–Q12 vs mother implementation matrix + DB adoption guide (`planning/WAKIN_Q12_VS_IMPLEMENTATION_2026-08-06.md`); PR #65 cross-check addendum (`planning/PR65_REVIEW_2026-08-06.md`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — AWS production deployment design prompt (planning SoT only; Decision Gate before provision) (`planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — CI Path 3: `synthetic-smoke` job (PHPUnit `@group smoke` + live `/health`/`/login` curl) and gated manual `deploy.yml` (staging/prod; requires `confirm_aws_gates=APPROVED`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — `ProductionSmokeTest` covering health, auth, upload, download forbid/allow (`tests/Feature/ProductionSmokeTest.php`).
