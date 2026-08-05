@@ -83,6 +83,8 @@ Full map: `docs/db/SCHEMA_MAPPING.md`.
 |------------|-------------------|
 | Creates `documents` with morph to Scholar | ✅ Aligns with Q2 |
 | `FileType::firstOrCreate(..., ['year' => …])` | ❌ `year` column **dropped**; year is not fillable — dead/wrong; use taxonomy name + `metadata` |
+| `FileType::where('is_available', …)` on Edit | ❌ **No `is_available` on `file_types`** — do not port that filter; availability is on lookups/scholars, not types |
+| Delete by `documentable_id` only | ❌ Always scope deletes with **both** `documentable_type` + `documentable_id` |
 | No `documents.metadata` write | ❌ Gaps Q3 / Q11 |
 | No `document_versions` on upload | ❌ Gaps Q4 |
 | Placeholder bytes `"DOST Document Content for …"` | ❌ Fake files in storage |
