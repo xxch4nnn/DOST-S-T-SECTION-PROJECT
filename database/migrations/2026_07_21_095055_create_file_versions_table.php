@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('file_versions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('file_id')->constrained('files')->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('file_id')->constrained('files', 'id')->cascadeOnDelete();
             $table->string('file_name', 200)->unique()->nullable(false);
             $table->string('file_path', 500)->unique()->nullable(false);
             $table->integer('file_size_kb')->nullable(false);

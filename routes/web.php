@@ -45,8 +45,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // // Audit Logs
     // Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
 
-    // Document Download
-    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    // Document View / Stream
+    Route::get('/documents/{file}/view', [DocumentController::class, 'viewFile'])->name('documents.view');
 });
 
 Route::middleware('auth')->group(function () {

@@ -13,9 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('files', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('file_type_id')->nullable(false)->constrained('file_types')->restrictOnDelete();
-            $table->string('file_name', 200)->unique()->nullable(false);
+            $table->string('file_name', 200)->nullable(false);
             $table->string('file_path', 500)->unique()->nullable(false);
             $table->integer('file_size')->nullable(false);
             $table->timestamp('uploaded_at')->useCurrent();

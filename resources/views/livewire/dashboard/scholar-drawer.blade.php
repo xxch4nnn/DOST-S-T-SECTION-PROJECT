@@ -16,6 +16,8 @@ new class extends Component
 
     public bool $showActionMenu = false;
     public bool $showStatusModal = false;
+    public array $file_groups = [];
+    public array $file_types = [];
 
     #[On('open-scholar-drawer')]
     public function openDrawer($scholarId, ?array $scholarData = null): void
@@ -82,22 +84,29 @@ new class extends Component
         }
     }
 
-    public function openDocument(string $title, string $imageUrl = '', string $fileType = 'pdf', int $documentIndex = 1, int $totalPages = 1): void
+    public function openDocument(string $folderName, int $index): void
     {
+        $folderFiles = $this->file_groups[$folderName] ?? [];
+        $file = $folderFiles[$index] ?? null;
+
+        if (!$file) {
+            return;
+        }
+
+        // Generate secure authenticated route URL for local private storage file
+        $secureStreamUrl = route('documents.view', ['file' => $file['id']]);
+
         $this->dispatch('open-document-viewer',
-            title: $title,
-            fileUrl: $imageUrl,
-            scholarName: $this->scholarData['name'] ?? 'null',
-            scholarId: $this->scholarId ?? -1,
-            fileId: 4, // Mock File ID for now
-            fileType: $fileType,
-            documentIndex: $documentIndex,
-            extraData: [
-                'totalPages' => $totalPages,
-                'currentPage' => 1,
-            ]
+            title: (string) ($file['file_type_name'] ?? $file['file_name'] ?? 'Document'),
+            fileUrl: (string) $secureStreamUrl,
+            scholarName: (string) ($this->scholarData['name'] ?? 'Scholar'),
+            fileType: str_contains($file['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
+            documentIndex: (int) ($index + 1),
+            scholarId: (int) ($this->scholarId ?? -1),
+            fileId: (int) ($file['id'] ?? 4),
         );
     }
+
 
     public function loadScholar(): void
     {
@@ -105,22 +114,25 @@ new class extends Component
             ->find($this->scholarId);
         
         // load all files
+        
+        $files = File::fromQuery("
+            SELECT 
+                f.id,
+                ft.name as file_type_name,
+                f.file_name,
+                f.file_path,
+                f.updated_at,
+                f.file_size,
+                f.mime_type,
+                f.metadata
+            FROM files as f
+            INNER JOIN file_types as ft ON f.file_type_id = ft.id
+            WHERE JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.scholar_id')) = :scholarId
+            ORDER BY ft.name ASC
+        ", array('scholarId' => $this->scholarId))->toArray();
 
-        // file_type_id, file_name, file_path, last_modified
-
-        $files = File::with('fileType')
-            ->whereHas('fileType', function ($query) {
-                $query->where('file_group_id', 1);
-            })
-            ->where('metadata->scholar_id', $this->scholarId)
-            ->whereNull('deleted_at')
-            ->get();
-        $this->groupedFiles = $files
-            ->groupBy('file_type_id')
-            ->toArray();
-
-        if (count($this->groupedFiles) > 0)
-            dd($this->groupedFiles);
+        $this->file_groups = collect($files)->groupBy('file_type_name')->toArray();
+        // dd($this->file_groups);
 
         if ($dbScholar) {
             $this->scholarData = [
@@ -304,45 +316,23 @@ new class extends Component
                         <span class="small text-muted fw-medium">Scanned Files</span>
                     </div>
 
-                    {{-- Dynamic Document Folders Array (Backend Handoff Ready with Test Cases A & B) --}}
-                    @php
-                        $fileGroups = [
-                            [
-                                'name' => 'Amendatory Agreement',
-                                'type' => 'pdf',
-                                'items' => [
-                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 10, 'url' => ''],
-                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 2', 'index' => 2, 'totalPages' => 10, 'url' => ''],
-                                    ['title' => 'Amendatory Agreement', 'sub' => 'Document 3', 'index' => 3, 'totalPages' => 10, 'url' => ''],
-                                ]
-                            ],
-                            [
-                                'name' => 'Report of Grades',
-                                'type' => 'pdf',
-                                'items' => [
-                                    ['title' => 'Report of Grades', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 1, 'url' => 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop'],
-                                ]
-                            ]
-                        ];
-                    @endphp
-
-                    @foreach($fileGroups as $group)
+                    @foreach ($file_groups as $folderName => $items)
                         <div class="folder-accordion mb-2">
-                            <button wire:click="toggleFolder('{{ $group['name'] }}')" type="button" class="folder-tab-btn">
-                                <span>{{ $group['name'] }}</span>
+                            <button wire:click="toggleFolder('{{ $folderName }}')" type="button" class="folder-tab-btn">
+                                <span>{{ $folderName }}</span>
                             </button>
 
-                            @if(in_array($group['name'], $expandedFolders, true))
+                            @if(in_array($folderName, $expandedFolders, true))
                                 <div class="folder-accordion__content">
                                     <div class="d-flex gap-3 overflow-auto pb-2">
-                                        @foreach($group['items'] as $docItem)
-                                            <div wire:click="openDocument('{{ $docItem['title'] }}', '{{ $docItem['url'] }}', '{{ $group['type'] }}', {{ $docItem['index'] }}, {{ $docItem['totalPages'] }})" class="doc-thumbnail-card" role="button">
+                                        @foreach ($items as $index => $file)
+                                            <div wire:click="openDocument('{{ $folderName }}', {{ $index }})" class="doc-thumbnail-card" role="button">
                                                 <div class="doc-thumbnail-card__preview">
                                                     <div class="doc-mini-paper">
                                                         <div class="doc-mini-header">
                                                             <div class="doc-mini-logo"></div>
-                                                            <div class="doc-mini-title">{{ $docItem['title'] }}</div>
-                                                            <div class="doc-mini-sub">{{ $docItem['sub'] }}</div>
+                                                            <div class="doc-mini-title">{{ $file['file_type_name'] }}</div>
+                                                            <div class="doc-mini-sub">{{ $file['file_name'] }}</div>
                                                         </div>
                                                         <div class="doc-mini-body">
                                                             <div class="doc-mini-line"></div>

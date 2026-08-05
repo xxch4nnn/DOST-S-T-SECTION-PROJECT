@@ -30,6 +30,10 @@ class FileSeeder extends Seeder
                 'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_3rd Year 2nd Sem.pdf',
                 'scholar_id'=>1                
             ],
+            [
+                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',
+                'scholar_id'=>1                
+            ],
         ];
 
         foreach($groups as $group){
@@ -44,7 +48,8 @@ class FileSeeder extends Seeder
 
             // Store the file in local storage under documents/ using a unique UUID (ADR-005)
             $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-            $uuidName = \Illuminate\Support\Str::uuid() . '.' . $extension;
+            $uuid = (string) \Illuminate\Support\Str::uuid();
+            $uuidName = $uuid . '.' . $extension;
             $destinationRelativePath = 'documents/' . $uuidName;
             $destinationAbsolutePath = \Illuminate\Support\Facades\Storage::disk('local')->path($destinationRelativePath);
 
@@ -69,6 +74,7 @@ class FileSeeder extends Seeder
             $fileTypeId = $fileType ? $fileType->id : 1;
 
             File::firstOrCreate([
+                'id' => $uuid,    
                 'file_name' => $fileName,
                 'file_type_id' => $fileTypeId,
                 'file_path' => $destinationRelativePath,

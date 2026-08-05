@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
             ClearanceStatusSeeder::class,
             UserSeeder::class,
             ScholarSeeder::class,
-            FileTypeSeeder::class
+            FileTypeSeeder::class,
+            FileSeeder::class
         ]);
     }
 }
