@@ -12,6 +12,7 @@ use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -26,7 +27,9 @@ class ScholarDocumentUploadTest extends TestCase
     public function test_allows_users_to_upload_documents_with_uuid_hashing()
     {
         // Avoid Storage::fake('local') — it breaks Livewire temporary upload metadata (LW4 + Flysystem).
+        $this->seed(RolesAndPermissionsSeeder::class);
         $user = User::factory()->create();
+        $user->assignRole('Encoder');
 
         $scholarship = Scholarship::firstOrCreate(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::firstOrCreate(['name' => 'Undergrad', 'is_available' => true]);
@@ -34,7 +37,10 @@ class ScholarDocumentUploadTest extends TestCase
         $course = Course::firstOrCreate(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
-        $fileType = FileType::firstOrCreate(['name' => 'Notice of Award', 'year' => '1st Year']);
+        $fileType = FileType::firstOrCreate(
+            ['name' => 'Notice of Award'],
+            ['metadata_template' => null, 'file_group_id' => null]
+        );
 
         $scholar = Scholar::create([
             'first_name' => 'John',

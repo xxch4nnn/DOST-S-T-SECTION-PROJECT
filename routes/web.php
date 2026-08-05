@@ -22,32 +22,51 @@ Route::redirect('/', '/login');
 Route::get('/health', HealthController::class)->name('health');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Volt::route('dashboard', 'dashboard.main')->name('dashboard');
+    // Any staff role may open the dashboard shell.
+    Route::middleware('role:Super Admin|Admin|Encoder')->group(function () {
+        Volt::route('dashboard', 'dashboard.main')->name('dashboard');
+    });
 
-    // Scholars CRUD
-    Route::get('/scholars', Index::class)->name('scholars.index');
-    Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
-    Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
-    // MOCK Edit File UI
-    Route::get('/scholars/{scholar}/files/{file}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
+    Route::middleware('permission:viewScholars')->group(function () {
+        Route::get('/scholars', Index::class)->name('scholars.index');
+        Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
+    });
 
-    // Add New File Wizard
-    Route::get('/add-file', AddFile::class)->name('add-file.index');
+    Route::middleware('permission:editScholars')->group(function () {
+        Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
+        Route::get('/scholars/{scholar}/files/{file}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
+    });
 
-    // Admin Records CRUD
-    Route::get('/admin-records', AdminRecordsIndex::class)->name('admin-records.index');
-    Route::get('/admin-records/create', AdminRecordsCreate::class)->name('admin-records.create');
-    Route::get('/admin-records/{record}', AdminRecordsShow::class)->name('admin-records.show');
-    Route::get('/admin-records/{record}/edit', AdminRecordsEdit::class)->name('admin-records.edit');
+    Route::middleware('permission:uploadDocuments')->group(function () {
+        Route::get('/add-file', AddFile::class)->name('add-file.index');
+    });
 
-    // Audit Logs
-    Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    Route::middleware('permission:viewAdminRecords')->group(function () {
+        Route::get('/admin-records', AdminRecordsIndex::class)->name('admin-records.index');
+    });
 
     // Notifications
     Route::get('/notifications', NotificationsIndex::class)->name('notifications.index');
 
-    // Document Download
-    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::middleware('permission:createAdminRecords')->group(function () {
+        Route::get('/admin-records/create', AdminRecordsCreate::class)->name('admin-records.create');
+    });
+
+    Route::middleware('permission:viewAdminRecords')->group(function () {
+        Route::get('/admin-records/{record}', AdminRecordsShow::class)->name('admin-records.show');
+    });
+
+    Route::middleware('permission:editAdminRecords')->group(function () {
+        Route::get('/admin-records/{record}/edit', AdminRecordsEdit::class)->name('admin-records.edit');
+    });
+
+    Route::middleware('permission:viewAuditLogs')->group(function () {
+        Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    });
+
+    // Download: auth + verified; DocumentPolicy::download enforces document-type access (403).
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])
+        ->name('documents.download');
 });
 
 Route::middleware('auth')->group(function () {

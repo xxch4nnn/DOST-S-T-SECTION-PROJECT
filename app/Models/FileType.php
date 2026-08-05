@@ -9,7 +9,22 @@ class FileType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'year'];
+    public $timestamps = false;
+
+    protected $fillable = [
+        'file_group_id',
+        'name',
+        'metadata_template',
+    ];
+
+    protected $casts = [
+        'metadata_template' => 'array',
+    ];
+
+    public function fileGroup()
+    {
+        return $this->belongsTo(FileGroup::class);
+    }
 
     public function documents()
     {

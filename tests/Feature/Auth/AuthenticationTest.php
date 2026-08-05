@@ -4,6 +4,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\AuditLog;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Volt\Volt;
@@ -95,7 +96,10 @@ class AuthenticationTest extends TestCase
 
     public function test_navigation_menu_can_be_rendered(): void
     {
+        $this->seed(RolesAndPermissionsSeeder::class);
+
         $user = User::factory()->create();
+        $user->assignRole('Encoder');
 
         $this->actingAs($user);
 

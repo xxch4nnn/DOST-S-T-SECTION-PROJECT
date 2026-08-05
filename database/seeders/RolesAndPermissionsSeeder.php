@@ -12,19 +12,30 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     /**
      * V1 baseline roles + permission matrix.
-     * Super Admin has all; Encoder must not receive manageUsers.
+     * Super Admin bypasses via Gate::before; Encoder must not receive manageUsers / strikeOff / audit.
      */
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
+            // Documents / ops
             'viewAuditLogs',
             'manageUsers',
             'uploadDocuments',
             'editDocumentMetadata',
             'strikeOffDocuments',
             'viewReports',
+            // Scholars
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'deleteScholars',
+            // Admin records
+            'viewAdminRecords',
+            'createAdminRecords',
+            'editAdminRecords',
+            'deleteAdminRecords',
         ];
 
         foreach ($permissions as $name) {
@@ -36,19 +47,16 @@ class RolesAndPermissionsSeeder extends Seeder
         $encoder = Role::firstOrCreate(['name' => 'Encoder', 'guard_name' => 'web']);
 
         $superAdmin->syncPermissions($permissions);
-
-        $admin->syncPermissions([
-            'viewAuditLogs',
-            'manageUsers',
-            'uploadDocuments',
-            'editDocumentMetadata',
-            'strikeOffDocuments',
-            'viewReports',
-        ]);
+        $admin->syncPermissions($permissions);
 
         $encoder->syncPermissions([
             'uploadDocuments',
             'editDocumentMetadata',
+            'viewReports',
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'viewAdminRecords',
         ]);
 
         $user = User::where('email', 'test@example.com')->first();

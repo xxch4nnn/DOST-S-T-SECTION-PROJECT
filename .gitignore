@@ -21,6 +21,12 @@
 .env.bak
 /public/build
 
+NUL
+Thumbs.db
+.DS_Store
+*.log
+*.tmp
+
 /testing
 /database/database.sqlite
 
@@ -48,3 +54,4 @@
 /.mcp.json
 /.ag-kit-backups
 
+_backend_scratch/
