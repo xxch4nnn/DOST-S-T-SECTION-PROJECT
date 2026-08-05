@@ -1,0 +1,410 @@
+// ===================================================================
+// Notifications Page & Right Corner Toast Alert Styles
+// ===================================================================
+
+.notifications-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.notifications-card {
+    background-color: #ffffff;
+    border-top-left-radius: 36px;
+    min-height: 100vh;
+    padding: 2.75rem 3.5rem;
+    box-shadow: 0 4px 24px rgb(0 0 0 / 2%);
+    display: flex;
+    flex-direction: column;
+}
+
+// Header Section
+.notifications-header {
+    margin-bottom: 2rem;
+}
+
+.notifications-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.notifications-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.notifications-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 9999px;
+    background-color: #0088ff;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+// Action Bar (Filters & Mark All Read)
+.notifications-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+}
+
+.notifications-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1.4rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1.4;
+}
+
+.filter-pill--active {
+    background-color: #0088ff;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgb(0 136 255 / 20%);
+
+    &:hover {
+        background-color: #0077e6;
+        color: #ffffff;
+    }
+}
+
+.filter-pill--inactive {
+    background-color: #94a3b8;
+    color: #ffffff;
+
+    &:hover {
+        background-color: #64748b;
+        color: #ffffff;
+    }
+}
+
+.mark-all-read-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+
+    &:hover {
+        color: #1d4ed8;
+    }
+
+    &:disabled {
+        color: #94a3b8;
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+}
+
+// Notifications List
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.notification-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 1.5rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.notification-item--unread {
+    background-color: #edf5ff;
+
+    &:hover {
+        background-color: #e2eeff;
+    }
+}
+
+.notification-item--read {
+    background-color: #ffffff;
+
+    &:hover {
+        background-color: #f8fafc;
+    }
+}
+
+.notification-content-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.unread-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ef4444;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgb(239 68 68 / 20%);
+}
+
+.unread-indicator-placeholder {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    visibility: hidden;
+}
+
+.notification-text {
+    font-size: 0.95rem;
+    color: #334155;
+    line-height: 1.4;
+
+    .notification-actor {
+        color: #0f172a;
+        font-weight: 700;
+        margin-right: 0.35rem;
+    }
+
+    .notification-target {
+        color: #1e293b;
+        font-weight: 500;
+    }
+}
+
+.notification-time {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    flex-shrink: 0;
+    margin-left: 2rem;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.notification-empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #64748b;
+
+    .empty-icon {
+        font-size: 3rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 0;
+    }
+}
+
+// Live alert demo bar (for testing alerts easily)
+.toast-demo-bar {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed #e2e8f0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .demo-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        margin-right: 0.5rem;
+    }
+
+    .demo-btn {
+        padding: 0.35rem 0.85rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+}
+
+// ===================================================================
+// Right Corner Floating Toast Alert Styles (Image 2 Match)
+// ===================================================================
+
+.notification-toasts-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 360px;
+    pointer-events: none;
+}
+
+.notification-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.15rem;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.toast-message {
+    line-height: 1.35;
+    overflow-wrap: break-word;
+    font-size: 0.9rem;
+}
+
+.toast-close-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.65;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+// Toast Palette Variants (Image 2)
+.toast-purple {
+    background-color: #f3e8ff;
+    border-color: #d8b4fe;
+    color: #581c87;
+
+    .toast-icon {
+        color: #4c1d95;
+    }
+}
+
+.toast-gray {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #334155;
+
+    .toast-icon {
+        color: #1e293b;
+    }
+}
+
+.toast-green {
+    background-color: #dcfce7;
+    border-color: #86efac;
+    color: #166534;
+
+    .toast-icon {
+        color: #14532d;
+    }
+}
+
+.toast-red {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+
+    .toast-icon {
+        color: #7f1d1d;
+    }
+}
+
+.toast-cyan {
+    background-color: #cffafe;
+    border-color: #67e8f9;
+    color: #0e7490;
+
+    .toast-icon {
+        color: #155e75;
+    }
+}
+
+.toast-yellow {
+    background-color: #fef9c3;
+    border-color: #fde047;
+    color: #854d0e;
+
+    .toast-icon {
+        color: #713f12;
+    }
+}

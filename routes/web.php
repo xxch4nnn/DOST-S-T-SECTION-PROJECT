@@ -10,6 +10,7 @@ use App\Livewire\AdminRecords\Edit as AdminRecordsEdit;
 use App\Livewire\AdminRecords\Index as AdminRecordsIndex;
 use App\Livewire\AdminRecords\Show as AdminRecordsShow;
 use App\Livewire\AuditLogs\Index as AuditLogsIndex;
+use App\Livewire\Notifications\Index as NotificationsIndex;
 use App\Livewire\Scholars\Edit;
 use App\Livewire\Scholars\Index;
 use App\Livewire\Scholars\Show;
@@ -41,6 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Audit Logs
     Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+
+    // Notifications
+    Route::get('/notifications', NotificationsIndex::class)->name('notifications.index');
 
     // Document Download
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');

@@ -30,5 +30,8 @@
         </div>
     </div>
 
+    {{-- Global Right-Corner Alert / Toast Notification System --}}
+    <x-notification-toast />
+
 </body>
 </html>

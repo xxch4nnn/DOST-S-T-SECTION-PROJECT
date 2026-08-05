@@ -90,8 +90,9 @@ new class extends Component
         <span class="sidebar-tooltip">Home</span>
     </a>
 
-    <a href="#" wire:click.prevent="setActive('notifications')"
-       class="sidebar-item {{ $activeItem === 'notifications' ? 'sidebar-item--active' : '' }}"
+    <a href="{{ route('notifications.index') }}" wire:navigate
+       wire:click="setActive('notifications')"
+       class="sidebar-item {{ $activeItem === 'notifications' || request()->routeIs('notifications.*') ? 'sidebar-item--active' : '' }}"
        aria-label="Notifications">
         <i class="ph ph-bell sidebar-icon"></i>
         <span class="sidebar-label">Notifications</span>
