@@ -28,11 +28,23 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Time:** 15:20:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Antigravity / Chan
-- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `fix/pr65-review-blockers-and-auth-hardening`
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/fe-08-upload-files-and-document-viewer`
 - **Action:** code refactor + tests + docs update
 - **Commit/PR:** #65 review resolution
 - **Summary:** Resolved all CODEOWNER review blockers for PR#65: gated notifications route with permission, eliminated fake mock notifications with real AuditLog queries, fixed document deletion authorization and cross-morph security, purged placeholder byte generation and attribution fallbacks, added DocumentVersion tracking, configured Bootstrap pagination, and cleaned up Volt stubs.
 - **Linked:** `routes/web.php`, `database/seeders/RolesAndPermissionsSeeder.php`, `app/Livewire/Notifications/Index.php`, `app/Livewire/AddFile.php`, `app/Livewire/Scholars/Edit.php`, `app/Livewire/Scholars/Files/Edit.php`, `config/livewire.php`, `resources/views/livewire/layout/sidebar.blade.php`, `tests/Feature/NotificationsTest.php`, `tests/Feature/EditScholarTest.php`, `CHANGELOG.md`
+
+- **Date:** 2026-08-06
+- **Time:** 01:45:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `docs/pr65-review-and-wakin-adoption`
+- **Action:** docs update + PR review
+- **Commit/PR:** #65 request-changes; docs PR pending
+- **Summary:** Independent review of Rui PR #65; cross-check vs PR65_REVIEW summary (additional High blockers: placeholder bytes, delete auth, mocks, FileType year, no versions/metadata); wrote Wakin Q1–Q12 side-by-side adoption guide.
+- **Linked:** `planning/PR65_REVIEW_2026-08-06.md`, `planning/WAKIN_Q12_VS_IMPLEMENTATION_2026-08-06.md`
+
+---
 
 ## 2026-08-05
 
