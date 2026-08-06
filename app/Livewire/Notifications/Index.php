@@ -6,7 +6,6 @@ namespace App\Livewire\Notifications;
 
 use App\Models\AuditLog;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -30,136 +29,38 @@ class Index extends Component
     }
 
     /**
-     * Load notifications merging system audit logs and initial mock events.
+     * Load notifications from system audit logs.
      */
     public function loadNotifications(): void
     {
-        // Check if notifications are stored in session for user state persistence
-        $cachedNotifications = session()->get('user_notifications');
-
-        if ($cachedNotifications && is_array($cachedNotifications) && count($cachedNotifications) > 0) {
-            $this->notifications = $cachedNotifications;
-
-            return;
-        }
+        $readIds = session()->get('read_notifications', []);
 
         $items = [];
 
-        // Try reading recent real audit logs
         try {
-            $recentAuditLogs = AuditLog::with('user')->latest()->take(10)->get();
+            $recentAuditLogs = AuditLog::with('user')->latest()->take(30)->get();
             foreach ($recentAuditLogs as $log) {
-                $actor = $log->user->name ?? 'Admin Name';
-                $action = $log->action ?? 'modified';
+                $actor = $log->user->name ?? 'System';
+                $action = $log->action ?? 'updated';
                 $target = $log->record_type ? class_basename($log->record_type).' #'.$log->record_id : 'system record';
+                $id = 'log_'.$log->id;
 
                 $items[] = [
-                    'id' => 'log_'.$log->id,
+                    'id' => $id,
                     'actor' => $actor,
-                    'action_text' => $action.' '.$target,
-                    'target_name' => '',
-                    'is_unread' => true,
-                    'time_ago' => $log->created_at ? $log->created_at->diffForHumans(short: true) : '5m ago',
+                    'action_text' => $action.' for',
+                    'target_name' => $target,
+                    'is_unread' => ! in_array($id, $readIds, true),
+                    'time_ago' => $log->created_at ? $log->created_at->diffForHumans(short: true) : 'just now',
                     'timestamp' => $log->created_at ? $log->created_at->timestamp : time(),
                     'type' => 'purple',
                 ];
             }
         } catch (\Throwable) {
-            // Fallback gracefully if database table is empty/unseeded
+            // Fallback gracefully if database table is empty or unmigrated
         }
 
-        // Add rich initial notifications matching the Figma mockup (Image 1)
-        $sampleNotifications = [
-            [
-                'id' => 'notif_1',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => true,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'purple',
-            ],
-            [
-                'id' => 'notif_2',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => true,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'cyan',
-            ],
-            [
-                'id' => 'notif_3',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => true,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'green',
-            ],
-            [
-                'id' => 'notif_4',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => true,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'red',
-            ],
-            [
-                'id' => 'notif_5',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => true,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'yellow',
-            ],
-            [
-                'id' => 'notif_6',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => false,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'gray',
-            ],
-            [
-                'id' => 'notif_7',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => false,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'purple',
-            ],
-            [
-                'id' => 'notif_8',
-                'actor' => 'Admin Name',
-                'action_text' => 'edited document metadata for',
-                'target_name' => 'Fernandez, Gianfranco Miguel D.',
-                'is_unread' => false,
-                'time_ago' => '5m ago',
-                'timestamp' => Carbon::now()->subMinutes(5)->timestamp,
-                'type' => 'green',
-            ],
-        ];
-
-        // Combine logs with mock items if list is small
-        if (count($items) < 5) {
-            $this->notifications = array_merge($items, $sampleNotifications);
-        } else {
-            $this->notifications = $items;
-        }
-
-        $this->saveState();
+        $this->notifications = $items;
     }
 
     /**
@@ -175,6 +76,12 @@ class Index extends Component
      */
     public function markAsRead(string $id): void
     {
+        $readIds = session()->get('read_notifications', []);
+        if (! in_array($id, $readIds, true)) {
+            $readIds[] = $id;
+            session()->put('read_notifications', $readIds);
+        }
+
         foreach ($this->notifications as &$item) {
             if ($item['id'] === $id) {
                 $item['is_unread'] = false;
@@ -182,8 +89,6 @@ class Index extends Component
             }
         }
         unset($item);
-
-        $this->saveState();
     }
 
     /**
@@ -191,12 +96,14 @@ class Index extends Component
      */
     public function markAllAsRead(): void
     {
+        $allIds = array_column($this->notifications, 'id');
+        $readIds = array_values(array_unique(array_merge(session()->get('read_notifications', []), $allIds)));
+        session()->put('read_notifications', $readIds);
+
         foreach ($this->notifications as &$item) {
             $item['is_unread'] = false;
         }
         unset($item);
-
-        $this->saveState();
 
         // Dispatch a corner toast alert confirming action
         $this->dispatch('notify', [
@@ -236,14 +143,6 @@ class Index extends Component
         }
 
         return $this->notifications;
-    }
-
-    /**
-     * Persist current notifications state in session.
-     */
-    private function saveState(): void
-    {
-        session()->put('user_notifications', $this->notifications);
     }
 
     public function render(): View

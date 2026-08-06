@@ -12,6 +12,7 @@ use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -82,41 +83,7 @@ class Edit extends Component
         if ($scholar instanceof Scholar) {
             $this->scholar = $scholar;
         } else {
-            $found = Scholar::find($scholar);
-            if ($found) {
-                $this->scholar = $found;
-            } else {
-                $defaultStatus = ClearanceStatus::first();
-                $defaultSchool = School::first();
-                $defaultCourse = Course::first();
-                $defaultRegion = Region::first();
-                $defaultType = ScholarshipType::first();
-                $defaultScholarship = Scholarship::first();
-
-                $this->scholar = new Scholar([
-                    'id' => is_numeric($scholar) ? (int) $scholar : 1,
-                    'first_name' => 'Wakin Cean',
-                    'middle_name' => 'C.',
-                    'last_name' => 'Maclang',
-                    'spas_no' => 'U-2023-00855-2235',
-                    'year_of_award' => 2023,
-                    'program' => 'RA 10612',
-                    'scholarship_id' => $defaultScholarship?->id ?? 1,
-                    'scholarship_type_id' => $defaultType?->id ?? 1,
-                    'school_id' => $defaultSchool?->id ?? 1,
-                    'course_id' => $defaultCourse?->id ?? 1,
-                    'region_id' => $defaultRegion?->id ?? 1,
-                    'clearance_status_id' => $defaultStatus?->id ?? 1,
-                    'sex' => 'Male',
-                    'birthdate' => '2005-08-23',
-                    'email_address' => 'maclangw26@gmail.com',
-                    'contact_number' => '09762941445',
-                    'barangay' => 'Brgy. 34 - D',
-                    'district' => 'C.M. Recto St. Poblacion District',
-                    'municipality' => 'Davao City',
-                    'province' => 'Davao del Sur',
-                ]);
-            }
+            $this->scholar = Scholar::findOrFail($scholar);
         }
 
         $this->fill($this->scholar->toArray());
@@ -133,7 +100,7 @@ class Edit extends Component
         $documents = $this->scholar->exists ? $this->scholar->documents()->with('fileType')->get() : collect();
 
         if ($documents->isEmpty()) {
-            $defaultType = FileType::where('is_available', true)->first();
+            $defaultType = FileType::first();
             $defaultName = $defaultType ? $defaultType->name : 'Scholarship Agreement';
             $this->scannedCategories = [
                 [
@@ -205,7 +172,14 @@ class Edit extends Component
         if (isset($this->scannedCategories[$index])) {
             foreach ($this->scannedCategories[$index]['files'] as $file) {
                 if (! empty($file['is_existing']) && ! empty($file['id'])) {
-                    $this->deletedDocumentIds[] = $file['id'];
+                    $doc = Document::where('id', $file['id'])
+                        ->where('documentable_type', Scholar::class)
+                        ->where('documentable_id', $this->scholar->id)
+                        ->first();
+                    if ($doc) {
+                        $this->authorize('delete', $doc);
+                        $this->deletedDocumentIds[] = $file['id'];
+                    }
                 }
             }
             array_splice($this->scannedCategories, $index, 1);
@@ -228,6 +202,13 @@ class Edit extends Component
 
     public function deleteExistingDocument(int $docId): void
     {
+        $doc = Document::where('id', $docId)
+            ->where('documentable_type', Scholar::class)
+            ->where('documentable_id', $this->scholar->id)
+            ->firstOrFail();
+
+        $this->authorize('delete', $doc);
+
         $this->deletedDocumentIds[] = $docId;
         foreach ($this->scannedCategories as &$cat) {
             $cat['files'] = array_values(array_filter($cat['files'], function ($f) use ($docId) {
@@ -316,10 +297,12 @@ class Edit extends Component
         // Delete any marked existing documents
         if (! empty($this->deletedDocumentIds)) {
             $toDelete = Document::whereIn('id', $this->deletedDocumentIds)
+                ->where('documentable_type', Scholar::class)
                 ->where('documentable_id', $this->scholar->id)
                 ->get();
 
             foreach ($toDelete as $doc) {
+                $this->authorize('delete', $doc);
                 if ($doc->stored_filename) {
                     Storage::disk('local')->delete('documents/'.$doc->stored_filename);
                 }
@@ -348,10 +331,7 @@ class Edit extends Component
                 $fileSizeKb = max(1, (int) round(($item['file_size'] ?? 1024) / 1024));
                 $mimeType = $item['mime_type'] ?? 'application/pdf';
 
-                $fileType = FileType::firstOrCreate(
-                    ['name' => $categoryName],
-                    ['year' => (string) ($this->year_of_award ?: date('Y'))]
-                );
+                $fileType = FileType::firstOrCreate(['name' => $categoryName]);
 
                 $uploaded = $uploadedMap[$originalName] ?? ($this->pendingUploads[$idx] ?? null);
 
@@ -362,10 +342,12 @@ class Edit extends Component
                 if ($uploaded && is_object($uploaded) && method_exists($uploaded, 'storeAs')) {
                     $uploaded->storeAs('documents', $storedFilename, 'local');
                 } else {
-                    Storage::disk('local')->put($targetPath, "DOST Document Content for {$originalName}");
+                    throw ValidationException::withMessages([
+                        'scanned_files' => "Uploaded file payload missing for {$originalName}.",
+                    ]);
                 }
 
-                Document::create([
+                $doc = Document::create([
                     'documentable_type' => Scholar::class,
                     'documentable_id' => $this->scholar->id,
                     'file_type_id' => $fileType->id,
@@ -374,7 +356,15 @@ class Edit extends Component
                     'mime_type' => $mimeType,
                     'file_size_kb' => $fileSizeKb,
                     'status' => 'active',
-                    'uploaded_by' => auth()->id() ?? 1,
+                    'uploaded_by' => auth()->id(),
+                ]);
+
+                $doc->versions()->create([
+                    'stored_filename' => $storedFilename,
+                    'original_filename' => $originalName,
+                    'file_size_kb' => $fileSizeKb,
+                    'version_number' => 1,
+                    'replaced_by_user_id' => auth()->id(),
                 ]);
             }
         }
@@ -383,10 +373,7 @@ class Edit extends Component
         foreach ($this->scannedCategories as $cat) {
             $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
             if (! empty($cat['files'])) {
-                $fileType = FileType::firstOrCreate(
-                    ['name' => $categoryName],
-                    ['year' => (string) ($this->year_of_award ?: date('Y'))]
-                );
+                $fileType = FileType::firstOrCreate(['name' => $categoryName]);
 
                 foreach ($cat['files'] as $fileMeta) {
                     if (! empty($fileMeta['is_existing'])) {
@@ -404,7 +391,7 @@ class Edit extends Component
 
                         Storage::disk('local')->move($tempPath, $targetPath);
 
-                        Document::create([
+                        $doc = Document::create([
                             'documentable_type' => Scholar::class,
                             'documentable_id' => $this->scholar->id,
                             'file_type_id' => $fileType->id,
@@ -413,7 +400,15 @@ class Edit extends Component
                             'mime_type' => $mimeType,
                             'file_size_kb' => $fileSizeKb,
                             'status' => 'active',
-                            'uploaded_by' => auth()->id() ?? 1,
+                            'uploaded_by' => auth()->id(),
+                        ]);
+
+                        $doc->versions()->create([
+                            'stored_filename' => $storedFilename,
+                            'original_filename' => $originalName,
+                            'file_size_kb' => $fileSizeKb,
+                            'version_number' => 1,
+                            'replaced_by_user_id' => auth()->id(),
                         ]);
                     }
                 }
@@ -439,7 +434,7 @@ class Edit extends Component
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),
             'clearanceStatuses' => ClearanceStatus::all(),
-            'availableFileTypes' => FileType::where('is_available', true)->get(),
+            'availableFileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

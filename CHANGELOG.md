@@ -20,6 +20,8 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Document versioning (`DocumentVersion`) creation for staged file uploads in `AddFile` and `Scholars/Edit` (#65).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — AWS production deployment design prompt (planning SoT only; Decision Gate before provision) (`planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — CI Path 3: `synthetic-smoke` job (PHPUnit `@group smoke` + live `/health`/`/login` curl) and gated manual `deploy.yml` (staging/prod; requires `confirm_aws_gates=APPROVED`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — `ProductionSmokeTest` covering health, auth, upload, download forbid/allow (`tests/Feature/ProductionSmokeTest.php`).
@@ -39,9 +41,13 @@ Every bullet **must** start with:
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Open PR review snapshot (`planning/PR_REVIEW_OPEN_2026-08-04.md`) (#35).
 
 ### Security
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Gated `notifications.index` route behind `permission:viewNotifications` and verified email/auth (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Authorized document deletion in `Scholars/Edit` with `DocumentPolicy::delete` check and scoped composite `documentable_type` + `documentable_id` filtering against cross-morph deletion (#65).
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit) (#52).
 
 ### Changed
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `Notifications/Index` component refactored to query real unread `AuditLog` records instead of hardcoded session mocks (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Livewire pagination theme configured to `bootstrap` in `config/livewire.php` (#65).
 - **2026-08-05 00:30:00 +08:00** · **Chan** (`@xxch4nnn`) — `AGENTS.md` / `CONTRIBUTING.md`: migrated Bible doc ID, Dependabot Paths A/B/C, CODEOWNER hold-release, Windows shell matrix, handoff ownership, changelog examples; re-pin concurrently **10.0.4** in `docs/TECH_STACK_DOCS.md` after #31 smoke.
 - **2026-08-05 00:27:19 +08:00** · **Chan** (`@xxch4nnn`) — Bump `concurrently` 9.2.4 → 10.0.4 (Dependabot #31; local smoke Path A/C).
 - **2026-08-05 00:13:37 +08:00** · **Chan** (`@xxch4nnn`) — Changelog policy: every `[Unreleased]` bullet must include date-time (+08:00) and user identity.
@@ -53,11 +59,15 @@ Every bullet **must** start with:
 - **2026-08-04 02:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Active task SoT is checklist + `planning/team_*.csv` (not `TASKS_DETECTED_payload.md`).
 
 ### Removed
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Removed empty Volt stub `resources/views/components/scholars/files/⚡edit.blade.php` and disabled mock `scholars.files.edit` route (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Eliminated placeholder fallback byte generation and `auth()->id() ?? 1` fallbacks in `AddFile` and `Scholars/Edit` (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Removed invalid `FileType::where('is_available')` and `year` query constraints (#65).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Unused `file_types.year` column (metadata carries year where needed) (#35).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — DomPDF targeted for removal as part of stitch (do not reintroduce).
 - **2026-08-04 02:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `TASKS_DETECTED_payload.md` retired from standup/reporting/Bible sync; archived reference only (#46 / #39).
 
 ### Fixed
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Enforced strict `Scholar::findOrFail` in `Scholars/Edit` mount to 404 instead of falling back to Wakin mock profile (#65).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Test alignment for taxonomy / FileType without `year` (#35).
 
 ---

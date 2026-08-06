@@ -33,31 +33,9 @@ class Edit extends Component
 
     public $compiledFile;
 
-    public function mount($scholar, $file)
+    public function mount($scholar, $file): void
     {
-        $this->scholar_id = $scholar;
-        $this->file_id = $file;
-
-        // Mock data
-        $this->fileTypes = collect([
-            (object) ['id' => 1, 'name' => 'Grades', 'file_group_id' => 1],
-            (object) ['id' => 2, 'name' => 'Registration Form', 'file_group_id' => 1],
-            (object) ['id' => 3, 'name' => 'Clearance', 'file_group_id' => 2],
-        ]);
-
-        $this->file = (object) [
-            'id' => $file,
-            'file_name' => '1st_sem_grades.pdf',
-            'file_type_id' => 1,
-            'mime_type' => 'application/pdf',
-            'file_size' => 1024,
-            'fileType' => (object) ['file_group_id' => 1],
-        ];
-
-        $this->file_type_id = $this->file->file_type_id;
-        $this->file_name = $this->file->file_name;
-        $this->mime_type = $this->file->mime_type;
-        $this->file_size = $this->file->file_size;
+        abort(501, 'Document file editor is under construction.');
     }
 
     public function save()

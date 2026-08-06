@@ -22,6 +22,18 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-06
+
+- **Date:** 2026-08-06
+- **Time:** 15:20:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `fix/pr65-review-blockers-and-auth-hardening`
+- **Action:** code refactor + tests + docs update
+- **Commit/PR:** #65 review resolution
+- **Summary:** Resolved all CODEOWNER review blockers for PR#65: gated notifications route with permission, eliminated fake mock notifications with real AuditLog queries, fixed document deletion authorization and cross-morph security, purged placeholder byte generation and attribution fallbacks, added DocumentVersion tracking, configured Bootstrap pagination, and cleaned up Volt stubs.
+- **Linked:** `routes/web.php`, `database/seeders/RolesAndPermissionsSeeder.php`, `app/Livewire/Notifications/Index.php`, `app/Livewire/AddFile.php`, `app/Livewire/Scholars/Edit.php`, `app/Livewire/Scholars/Files/Edit.php`, `config/livewire.php`, `resources/views/livewire/layout/sidebar.blade.php`, `tests/Feature/NotificationsTest.php`, `tests/Feature/EditScholarTest.php`, `CHANGELOG.md`
+
 ## 2026-08-05
 
 - **Date:** 2026-08-05
