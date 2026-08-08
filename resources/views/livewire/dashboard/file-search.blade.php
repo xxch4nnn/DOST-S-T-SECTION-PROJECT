@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Scholar;
+use Illuminate\Support\Facades\DB;
 use Livewire\Volt\Component;
 
 new class extends Component
@@ -19,13 +20,36 @@ new class extends Component
         if (trim($this->query) !== '') {
             $searchTerm = trim($this->query);
 
-            $dbResults = Scholar::with(['scholarshipType', 'clearanceStatus'])
-                ->where('first_name', 'like', "%{$searchTerm}%")
-                ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                ->orWhere('spas_no', 'like', "%{$searchTerm}%")
-                ->orWhere('year_of_award', 'like', "%{$searchTerm}%")
-                ->limit(6)
-                ->get();
+            $query = Scholar::query()->with([
+                'school',
+                'course',
+                'scholarship',
+                'scholarshipType',
+                'clearanceStatus'
+            ]);
+
+            if (str_contains($searchTerm, '@')) {
+                $query->where('email_address', $searchTerm);
+            } elseif (preg_match('/^[a-zA-Z0-9]+-[a-zA-Z0-9\-]+$/', $searchTerm)) {
+                $query->where('spas_number', 'LIKE', $searchTerm . '%');
+            } elseif (preg_match('/^(09|\+63)\d+$/', $searchTerm)) {
+                $query->where('contact_number', 'LIKE', $searchTerm . '%');
+            } elseif (is_numeric($searchTerm)) {
+                $query->where('year_of_award', $searchTerm);
+            } else {
+                if (DB::connection()->getDriverName() === 'mysql') {
+                    $query->where(function ($sub) use ($searchTerm) {
+                        $sub->where('first_name', 'like', "%{$searchTerm}%")
+                            ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                            ->orWhere('middle_name', 'like', "%{$searchTerm}%")
+                            ->orWhere('fts_search_data', 'like', "%{$searchTerm}%");
+                    });
+                } else {
+                    $query->whereRaw("MATCH(fts_search_data) AGAINST(? IN BOOLEAN MODE)", [$searchTerm]);
+                }
+            }
+
+            $dbResults = $query->limit(15)->get();
 
             if ($dbResults->isNotEmpty()) {
                 foreach ($dbResults as $scholar) {
@@ -33,11 +57,11 @@ new class extends Component
                         'id' => $scholar->id,
                         'last_name' => $scholar->last_name,
                         'first_name' => $scholar->first_name,
-                        'spas_no' => $scholar->spas_no ?? '2023-00855-9102',
-                        'program_type' => $scholar->scholarshipType->code ?? 'RA 10612',
-                        'program_level' => $scholar->program ?? 'Undergrad',
+                        'spas_number' => $scholar->spas_number ?? '2023-00855-9102',
+                        'program_type' => $scholar->scholarshipProgram->name ?? 'RA 10612',
+                        'program_level' => $scholar->scholarshipProgramType->name ?? 'Undergrad',
                         'status' => $scholar->clearanceStatus->name ?? 'Not Cleared',
-                        'status_class' => ($scholar->clearanceStatus->name ?? '') === 'Cleared' ? 'badge-status-cleared' : 'badge-status-not-cleared',
+                        'status_class' => ($scholar->clearanceStatus?->name ?? '') === 'Cleared' ? 'badge-status-cleared' : 'badge-status-not-cleared',
                     ];
                 }
             } else {
@@ -45,9 +69,9 @@ new class extends Component
                 $results = [
                     [
                         'id' => 1,
-                        'last_name' => 'Maclang',
-                        'first_name' => 'Wakin Cean',
-                        'spas_no' => '2023-00855-9102',
+                        'last_name' => 'NA',
+                        'first_name' => 'NA',
+                        'spas_number' => '2023-00855-9102',
                         'program_type' => 'RA 10612',
                         'program_level' => 'Undergrad',
                         'status' => 'Not Cleared',
@@ -57,7 +81,7 @@ new class extends Component
                         'id' => 2,
                         'last_name' => 'Palabon',
                         'first_name' => 'Rui',
-                        'spas_no' => '2023-00855-9102',
+                        'spas_number' => '2023-00855-9102',
                         'program_type' => 'RA 10612',
                         'program_level' => 'Undergrad',
                         'status' => 'Not Cleared',
@@ -67,7 +91,7 @@ new class extends Component
                         'id' => 3,
                         'last_name' => 'Rizal Mercado',
                         'first_name' => 'Jose Protasio Alonzo Realonda',
-                        'spas_no' => '2023-00855-9102',
+                        'spas_number' => '2023-00855-9102',
                         'program_type' => 'RA 10612',
                         'program_level' => 'Undergrad',
                         'status' => 'Not Cleared',
@@ -117,7 +141,7 @@ new class extends Component
                         {{-- SPAS ID --}}
                         <div class="search-result-item__spas">
                             <span class="fw-bold text-dark me-1">SPAS ID:</span>
-                            <span class="text-secondary">{{ $item['spas_no'] }}</span>
+                            <span class="text-secondary">{{ $item['spas_number'] }}</span>
                         </div>
 
                         {{-- Program & Level --}}

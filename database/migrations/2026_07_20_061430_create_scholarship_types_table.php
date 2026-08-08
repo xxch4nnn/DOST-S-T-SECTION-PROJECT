@@ -6,16 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('scholarship_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
-            $table->boolean('is_available')->default(true);
-            $table->timestamps();
+            $table->string('name', 100)->unique()->nullable(false);
+            $table->boolean('is_available')->default(1)->nullable(false);
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('scholarship_types');

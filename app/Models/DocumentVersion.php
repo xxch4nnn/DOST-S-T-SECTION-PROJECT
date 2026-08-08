@@ -2,25 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DocumentVersion extends Model
 {
-    use HasFactory;
+    public $timestamps = false; 
 
     protected $fillable = [
-        'document_id', 'stored_filename', 'original_filename',
-        'file_size_kb', 'version_number', 'replaced_by_user_id',
+        'document_id', 'version_number', 'file_name', 'file_path', 'file_size', 'file_type_id', 'uploaded_by'
     ];
 
-    public function document()
-    {
+    public function document(){
         return $this->belongsTo(Document::class);
     }
 
-    public function replacer()
+    public function fileType()
     {
-        return $this->belongsTo(User::class, 'replaced_by_user_id');
+        return $this->belongsTo(FileType::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -315,7 +315,7 @@
                     const defaultName = rawName.substring(0, rawName.lastIndexOf('.')) || rawName;
                     const fileNameInput = document.getElementById("file_name");
                     if (fileNameInput && !fileNameInput.value) {
-                        @this.set('file_name', defaultName);
+                        $wire.set('file_name', defaultName);
                     }
                 }
             }
@@ -358,7 +358,7 @@
             const cards = previewContainer.querySelectorAll('.preview-card-item');
             if (cards.length === 0) {
                 // If there's no files, we just run Livewire's normal save.
-                @this.save();
+                $wire.save();
                 return;
             }
 
@@ -427,7 +427,7 @@
 
                 const pdfBlob = doc.output('blob');
                 
-                let customName = @this.get('file_name');
+                let customName = $wire.get('file_name');
                 if (!customName || customName.trim() === '') customName = 'compiled_document';
                 const finalName = customName.endsWith('.pdf') ? customName : `${customName}.pdf`;
                 
@@ -436,9 +436,9 @@
                 });
 
                 // Upload the file via Livewire
-                @this.upload('compiledFile', compiledFile, (uploadedFilename) => {
+                $wire.upload('compiledFile', compiledFile, (uploadedFilename) => {
                     // Success!
-                    @this.save();
+                    $wire.save();
                     
                     // Reset button after Livewire finishes request
                     setTimeout(() => {

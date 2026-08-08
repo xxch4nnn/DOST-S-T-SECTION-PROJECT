@@ -2,6 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\ClearanceStatus;
+use App\Models\Course;
+use App\Models\Region;
+use App\Models\Scholar;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
+use App\Models\School;
 use Illuminate\Database\Seeder;
 
 class ScholarSeeder extends Seeder
@@ -11,6 +18,252 @@ class ScholarSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $groups = [
+            [
+                'first_name' => "Waken Cean", 
+                'middle_name'  => "Cruz", 
+                'last_name'  => "Maclang", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI Merit')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"U-2023-11-09419", 
+                'sex'=>"Male", 
+                'birthdate'=>"2007-06-26", 
+                'contact_number'=>"09762941445", 
+                'email_address'=>"maclangw26@gmail.com", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "Indangan", 
+                'municipality' => "Davao City", 
+                'district' => "Buhangin", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+
+            [
+                'first_name' => "Gianfranco Miguel", 
+                'middle_name'  => "Deveza", 
+                'last_name'  => "Fernandez", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"U-2023-XX-XXXXX", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"09997186663", 
+                'email_address'=>"gmdfernandez00855@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+                [
+                'first_name' => "Jeff Ronyl", 
+                'middle_name'  => "Recto", 
+                'last_name'  => "Pausal", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"1", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"12345765432", 
+                'email_address'=>"a@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Christian Jhon", 
+                'middle_name'  => "J.", 
+                'last_name'  => "Rosal", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"2", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"146321323545", 
+                'email_address'=>"b@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+                [
+                'first_name' => "Rui", 
+                'middle_name'  => "A.", 
+                'last_name'  => "Palabon", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"3", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"56435243134245", 
+                'email_address'=>"c@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Tagum'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Earl Josh", 
+                'middle_name'  => "", 
+                'last_name'  => "Delgado", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"4", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"156575435324", 
+                'email_address'=>"d@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Theo Benedict", 
+                'middle_name'  => "S.", 
+                'last_name'  => "Pasion", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"5", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"22467651224", 
+                'email_address'=>"e@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Maxinne Samantha", 
+                'middle_name'  => "T.", 
+                'last_name'  => "Ortega", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"6", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"321432132324334", 
+                'email_address'=>"f@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Sean Benedict", 
+                'middle_name'  => "S.", 
+                'last_name'  => "Mendoza", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"8", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"5353212321425435", 
+                'email_address'=>"f@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ],
+            [
+                'first_name' => "Nurina", 
+                'middle_name'  => "", 
+                'last_name'  => "Lakian", 
+                'year_of_award' => 2023, 
+                'scholarship_id' => Scholarship::where('name', 'DOST-SEI RA 7687')->first()->id, 
+                'scholarship_type_id' => ScholarshipType::where('name', 'DOST-SEI Undergraduate Scholarship')->first()->id, 
+                'spas_no'=>"9", 
+                'sex'=>"Male", 
+                'birthdate'=>"2005-03-27", 
+                'contact_number'=>"342543243134", 
+                'email_address'=>"g@usep.edu.ph", 
+                'school_id'=> School::where([
+                    'name'=>'University of Southeastern Philippines',
+                    'campus'=>'Obrero'
+                ])->first()->id, 
+                'course_id' => Course::where('abbreviation', 'BS CS-DS')->first()->id, 
+                'barangay' => "34-D", 
+                'municipality' => "Davao City", 
+                'district' => "Poblacion", 
+                'province' => "Davao del Sur", 
+                'region_id' => Region::where('abbreviation', 'Region XI')->first()->id, 
+                'clearance_status_id' => ClearanceStatus::where('name', 'Not Cleared')->first()->id
+            ]
+        ];
+
+        foreach($groups as $group){
+            Scholar::firstOrCreate($group);
+        }
     }
 }

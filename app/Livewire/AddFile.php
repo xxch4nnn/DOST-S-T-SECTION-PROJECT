@@ -2,15 +2,14 @@
 
 namespace App\Livewire;
 
-use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\Scholarship;
-use App\Models\ScholarshipType;
+use App\Models\ScholarshipProgram;
+use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -652,13 +651,12 @@ class AddFile extends Component
     public function render()
     {
         return view('livewire.add-file', [
-            'scholarships' => Scholarship::all(),
-            'scholarshipTypes' => ScholarshipType::all(),
-            'schools' => School::all(),
-            'courses' => Course::all(),
-            'clearanceStatuses' => ClearanceStatus::all(),
-            'regions' => Region::all(),
-            'availableFileTypes' => FileType::orderBy('name')->get(),
-        ]);
+            'scholarships' => Scholarship::orderBy('name')->get(),
+            'scholarshipTypes' => ScholarshipType::orderBy('name')->get(),
+            'schools' => School::orderBy('name')->get(),
+            'courses' => Course::orderBy('name')->get(),
+            'clearanceStatuses' => ClearanceStatus::orderBy('name')->get(),
+            'regions' => Region::orderBy('name')->get(),
+        ])->layout('layouts.app');
     }
 }

@@ -3,35 +3,78 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\ClearanceStatusSeeder;
+use Database\Seeders\CourseSeeder;
+use Database\Seeders\DocumentSeeder;
+use Database\Seeders\FileGroupSeeder;
+use Database\Seeders\FileTypeSeeder;
+use Database\Seeders\RegionSeeder;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\ScholarSeeder;
+use Database\Seeders\ScholarshipSeeder;
+use Database\Seeders\ScholarshipTypeSeeder;
+use Database\Seeders\SchoolSeeder;
+use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
+    // use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test Admin',
-            'email' => 'test@example.com',
-        ]);
-
         $this->call([
             RolesAndPermissionsSeeder::class,
+        ]);
+
+        $testAdmin = User::firstOrCreate([
+            'email' => 'test@example.com',
+        ], [
+            'name' => 'Test Admin',
+            'password' => bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+        $testAdmin->assignRole('Super Admin');
+
+        $adminUser = User::firstOrCreate([
+            'email' => 'a@a',
+        ], [
+            'name' => 'admin',
+            'password' => bcrypt('admin'),
+            'email_verified_at' => now(),
+        ]);
+        $adminUser->assignRole('Super Admin');
+
+        $myUser = User::firstOrCreate([
+            'email' => 'maclangw26@gmail.com',
+        ], [
+            'name' => 'Wakin Maclang',
+            'password' => bcrypt('Wakster2112'), // Change to your desired password
+            'email_verified_at' => now(),
+        ]);
+        $myUser->assignRole('Super Admin');
+
+        $lazyUser = User::firstOrCreate([
+            'email' => 'a',
+        ], [
+            'name' => 'a',
+            'password' => bcrypt('a'), // Change to your desired password
+            'email_verified_at' => now(),
+        ]);
+        $lazyUser->assignRole('Super Admin');
+
+        $this->call([
+            FileGroupSeeder::class,
+            RegionSeeder::class,
             ScholarshipSeeder::class,
             ScholarshipTypeSeeder::class,
             SchoolSeeder::class,
             CourseSeeder::class,
-            RegionSeeder::class,
             ClearanceStatusSeeder::class,
-            FileGroupSeeder::class,
+            UserSeeder::class,
+            ScholarSeeder::class,
             FileTypeSeeder::class,
+            DocumentSeeder::class
         ]);
     }
 }

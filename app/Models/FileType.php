@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\FileGroup;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 
+#[Fillable(['file_group_id', 'name', 'metadata_template'])]
 class FileType extends Model
 {
     use HasFactory;
@@ -26,8 +29,7 @@ class FileType extends Model
         return $this->belongsTo(FileGroup::class);
     }
 
-    public function documents()
-    {
-        return $this->hasMany(Document::class);
+    public function document(){
+        return $this->hasMany(Document::class, 'file_type_id');
     }
 }

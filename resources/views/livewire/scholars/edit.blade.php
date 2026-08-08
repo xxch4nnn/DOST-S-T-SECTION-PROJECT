@@ -672,7 +672,7 @@
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving Scholar & Uploading Documents...';
                 }
 
-                @this.uploadMultiple('pendingUploads', allFiles, () => {
+                $wire.uploadMultiple('pendingUploads', allFiles, () => {
                     $wire.saveScholarWithStagedFiles(manifest);
                 }, (err) => {
                     console.error('Upload failed:', err);

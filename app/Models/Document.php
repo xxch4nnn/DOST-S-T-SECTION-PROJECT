@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Observers\DocumentObserver;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy([DocumentObserver::class])]
 class Document extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasUuids, HasFactory, SoftDeletes;
 
+    public $timestamps = true;
     protected $fillable = [
-        'documentable_type', 'documentable_id',
-        'file_type_id', 'original_filename', 'stored_filename',
-        'mime_type', 'file_size_kb', 'status', 'metadata', 'uploaded_by',
+        'uuid', 'documentable_type', 'documentable_id',
+        'metadata', 'deleted_at'
     ];
 
     protected $casts = [
@@ -25,18 +30,13 @@ class Document extends Model
         return $this->morphTo();
     }
 
-    public function fileType()
-    {
-        return $this->belongsTo(FileType::class);
-    }
-
-    public function uploader()
-    {
-        return $this->belongsTo(User::class, 'uploaded_by');
-    }
-
-    public function versions()
+    public function documentVersion()
     {
         return $this->hasMany(DocumentVersion::class);
+    }
+
+    public function latestVersion()
+    {
+        return $this->hasOne(DocumentVersion::class)->latestOfMany('version_number');
     }
 }

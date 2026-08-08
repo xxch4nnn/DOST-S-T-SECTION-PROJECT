@@ -11,7 +11,7 @@ use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use Livewire\Component;
 
-class Create extends Component
+class Delete extends Component
 {
     public $first_name = '';
 
@@ -102,12 +102,12 @@ class Create extends Component
     public function render()
     {
         return view('livewire.scholars.create', [
-            'scholarships' => ScholarshipProgram::orderBy('name', 'asc')->get(),
-            'scholarshipTypes' => ScholarshipProgramType::orderBy('name', 'asc')->get(),
-            'schools' => School::orderBy('name', 'asc')->get(),
-            'courses' => Course::orderBy('name', 'asc')->get(),
-            'regions' => Region::orderBy('name', 'asc')->get(),
-            'clearanceStatuses' => ClearanceStatus::orderBy('name', 'asc')->get(),
+            'scholarships' => ScholarshipProgram::all(),
+            'scholarshipTypes' => ScholarshipProgramType::all(),
+            'schools' => School::orderBy('name')->get(),
+            'courses' => Course::orderBy('name')->get(),
+            'regions' => Region::orderBy('name')->get(),
+            'clearanceStatuses' => ClearanceStatus::all(),
         ])->layout('layouts.app');
     }
 }

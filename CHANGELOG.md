@@ -20,6 +20,8 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Document versioning (`DocumentVersion`) creation for staged file uploads in `AddFile` and `Scholars/Edit` (#65).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
@@ -46,9 +48,14 @@ Every bullet **must** start with:
 ### Security
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Gated `notifications.index` route behind `permission:viewNotifications` and verified email/auth (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Authorized document deletion in `Scholars/Edit` with `DocumentPolicy::delete` check and scoped composite `documentable_type` + `documentable_id` filtering against cross-morph deletion (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Gated `notifications.index` route behind `permission:viewNotifications` and verified email/auth (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Authorized document deletion in `Scholars/Edit` with `DocumentPolicy::delete` check and scoped composite `documentable_type` + `documentable_id` filtering against cross-morph deletion (#65).
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit) (#52).
 
 ### Changed
+- **2026-08-05 13:38:00 +08:00** · **Chan** (`@xxch4nnn`) — Update `database/migrations/2026_07_20_061543_create_documents_table.php` schema definition to use `documents` table name, polymorphic `documentable_type`/`documentable_id` columns with compound index, timestamps, and soft deletes.
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `Notifications/Index` component refactored to query real unread `AuditLog` records instead of hardcoded session mocks (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Livewire pagination theme configured to `bootstrap` in `config/livewire.php` (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `Notifications/Index` component refactored to query real unread `AuditLog` records instead of hardcoded session mocks (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Livewire pagination theme configured to `bootstrap` in `config/livewire.php` (#65).
 - **2026-08-05 00:30:00 +08:00** · **Chan** (`@xxch4nnn`) — `AGENTS.md` / `CONTRIBUTING.md`: migrated Bible doc ID, Dependabot Paths A/B/C, CODEOWNER hold-release, Windows shell matrix, handoff ownership, changelog examples; re-pin concurrently **10.0.4** in `docs/TECH_STACK_DOCS.md` after #31 smoke.

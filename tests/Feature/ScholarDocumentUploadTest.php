@@ -5,11 +5,12 @@ namespace Tests\Feature;
 use App\Livewire\Scholars\Show;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\Scholarship;
-use App\Models\ScholarshipType;
+use App\Models\ScholarshipProgram;
+use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -31,12 +32,23 @@ class ScholarDocumentUploadTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole('Encoder');
 
-        $scholarship = Scholarship::firstOrCreate(['name' => 'RA 7687', 'is_available' => true]);
-        $scholarshipType = ScholarshipType::firstOrCreate(['name' => 'Undergrad', 'is_available' => true]);
+        $scholarship = ScholarshipProgram::firstOrCreate(['name' => 'RA 7687', 'is_available' => true]);
+        $scholarshipType = ScholarshipProgramType::firstOrCreate(['name' => 'Undergrad', 'is_available' => true]);
         $school = School::firstOrCreate(['name' => 'Test University', 'campus' => 'Main', 'is_available' => true]);
         $course = Course::firstOrCreate(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
+        
+        $fileGroup = FileGroup::firstOrCreate([
+            'name' => 'Scholarly Documents',
+            'slug' => 'scholarly_documents'
+        ]);
+        $fileType = FileType::firstOrCreate([
+            'name' => 'Notice of Award',
+        ], [
+            'file_group_id' => $fileGroup->id,
+            'metadata_template' => [],
+        ]);
         $fileType = FileType::firstOrCreate(
             ['name' => 'Notice of Award'],
             ['metadata_template' => null, 'file_group_id' => null]
@@ -46,13 +58,14 @@ class ScholarDocumentUploadTest extends TestCase
             'first_name' => 'John',
             'last_name' => 'Doe',
             'year_of_award' => 2023,
-            'scholarship_id' => $scholarship->id,
-            'scholarship_type_id' => $scholarshipType->id,
+            'scholarship_program_id' => $scholarship->id,
+            'scholarship_program_type_id' => $scholarshipType->id,
             'school_id' => $school->id,
             'course_id' => $course->id,
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
-            'spas_no' => '2023-0001',
+            'spas_number' => '2023-0001',
+            'contact_number' => '09123456789',
         ]);
 
         $file = UploadedFile::fake()->create('test_document.pdf', 100, 'application/pdf');
