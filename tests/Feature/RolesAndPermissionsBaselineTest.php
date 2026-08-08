@@ -35,6 +35,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
             'editDocumentMetadata',
             'strikeOffDocuments',
             'viewReports',
+            'viewNotifications',
             'viewScholars',
             'createScholars',
             'editScholars',
@@ -67,6 +68,8 @@ class RolesAndPermissionsBaselineTest extends TestCase
 
         $this->assertTrue($encoder->hasPermissionTo('uploadDocuments'));
         $this->assertTrue($encoder->hasPermissionTo('editDocumentMetadata'));
+        $this->assertTrue($encoder->hasPermissionTo('viewReports'));
+        $this->assertTrue($encoder->hasPermissionTo('viewNotifications'));
         $this->assertTrue($encoder->hasPermissionTo('viewScholars'));
         $this->assertTrue($encoder->hasPermissionTo('viewAdminRecords'));
         $this->assertFalse($encoder->hasPermissionTo('manageUsers'));

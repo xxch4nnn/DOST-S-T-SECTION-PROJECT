@@ -28,6 +28,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'editDocumentMetadata',
             'strikeOffDocuments',
             'viewReports',
+            'viewNotifications',
             // Scholars
             'viewScholars',
             'createScholars',
@@ -57,6 +58,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'uploadDocuments',
             'editDocumentMetadata',
             'viewReports',
+            'viewNotifications',
             'viewScholars',
             'createScholars',
             'editScholars',

@@ -142,4 +142,26 @@ class RoutePermissionGateTest extends TestCase
             ->get(route('documents.download', $document))
             ->assertOk();
     }
+
+    public function test_notifications_route_requires_view_notifications_permission(): void
+    {
+        $encoder = User::factory()->create([
+            'email' => 'encoder-notifs@example.com',
+            'email_verified_at' => now(),
+        ]);
+        $encoder->assignRole('Encoder');
+
+        $denied = User::factory()->create([
+            'email' => 'denied-notifs@example.com',
+            'email_verified_at' => now(),
+        ]);
+
+        $this->actingAs($denied)
+            ->get(route('notifications.index'))
+            ->assertForbidden();
+
+        $this->actingAs($encoder)
+            ->get(route('notifications.index'))
+            ->assertOk();
+    }
 }

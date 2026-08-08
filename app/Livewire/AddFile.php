@@ -12,6 +12,7 @@ use App\Models\ScholarshipProgram;
 use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -412,89 +413,105 @@ class AddFile extends Component
         $uploadedCount = 0;
         $uploads = is_array($this->pendingUploads) ? $this->pendingUploads : [];
 
-        foreach ($manifest as $mIdx => $item) {
-            $catName = trim($item['cat_name'] ?? '') ?: 'General Documents';
-            $fileType = FileType::firstOrCreate(
-                ['name' => $catName],
-                ['year' => (string) ($this->year_of_award ?: date('Y'))]
-            );
+        if (! empty($manifest)) {
+            foreach ($manifest as $mIdx => $item) {
+                $catName = trim($item['cat_name'] ?? '') ?: 'General Documents';
+                $fileType = FileType::firstOrCreate(['name' => $catName]);
 
-            $uploadIdx = $item['index'] ?? $mIdx;
-            $uploaded = $uploads[$uploadIdx] ?? null;
+                $uploadIdx = $item['index'] ?? $mIdx;
+                $uploaded = $uploads[$uploadIdx] ?? null;
 
-            $originalName = $item['name'] ?? ($uploaded && method_exists($uploaded, 'getClientOriginalName') ? $uploaded->getClientOriginalName() : 'Document');
-            $mimeType = $item['mime_type'] ?? ($uploaded && method_exists($uploaded, 'getMimeType') ? $uploaded->getMimeType() : 'application/pdf');
-            $fileSize = (int) ($item['file_size'] ?? ($uploaded && method_exists($uploaded, 'getSize') ? $uploaded->getSize() : 1024));
-            $fileSizeKb = max(1, (int) round($fileSize / 1024));
+                $originalName = $item['name'] ?? ($uploaded && method_exists($uploaded, 'getClientOriginalName') ? $uploaded->getClientOriginalName() : 'Document');
+                $mimeType = $item['mime_type'] ?? ($uploaded && method_exists($uploaded, 'getMimeType') ? $uploaded->getMimeType() : 'application/pdf');
+                $fileSize = (int) ($item['file_size'] ?? ($uploaded && method_exists($uploaded, 'getSize') ? $uploaded->getSize() : 1024));
+                $fileSizeKb = max(1, (int) round($fileSize / 1024));
 
-            $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($item['is_pdf']) ? 'pdf' : 'png');
-            $storedFilename = 'doc_'.uniqid().'.'.$extension;
-            $targetPath = 'documents/'.$storedFilename;
+                $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($item['is_pdf']) ? 'pdf' : 'png');
+                $storedFilename = 'doc_'.uniqid().'.'.$extension;
+                $targetPath = 'documents/'.$storedFilename;
 
-            if ($uploaded && is_object($uploaded) && method_exists($uploaded, 'storeAs')) {
-                $uploaded->storeAs('documents', $storedFilename, 'local');
-            } else {
-                Storage::disk('local')->put($targetPath, "DOST Document Content for {$originalName}");
-            }
-
-            Document::create([
-                'documentable_type' => Scholar::class,
-                'documentable_id' => $scholar->id,
-                'file_type_id' => $fileType->id,
-                'original_filename' => $originalName,
-                'stored_filename' => $storedFilename,
-                'mime_type' => $mimeType,
-                'file_size_kb' => $fileSizeKb,
-                'status' => 'active',
-                'uploaded_by' => auth()->id() ?? 1,
-            ]);
-
-            $uploadedCount++;
-        }
-
-        foreach ($this->scannedCategories as $cat) {
-            $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
-            if (! empty($cat['files'])) {
-                $fileType = FileType::firstOrCreate(
-                    ['name' => $categoryName],
-                    ['year' => (string) ($this->year_of_award ?: date('Y'))]
-                );
-
-                foreach ($cat['files'] as $fileMeta) {
-                    $originalName = $fileMeta['name'] ?? 'Document';
-                    $mimeType = $fileMeta['mime_type'] ?? 'application/pdf';
-                    $fileSizeKb = max(1, (int) round(($fileMeta['size'] ?? 1024) / 1024));
-                    $dataUrl = $fileMeta['data_url'] ?? null;
-                    $tempPath = $fileMeta['temp_path'] ?? null;
-
-                    $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($fileMeta['is_pdf']) ? 'pdf' : 'png');
-                    $storedFilename = 'doc_'.uniqid().'.'.$extension;
-                    $targetPath = 'documents/'.$storedFilename;
-
-                    if ($tempPath && Storage::disk('local')->exists($tempPath)) {
-                        Storage::disk('local')->move($tempPath, $targetPath);
-                    } elseif ($tempPath && file_exists($tempPath)) {
-                        Storage::disk('local')->put($targetPath, file_get_contents($tempPath));
-                    } elseif ($dataUrl && str_contains($dataUrl, 'base64,')) {
-                        $binaryContent = base64_decode(explode('base64,', $dataUrl)[1]);
-                        Storage::disk('local')->put($targetPath, $binaryContent);
-                    } else {
-                        Storage::disk('local')->put($targetPath, "DOST Document Content for {$originalName}");
-                    }
-
-                    Document::create([
-                        'documentable_type' => Scholar::class,
-                        'documentable_id' => $scholar->id,
-                        'file_type_id' => $fileType->id,
-                        'original_filename' => $originalName,
-                        'stored_filename' => $storedFilename,
-                        'mime_type' => $mimeType,
-                        'file_size_kb' => $fileSizeKb,
-                        'status' => 'active',
-                        'uploaded_by' => auth()->id() ?? 1,
+                if ($uploaded && is_object($uploaded) && method_exists($uploaded, 'storeAs')) {
+                    $uploaded->storeAs('documents', $storedFilename, 'local');
+                } else {
+                    throw ValidationException::withMessages([
+                        'scanned_files' => "Uploaded file payload missing for {$originalName}.",
                     ]);
+                }
 
-                    $uploadedCount++;
+                $doc = Document::create([
+                    'documentable_type' => Scholar::class,
+                    'documentable_id' => $scholar->id,
+                    'file_type_id' => $fileType->id,
+                    'original_filename' => $originalName,
+                    'stored_filename' => $storedFilename,
+                    'mime_type' => $mimeType,
+                    'file_size_kb' => $fileSizeKb,
+                    'status' => 'active',
+                    'uploaded_by' => auth()->id(),
+                ]);
+
+                $doc->versions()->create([
+                    'stored_filename' => $storedFilename,
+                    'original_filename' => $originalName,
+                    'file_size_kb' => $fileSizeKb,
+                    'version_number' => 1,
+                    'replaced_by_user_id' => auth()->id(),
+                ]);
+
+                $uploadedCount++;
+            }
+        } else {
+            foreach ($this->scannedCategories as $cat) {
+                $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
+                if (! empty($cat['files'])) {
+                    $fileType = FileType::firstOrCreate(['name' => $categoryName]);
+
+                    foreach ($cat['files'] as $fileMeta) {
+                        $originalName = $fileMeta['name'] ?? 'Document';
+                        $mimeType = $fileMeta['mime_type'] ?? 'application/pdf';
+                        $fileSizeKb = max(1, (int) round(($fileMeta['size'] ?? 1024) / 1024));
+                        $dataUrl = $fileMeta['data_url'] ?? null;
+                        $tempPath = $fileMeta['temp_path'] ?? null;
+
+                        $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($fileMeta['is_pdf']) ? 'pdf' : 'png');
+                        $storedFilename = 'doc_'.uniqid().'.'.$extension;
+                        $targetPath = 'documents/'.$storedFilename;
+
+                        if ($tempPath && Storage::disk('local')->exists($tempPath)) {
+                            Storage::disk('local')->move($tempPath, $targetPath);
+                        } elseif ($tempPath && file_exists($tempPath)) {
+                            Storage::disk('local')->put($targetPath, file_get_contents($tempPath));
+                        } elseif ($dataUrl && str_contains($dataUrl, 'base64,')) {
+                            $binaryContent = base64_decode(explode('base64,', $dataUrl)[1]);
+                            Storage::disk('local')->put($targetPath, $binaryContent);
+                        } else {
+                            throw ValidationException::withMessages([
+                                'scanned_files' => "Uploaded file payload missing for {$originalName}.",
+                            ]);
+                        }
+
+                        $doc = Document::create([
+                            'documentable_type' => Scholar::class,
+                            'documentable_id' => $scholar->id,
+                            'file_type_id' => $fileType->id,
+                            'original_filename' => $originalName,
+                            'stored_filename' => $storedFilename,
+                            'mime_type' => $mimeType,
+                            'file_size_kb' => $fileSizeKb,
+                            'status' => 'active',
+                            'uploaded_by' => auth()->id(),
+                        ]);
+
+                        $doc->versions()->create([
+                            'stored_filename' => $storedFilename,
+                            'original_filename' => $originalName,
+                            'file_size_kb' => $fileSizeKb,
+                            'version_number' => 1,
+                            'replaced_by_user_id' => auth()->id(),
+                        ]);
+
+                        $uploadedCount++;
+                    }
                 }
             }
         }
@@ -544,10 +561,7 @@ class AddFile extends Component
             $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
 
             // Find or create FileType
-            $fileType = FileType::firstOrCreate(
-                ['name' => $categoryName],
-                ['year' => (string) ($this->year_of_award ?: date('Y'))]
-            );
+            $fileType = FileType::firstOrCreate(['name' => $categoryName]);
 
             if (! empty($cat['files'])) {
                 foreach ($cat['files'] as $fileMeta) {
@@ -570,10 +584,12 @@ class AddFile extends Component
                         $binaryContent = base64_decode(explode('base64,', $dataUrl)[1]);
                         Storage::disk('local')->put($targetPath, $binaryContent);
                     } else {
-                        Storage::disk('local')->put($targetPath, "DOST Document Content for {$originalName}");
+                        throw ValidationException::withMessages([
+                            'scanned_files' => "Uploaded file payload missing for {$originalName}.",
+                        ]);
                     }
 
-                    Document::create([
+                    $doc = Document::create([
                         'documentable_type' => Scholar::class,
                         'documentable_id' => $scholar->id,
                         'file_type_id' => $fileType->id,
@@ -582,7 +598,15 @@ class AddFile extends Component
                         'mime_type' => $mimeType,
                         'file_size_kb' => $fileSizeKb,
                         'status' => 'active',
-                        'uploaded_by' => auth()->id() ?? 1,
+                        'uploaded_by' => auth()->id(),
+                    ]);
+
+                    $doc->versions()->create([
+                        'stored_filename' => $storedFilename,
+                        'original_filename' => $originalName,
+                        'file_size_kb' => $fileSizeKb,
+                        'version_number' => 1,
+                        'replaced_by_user_id' => auth()->id(),
                     ]);
 
                     $uploadedCount++;
@@ -613,7 +637,7 @@ class AddFile extends Component
             'year' => (int) $this->admin_year,
             'recipient' => $this->admin_recipient,
             'description' => $this->admin_description,
-            'created_by' => auth()->id() ?? 1,
+            'created_by' => auth()->id(),
         ]);
 
         session()->flash('status', 'Administrative record saved successfully!');

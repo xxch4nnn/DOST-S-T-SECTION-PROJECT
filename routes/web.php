@@ -44,7 +44,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('permission:editScholars')->group(function () {
         Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
-        Route::get('/scholars/{scholar}/files/{file}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
     });
 
     Route::middleware('permission:uploadDocuments')->group(function () {
@@ -60,8 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin-records', AdminRecordsIndex::class)->name('admin-records.index');
     });
 
-    // Notifications
-    Route::get('/notifications', NotificationsIndex::class)->name('notifications.index');
+    Route::middleware('permission:viewNotifications')->group(function () {
+        Route::get('/notifications', NotificationsIndex::class)->name('notifications.index');
+    });
 
     Route::middleware('permission:createAdminRecords')->group(function () {
         Route::get('/admin-records/create', AdminRecordsCreate::class)->name('admin-records.create');

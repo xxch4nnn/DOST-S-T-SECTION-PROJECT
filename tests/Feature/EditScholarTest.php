@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Scholars\Edit;
+use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
@@ -13,6 +14,8 @@ use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -23,9 +26,16 @@ class EditScholarTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RolesAndPermissionsSeeder::class);
+    }
+
     public function test_edit_scholar_page_renders_with_prefilled_scholar_data()
     {
         $user = User::factory()->create();
+        $user->assignRole('Super Admin');
 
         $scholarship = Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::create(['name' => 'Undergraduate', 'is_available' => true]);
@@ -47,7 +57,7 @@ class EditScholarTest extends TestCase
             'clearance_status_id' => $status->id,
         ]);
 
-        $fileType = FileType::create(['name' => 'Scholarship Agreement', 'year' => '2024']);
+        $fileType = FileType::create(['name' => 'Scholarship Agreement']);
         $doc = Document::create([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
@@ -72,6 +82,7 @@ class EditScholarTest extends TestCase
     public function test_save_scholar_updates_scholar_profile_and_redirects()
     {
         $user = User::factory()->create();
+        $user->assignRole('Super Admin');
 
         $scholarship = Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::create(['name' => 'Undergraduate', 'is_available' => true]);
@@ -112,6 +123,7 @@ class EditScholarTest extends TestCase
     {
         Storage::fake('local');
         $user = User::factory()->create();
+        $user->assignRole('Super Admin');
 
         $scholarship = Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::create(['name' => 'Undergraduate', 'is_available' => true]);
@@ -133,7 +145,7 @@ class EditScholarTest extends TestCase
             'clearance_status_id' => $status->id,
         ]);
 
-        $fileType = FileType::create(['name' => 'Scholarship Agreement', 'year' => '2024']);
+        $fileType = FileType::create(['name' => 'Scholarship Agreement']);
         $oldDoc = Document::create([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
@@ -183,21 +195,66 @@ class EditScholarTest extends TestCase
         ]);
     }
 
-    public function test_edit_scholar_page_renders_with_mock_fallback_when_scholar_id_does_not_exist()
+    public function test_delete_existing_document_rejects_cross_morph_documents()
     {
         $user = User::factory()->create();
+        $user->assignRole('Super Admin');
 
-        Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
-        ScholarshipType::create(['name' => 'Undergraduate', 'is_available' => true]);
-        School::create(['name' => 'University of Southeastern Philippines', 'is_available' => true]);
-        Course::create(['name' => 'BS Computer Science', 'abbreviation' => 'BSCS', 'is_available' => true]);
-        Region::create(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
-        ClearanceStatus::create(['name' => 'Not Cleared', 'is_available' => true]);
+        $scholarship = Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
+        $scholarshipType = ScholarshipType::create(['name' => 'Undergraduate', 'is_available' => true]);
+        $school = School::create(['name' => 'University of the Philippines', 'is_available' => true]);
+        $course = Course::create(['name' => 'BS Computer Science', 'abbreviation' => 'BSCS', 'is_available' => true]);
+        $region = Region::create(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
+        $status = ClearanceStatus::create(['name' => 'Cleared', 'is_available' => true]);
+
+        $scholar = Scholar::create([
+            'first_name' => 'Juan',
+            'last_name' => 'Dela Cruz',
+            'spas_no' => '2024-001',
+            'year_of_award' => '2024',
+            'scholarship_id' => $scholarship->id,
+            'scholarship_type_id' => $scholarshipType->id,
+            'school_id' => $school->id,
+            'course_id' => $course->id,
+            'region_id' => $region->id,
+            'clearance_status_id' => $status->id,
+        ]);
+
+        $adminRecord = AdministrativeRecord::create([
+            'record_type' => 'Memorandum',
+            'series_number' => 'Memo-2024-01',
+            'title' => 'Admin Record Test',
+            'created_by' => $user->id,
+        ]);
+
+        $fileType = FileType::create(['name' => 'Administrative Order']);
+        $adminDoc = Document::create([
+            'documentable_type' => AdministrativeRecord::class,
+            'documentable_id' => $adminRecord->id,
+            'file_type_id' => $fileType->id,
+            'original_filename' => 'admin_memo.pdf',
+            'stored_filename' => 'doc_admin.pdf',
+            'mime_type' => 'application/pdf',
+            'file_size_kb' => 50,
+            'status' => 'active',
+            'uploaded_by' => $user->id,
+        ]);
+
+        $this->expectException(ModelNotFoundException::class);
 
         Livewire::actingAs($user)
-            ->test(Edit::class, ['scholar' => 99999])
-            ->assertOk()
-            ->assertSet('first_name', 'Wakin Cean')
-            ->assertSet('last_name', 'Maclang');
+            ->test(Edit::class, ['scholar' => $scholar])
+            ->call('deleteExistingDocument', $adminDoc->id);
+    }
+
+    public function test_edit_scholar_throws_404_when_scholar_id_does_not_exist()
+    {
+        $user = User::factory()->create();
+        $user->assignRole('Super Admin');
+
+        $this->expectException(ModelNotFoundException::class);
+
+        Livewire::actingAs($user)
+            ->test(Edit::class, ['scholar' => 99999]);
     }
 }
