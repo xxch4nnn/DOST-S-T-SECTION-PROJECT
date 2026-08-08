@@ -9,6 +9,8 @@ use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
 use App\Models\Scholarship;
+use App\Models\ScholarshipProgram;
+use App\Models\ScholarshipProgramType;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -46,15 +48,12 @@ class Edit extends Component
     public string $spas_no = '';
 
     public string $sex = 'Male';
-    public string $sex = 'Male';
 
-    public string $birthdate = '';
     public string $birthdate = '';
 
     public string $contact_number = '';
-    public string $contact_number = '';
 
-    public string string $email_address = '' = '';
+    public string $email_address = '';
 
     public $school_id = '';
 
@@ -442,8 +441,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.scholars.edit', [
-            'scholarships' => Scholarship::all(),
-            'scholarshipTypes' => ScholarshipType::all(),
+            'scholarships' => ScholarshipProgram::all(),
+            'scholarshipTypes' => ScholarshipProgramType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),

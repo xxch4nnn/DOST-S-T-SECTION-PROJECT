@@ -111,7 +111,7 @@ new class extends Component
             fileUrl: (string) $secureStreamUrl,
             scholarName: (string) ($this->scholarData['name'] ?? 'Scholar'),
             fileType: str_contains($file['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
-            documentIndex: (int) ($index + 1),
+            documentIndex: (int) $index,
             scholarId: (int) ($this->scholarId ?? -1),
             documentId: (string) ($file['id'] ?? ''),
         );

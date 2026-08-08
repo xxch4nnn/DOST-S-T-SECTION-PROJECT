@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('generational_suffix', 5)->nullable(true)->default(null);
 
             $table->integer('year_of_award')->nullable(false);
-            $table->foreignId('scholarship_program_id')->nullable(false)->constrained('scholarship_programs')->restrictOnDelete();
-            $table->foreignId('scholarship_program_type_id')->nullable(false)->constrained('scholarship_program_types')->restrictOnDelete();
-            $table->string('spas_number', 100)->unique()->nullable();
+            $table->foreignId('scholarship_id')->nullable(false)->constrained('scholarships')->restrictOnDelete();
+            $table->foreignId('scholarship_type_id')->nullable(false)->constrained('scholarship_types')->restrictOnDelete();
+            $table->string('spas_no', 100)->unique()->nullable();
 
             $table->enum('sex', ['Male', 'Female'])->nullable();
             $table->date('birthdate')->nullable();

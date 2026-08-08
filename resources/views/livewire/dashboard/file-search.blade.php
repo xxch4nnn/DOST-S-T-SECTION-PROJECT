@@ -23,8 +23,8 @@ new class extends Component
             $query = Scholar::query()->with([
                 'school',
                 'course',
-                'scholarshipProgram',
-                'scholarshipProgramType',
+                'scholarship',
+                'scholarshipType',
                 'clearanceStatus'
             ]);
 

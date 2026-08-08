@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\ScholarshipProgramType;
+use App\Models\ScholarshipType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ScholarshipProgramTypeSeeder extends Seeder
+class ScholarshipTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,7 +19,7 @@ class ScholarshipProgramTypeSeeder extends Seeder
         ];
 
         foreach($groups as $group){
-            ScholarshipProgramType::firstOrCreate($group);
+            ScholarshipType::firstOrCreate($group);
         }
     }
 }

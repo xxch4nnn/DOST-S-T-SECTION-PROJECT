@@ -139,23 +139,6 @@ new class extends Component
         }
     }
 
-    public function setZoom(mixed $value): void
-    {
-        $zoom = (int) $value;
-        $this->zoom = max(60, min(200, $zoom));
-        $this->dispatch('zoom-changed', zoom: $this->zoom);
-    }
-
-    public function zoomIn(): void
-    {
-        $this->setZoom($this->zoom + 20);
-    }
-
-    public function zoomOut(): void
-    {
-        $this->setZoom($this->zoom - 20);
-    }
-
     public function rotate(): void
     {
         $this->rotation = ($this->rotation + 90) % 360;

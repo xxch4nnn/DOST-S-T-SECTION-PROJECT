@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['name', 'is_available'])]
-class ScholarshipProgram extends Model
+class ScholarshipType extends Model
 {
     public $timestamps=false;
     public function scholars(){
-        return $this->hasMany(Scholar::class, "scholarship_program_id");
+        return $this->hasMany(Scholar::class, "scholarship_type_id");
     }
 }
