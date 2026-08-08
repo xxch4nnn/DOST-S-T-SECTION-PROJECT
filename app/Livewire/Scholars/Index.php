@@ -15,12 +15,9 @@ class Index extends Component
 
     public function mount(): void
     {
-        // Default expand the first year group if available
         $firstYear = Scholar::query()->distinct()->pluck('year_of_award')->sortDesc()->first();
         if ($firstYear) {
             $this->expandedYears[] = (string) $firstYear;
-        } else {
-            $this->expandedYears[] = '2023';
         }
     }
 
@@ -52,9 +49,36 @@ class Index extends Component
         $this->selectedYears = [];
     }
 
-    public function openScholar(int $scholarId): void
+    public function openScholar($scholarId): void
     {
-        $this->dispatch('open-scholar-drawer', scholarId: $scholarId);
+        $scholarId = (int) $scholarId;
+        $scholar = Scholar::with(['scholarshipType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
+
+        $scholarData = null;
+        if ($scholar) {
+            $scholarData = [
+                'id' => $scholar->id,
+                'name' => "{$scholar->last_name}, {$scholar->first_name} {$scholar->middle_name}",
+                'spas_id' => $scholar->spas_no,
+                'program' => $scholar->scholarshipType->code ?? ($scholar->scholarshipType->name ?? '—'),
+                'program_type' => $scholar->scholarshipType->name ?? '—',
+                'year_of_award' => $scholar->year_of_award ?? '—',
+                'clearance_date' => $scholar->clearance_date ? $scholar->clearance_date->format('d / m / Y') : '—',
+                'course' => $scholar->course->name ?? '—',
+                'university' => $scholar->school->name ?? '—',
+                'address' => $scholar->barangay ? trim("{$scholar->barangay}, {$scholar->district}", ' ,') : '—',
+                'municipality' => $scholar->municipality ?? '—',
+                'province' => $scholar->province ?? '—',
+                'region' => $scholar->region->name ?? '—',
+                'email' => $scholar->email_address ?? '—',
+                'contact' => $scholar->contact_number ?? '—',
+                'birthdate' => $scholar->birthdate ? $scholar->birthdate->format('m / d / Y') : '—',
+                'sex' => $scholar->sex ?? '—',
+                'status' => $scholar->clearanceStatus->name ?? '—',
+            ];
+        }
+
+        $this->dispatch('open-scholar-drawer', scholarId: $scholarId, scholarData: $scholarData);
     }
 
     public function render()
@@ -74,15 +98,9 @@ class Index extends Component
 
         $scholars = $query->get();
 
-        // Group scholars by year_of_award
         $groupedScholars = $scholars->groupBy(function ($scholar) {
-            return (string) ($scholar->year_of_award ?? '2023');
+            return (string) ($scholar->year_of_award ?? 'Unknown');
         });
-
-        // Ensure default year 2023 exists if DB is empty
-        if ($groupedScholars->isEmpty()) {
-            $groupedScholars = collect(['2023' => collect([])]);
-        }
 
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,

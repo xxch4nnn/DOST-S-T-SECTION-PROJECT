@@ -63,7 +63,7 @@ new class extends Component
     {{-- Toggle Button / Logo Slot --}}
     @if (! $expanded && ! $isHome)
         {{-- Collapsed state on non-Home pages: Show DOST Logo by default, hover to reveal Open Sidebar toggle icon --}}
-        <button wire:click="toggle" class="sidebar-item sidebar-toggle sidebar-logo-toggle" type="button" title="Open Sidebar">
+        <button wire:click="toggle" class="sidebar-item sidebar-toggle sidebar-logo-toggle" type="button" aria-label="Open Sidebar">
             <img src="{{ asset('DostSEILogo.svg') }}" alt="DOST SEI Logo" class="sidebar-collapsed-logo" />
             <i class="ph ph-sidebar sidebar-icon sidebar-hover-icon"></i>
             <span class="sidebar-label">Open Sidebar</span>
@@ -71,7 +71,7 @@ new class extends Component
         </button>
     @else
         {{-- Expanded state OR Collapsed state on Home page --}}
-        <button wire:click="toggle" class="sidebar-item sidebar-toggle" type="button" title="{{ $expanded ? 'Close Sidebar' : 'Open Sidebar' }}">
+        <button wire:click="toggle" class="sidebar-item sidebar-toggle" type="button" aria-label="{{ $expanded ? 'Close Sidebar' : 'Open Sidebar' }}">
             <i class="ph ph-sidebar sidebar-icon"></i>
             <span class="sidebar-label">{{ $expanded ? 'Close Sidebar' : 'Open Sidebar' }}</span>
             <span class="sidebar-tooltip">{{ $expanded ? 'Close Sidebar' : 'Open Sidebar' }}</span>
@@ -84,15 +84,16 @@ new class extends Component
     <a href="{{ route('dashboard') }}" wire:navigate
        wire:click="setActive('home')"
        class="sidebar-item {{ $activeItem === 'home' || request()->routeIs('dashboard') ? 'sidebar-item--active' : '' }}"
-       title="Home">
+       aria-label="Home">
         <i class="ph ph-house sidebar-icon"></i>
         <span class="sidebar-label">Home</span>
         <span class="sidebar-tooltip">Home</span>
     </a>
 
-    <a href="#" wire:click.prevent="setActive('notifications')"
-       class="sidebar-item {{ $activeItem === 'notifications' ? 'sidebar-item--active' : '' }}"
-       title="Notifications">
+    <a href="{{ route('notifications.index') }}" wire:navigate
+       wire:click="setActive('notifications')"
+       class="sidebar-item {{ $activeItem === 'notifications' || request()->routeIs('notifications.*') ? 'sidebar-item--active' : '' }}"
+       aria-label="Notifications">
         <i class="ph ph-bell sidebar-icon"></i>
         <span class="sidebar-label">Notifications</span>
         <span class="sidebar-tooltip">Notifications</span>
@@ -103,7 +104,7 @@ new class extends Component
 
     <a href="#" wire:click.prevent="setActive('analytics')"
        class="sidebar-item {{ $activeItem === 'analytics' ? 'sidebar-item--active' : '' }}"
-       title="Analytics">
+       aria-label="Analytics">
         <i class="ph ph-chart-line-up sidebar-icon"></i>
         <span class="sidebar-label">Analytics</span>
         <span class="sidebar-tooltip">Analytics</span>
@@ -112,7 +113,7 @@ new class extends Component
     <a href="{{ route('scholars.index') }}" wire:navigate
        wire:click="setActive('scholars')"
        class="sidebar-item {{ $activeItem === 'scholars' || request()->routeIs('scholars.*') ? 'sidebar-item--active' : '' }}"
-       title="Scholars List">
+       aria-label="Scholars List">
         <i class="ph ph-graduation-cap sidebar-icon"></i>
         <span class="sidebar-label">Scholars List</span>
         <span class="sidebar-tooltip">Scholars List</span>
@@ -121,7 +122,7 @@ new class extends Component
     <a href="{{ route('admin-records.index') }}" wire:navigate
        wire:click="setActive('admin-records')"
        class="sidebar-item {{ $activeItem === 'admin-records' || request()->routeIs('admin-records.*') ? 'sidebar-item--active' : '' }}"
-       title="Administrative Files">
+       aria-label="Administrative Files">
         <i class="ph ph-file-text sidebar-icon"></i>
         <span class="sidebar-label">Administrative Files</span>
         <span class="sidebar-tooltip">Administrative Files</span>
@@ -133,7 +134,7 @@ new class extends Component
     <a href="{{ route('add-file.index') }}" wire:navigate
        wire:click="setActive('add-file')"
        class="sidebar-item {{ $activeItem === 'add-file' || request()->routeIs('add-file.*') ? 'sidebar-item--active' : '' }}"
-       title="Add File">
+       aria-label="Add File">
         <i class="ph ph-file-plus sidebar-icon"></i>
         <span class="sidebar-label">Add File</span>
         <span class="sidebar-tooltip">Add File</span>
@@ -141,7 +142,7 @@ new class extends Component
 
     <a href="#" wire:click.prevent="setActive('edit-requirements')"
        class="sidebar-item {{ $activeItem === 'edit-requirements' ? 'sidebar-item--active' : '' }}"
-       title="Edit File Requirements">
+       aria-label="Edit File Requirements">
         <i class="ph ph-note-pencil sidebar-icon"></i>
         <span class="sidebar-label">Edit File Requirements</span>
         <span class="sidebar-tooltip">Edit File Requirements</span>
@@ -153,7 +154,7 @@ new class extends Component
     <a href="{{ route('profile') }}" wire:navigate
        wire:click="setActive('profile')"
        class="sidebar-item {{ $activeItem === 'profile' || request()->routeIs('profile') ? 'sidebar-item--active' : '' }}"
-       title="Admin Profile">
+       aria-label="Admin Profile">
         <i class="ph ph-user sidebar-icon"></i>
         <span class="sidebar-label">Admin Profile</span>
         <span class="sidebar-tooltip">Admin Profile</span>

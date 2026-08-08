@@ -1,197 +1,709 @@
-<x-slot name="header">
-    <div class="d-flex justify-content-between align-items-center">
-        <h2 class="h4 mb-0 fw-semibold">
-            {{ __('Edit Scholar:') }} {{ $scholar->first_name }} {{ $scholar->last_name }}
-        </h2>
-        <a href="{{ route('scholars.show', $scholar->id) }}" class="btn btn-link btn-sm">
-            &larr; Back to Scholar Record
+<div class="add-file-page">
+    {{-- External Libraries for Instant Client-Side PDF Preview & Drag-Drop Reorder --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    {{-- Breadcrumb Bar --}}
+    <div class="admin-breadcrumb-bar">
+        <a href="{{ route('scholars.index', ['open_scholar' => $scholar->id]) }}" wire:navigate class="admin-back-btn text-decoration-none" title="Back to Scholars">
+            <i class="ph ph-caret-left"></i>
         </a>
+        <span class="admin-breadcrumb-title">Scholars</span>
+        <span class="admin-breadcrumb-sep">/</span>
+        <span class="admin-breadcrumb-active">Edit Scholar - {{ $scholar->first_name }} {{ $scholar->last_name }}</span>
     </div>
-</x-slot>
 
-<div class="container py-4">
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <form wire:submit="save">
-                <div class="mb-4">
-                    <h3 class="h5 border-bottom pb-2">1. Personal Information</h3>
-                    <div class="row g-3 mt-1">
-                        <div class="col-md-3">
-                            <label class="form-label">First Name <span class="text-danger">*</span></label>
-                            <input wire:model="first_name" type="text" class="form-control" required>
-                            @error('first_name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Middle Name</label>
-                            <input wire:model="middle_name" type="text" class="form-control">
-                            @error('middle_name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Last Name <span class="text-danger">*</span></label>
-                            <input wire:model="last_name" type="text" class="form-control" required>
-                            @error('last_name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Suffix (e.g. Jr, III)</label>
-                            <input wire:model="generational_suffix" type="text" class="form-control">
-                            @error('generational_suffix') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Sex</label>
-                            <select wire:model="sex" class="form-select">
-                                <option value="">Select...</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                            @error('sex') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Birthdate</label>
-                            <input wire:model="birthdate" type="date" class="form-control">
-                            @error('birthdate') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Contact Number</label>
-                            <input wire:model="contact_number" type="text" placeholder="09171234567" class="form-control">
-                            @error('contact_number') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Email Address</label>
-                            <input wire:model="email_address" type="email" class="form-control">
-                            @error('email_address') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
+    {{-- Hidden data element for preloading existing categories & documents into JS --}}
+    <div id="existing-categories-data" data-categories='@json($scannedCategories)' style="display: none;"></div>
+
+    <form wire:submit="save" class="add-file-form-stack" id="scholarEditForm">
+        {{-- Section 1: Basic Information --}}
+        <div class="add-file-form-card">
+            <h3 class="add-file-form-card__title">Basic Information</h3>
+
+            <div class="row g-3">
+                <div class="col-md-3 form-field-group">
+                    <label for="last_name">Last Name <span class="text-danger">*</span></label>
+                    <input wire:model="last_name" type="text" id="last_name" class="form-control-custom" placeholder="e.g. Maclang" required>
+                    @error('last_name') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="h5 border-bottom pb-2">2. Scholarship &amp; Academic Information</h3>
-                    <div class="row g-3 mt-1">
-                        <div class="col-md-4">
-                            <label class="form-label">SPAS No.</label>
-                            <input wire:model="spas_no" type="text" class="form-control">
-                            @error('spas_no') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Year of Award <span class="text-danger">*</span></label>
-                            <input wire:model="year_of_award" type="number" class="form-control" required>
-                            @error('year_of_award') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Scholarship <span class="text-danger">*</span></label>
-                            <select wire:model="scholarship_id" class="form-select" required>
-                                <option value="">Select...</option>
-                                @foreach($scholarships as $s)
-                                    <option value="{{ $s->id }}">{{ $s->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('scholarship_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Scholarship Type <span class="text-danger">*</span></label>
-                            <select wire:model="scholarship_type_id" class="form-select" required>
-                                <option value="">Select...</option>
-                                @foreach($scholarshipTypes as $t)
-                                    <option value="{{ $t->id }}">{{ $t->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('scholarship_type_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">School <span class="text-danger">*</span></label>
-                            <select wire:model="school_id" class="form-select" required>
-                                <option value="">Select...</option>
-                                @foreach($schools as $s)
-                                    <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->campus }})</option>
-                                @endforeach
-                            </select>
-                            @error('school_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Course</label>
-                            <select wire:model="course_id" class="form-select">
-                                <option value="">Select...</option>
-                                @foreach($courses as $c)
-                                    <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->abbreviation }})</option>
-                                @endforeach
-                            </select>
-                            @error('course_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Program / Major / Specialization Details</label>
-                            <input wire:model="program" type="text" class="form-control">
-                            @error('program') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
+                <div class="col-md-3 form-field-group">
+                    <label for="first_name">First Name <span class="text-danger">*</span></label>
+                    <input wire:model="first_name" type="text" id="first_name" class="form-control-custom" placeholder="e.g. Wakin Cean" required>
+                    @error('first_name') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="h5 border-bottom pb-2">3. Address &amp; Geographic Information</h3>
-                    <div class="row g-3 mt-1">
-                        <div class="col-md">
-                            <label class="form-label">Barangay</label>
-                            <input wire:model="barangay" type="text" class="form-control">
-                            @error('barangay') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md">
-                            <label class="form-label">Municipality / City</label>
-                            <input wire:model="municipality" type="text" class="form-control">
-                            @error('municipality') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md">
-                            <label class="form-label">District</label>
-                            <input wire:model="district" type="text" class="form-control">
-                            @error('district') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md">
-                            <label class="form-label">Province</label>
-                            <input wire:model="province" type="text" class="form-control">
-                            @error('province') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md">
-                            <label class="form-label">Region <span class="text-danger">*</span></label>
-                            <select wire:model="region_id" class="form-select" required>
-                                <option value="">Select...</option>
-                                @foreach($regions as $r)
-                                    <option value="{{ $r->id }}">{{ $r->name }} ({{ $r->abbreviation }})</option>
-                                @endforeach
-                            </select>
-                            @error('region_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
+                <div class="col-md-3 form-field-group">
+                    <label for="middle_name">Middle Name</label>
+                    <input wire:model="middle_name" type="text" id="middle_name" class="form-control-custom" placeholder="e.g. Castro">
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="h5 border-bottom pb-2">4. Clearance &amp; Status</h3>
-                    <div class="row g-3 mt-1 align-items-end">
-                        <div class="col-md-4">
-                            <label class="form-label">Clearance Status <span class="text-danger">*</span></label>
-                            <select wire:model="clearance_status_id" class="form-select" required>
-                                @foreach($clearanceStatuses as $status)
-                                    <option value="{{ $status->id }}">{{ $status->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('clearance_status_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Clearance Date</label>
-                            <input wire:model="clearance_date" type="date" class="form-control">
-                            @error('clearance_date') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input wire:model="for_disposal" type="checkbox" class="form-check-input" id="for_disposal_edit">
-                                <label class="form-check-label text-danger" for="for_disposal_edit">Flag for Disposal (Retention eligibility achieved)</label>
-                            </div>
-                            @error('for_disposal') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                        </div>
-                    </div>
+                <div class="col-md-3 form-field-group">
+                    <label for="generational_suffix">Suffix</label>
+                    <input wire:model="generational_suffix" type="text" id="generational_suffix" class="form-control-custom" placeholder="e.g. Jr., III">
                 </div>
-
-                <div class="d-flex justify-content-end gap-2 border-top pt-3">
-                    <a href="{{ route('scholars.show', $scholar->id) }}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Update Scholar</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+
+        {{-- Section 2: Scholarship Details --}}
+        <div class="add-file-form-card">
+            <h3 class="add-file-form-card__title">Scholarship Details</h3>
+
+            <div class="row g-3">
+                {{-- Row 1: 3 equal columns --}}
+                <div class="col-md-4 form-field-group">
+                    <label for="spas_no">SPAS ID No. <span class="text-danger">*</span></label>
+                    <input wire:model="spas_no" type="text" id="spas_no" class="form-control-custom" placeholder="e.g. U-2023-00855-2235" required>
+                    @error('spas_no') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-4 form-field-group">
+                    <label for="scholarship_id">Scholarship Program <span class="text-danger">*</span></label>
+                    <select wire:model="scholarship_id" id="scholarship_id" class="form-select-custom" required>
+                        <option value="">Select Scholarship</option>
+                        @foreach($scholarships as $sch)
+                            <option value="{{ $sch->id }}">{{ $sch->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('scholarship_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-4 form-field-group">
+                    <label for="scholarship_type_id">Program Type <span class="text-danger">*</span></label>
+                    <select wire:model="scholarship_type_id" id="scholarship_type_id" class="form-select-custom" required>
+                        <option value="">Select Program Type</option>
+                        @foreach($scholarshipTypes as $st)
+                            <option value="{{ $st->id }}">{{ $st->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('scholarship_type_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 2: 3 equal columns --}}
+                <div class="col-md-4 form-field-group">
+                    <label for="year_of_award">Year of Award <span class="text-danger">*</span></label>
+                    <select wire:model="year_of_award" id="year_of_award" class="form-select-custom" required>
+                        @for($y = date('Y'); $y >= 2000; $y--)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endfor
+                    </select>
+                    @error('year_of_award') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-4 form-field-group">
+                    <label for="school_id">University / School <span class="text-danger">*</span></label>
+                    <select wire:model="school_id" id="school_id" class="form-select-custom" required>
+                        <option value="">Select School</option>
+                        @foreach($schools as $school)
+                            <option value="{{ $school->id }}">{{ $school->name }} {{ $school->abbreviation ? "({$school->abbreviation})" : '' }}</option>
+                        @endforeach
+                    </select>
+                    @error('school_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-4 form-field-group">
+                    <label for="course_id">Course / Degree Program</label>
+                    <select wire:model="course_id" id="course_id" class="form-select-custom">
+                        <option value="">Select Course</option>
+                        @foreach($courses as $course)
+                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Row 3: 2 equal columns --}}
+                <div class="col-md-6 form-field-group">
+                    <label for="clearance_status_id">Clearance Status <span class="text-danger">*</span></label>
+                    <select wire:model="clearance_status_id" id="clearance_status_id" class="form-select-custom" required>
+                        <option value="">Select Status</option>
+                        @foreach($clearanceStatuses as $status)
+                            <option value="{{ $status->id }}">{{ $status->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('clearance_status_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-6 form-field-group">
+                    <label for="clearance_date">Clearance Date</label>
+                    <input wire:model="clearance_date" type="date" id="clearance_date" class="form-control-custom">
+                </div>
+            </div>
+        </div>
+
+        {{-- Section 3: Demographic & Contact Information --}}
+        <div class="add-file-form-card">
+            <h3 class="add-file-form-card__title">Demographic & Contact Information</h3>
+
+            <div class="row g-3">
+                {{-- Row 1: 4 equal columns --}}
+                <div class="col-md-3 form-field-group">
+                    <label for="barangay">Address / Barangay</label>
+                    <input wire:model="barangay" type="text" id="barangay" class="form-control-custom" placeholder="e.g. Brgy. 34-D">
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="municipality">Municipality / City</label>
+                    <input wire:model="municipality" type="text" id="municipality" class="form-control-custom" placeholder="e.g. Davao City">
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="province">Province</label>
+                    <input wire:model="province" type="text" id="province" class="form-control-custom" placeholder="e.g. Davao del Sur">
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="region_id">Region <span class="text-danger">*</span></label>
+                    <select wire:model="region_id" id="region_id" class="form-select-custom" required>
+                        <option value="">Select Region</option>
+                        @foreach($regions as $reg)
+                            <option value="{{ $reg->id }}">{{ $reg->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('region_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 2: 4 columns --}}
+                <div class="col-md-3 form-field-group">
+                    <label for="birthdate">Birthdate</label>
+                    <input wire:model="birthdate" type="date" id="birthdate" class="form-control-custom">
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="sex">Sex</label>
+                    <select wire:model="sex" id="sex" class="form-select-custom">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="contact_number">Contact Number</label>
+                    <input wire:model="contact_number" type="text" id="contact_number" class="form-control-custom" placeholder="e.g. 09123456789">
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="email_address">Email Address</label>
+                    <input wire:model="email_address" type="email" id="email_address" class="form-control-custom" placeholder="e.g. scholar@example.com">
+                    @error('email_address') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+            </div>
+        </div>
+
+        {{-- Section 4: Scanned Files Extension (Client-Side Staging + Existing Documents) --}}
+        <div class="add-file-form-card">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="add-file-form-card__title mb-1">Scholar Documents</h3>
+                    <p class="text-muted small mb-0">View existing documents, add new scanned files, and drag to organize by category.</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill">
+                    {{ count($scannedCategories) }} {{ count($scannedCategories) === 1 ? 'Category' : 'Categories' }}
+                </span>
+            </div>
+
+            <div class="upload-scanned-stack d-flex flex-column gap-4">
+                @foreach($scannedCategories as $catIndex => $cat)
+                    <div class="scanned-file-box" wire:key="scanned-category-{{ $cat['id'] }}">
+                        {{-- Category Header with Category Dropdown & Custom Rename Field --}}
+                        <div class="scanned-file-box__header d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom">
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="ph ph-folder-notch-open text-primary fs-5"></i>
+                                    <label class="fw-bold text-dark small mb-0 me-1">Folder Category:</label>
+                                </div>
+
+                                {{-- Predefined Category Dropdown --}}
+                                <select class="scanned-file-box__category-select" 
+                                        wire:change="setCategoryType({{ $catIndex }}, $event.target.value)"
+                                        value="{{ $cat['selected_type'] ?? 'custom' }}">
+                                    @foreach($availableFileTypes as $ft)
+                                        <option value="{{ $ft->name }}" @selected(($cat['selected_type'] ?? '') === $ft->name)>
+                                             {{ $ft->name }}
+                                        </option>
+                                    @endforeach
+                                    <option value="custom" @selected(($cat['selected_type'] ?? '') === 'custom')>+ Custom Name / Rename...</option>
+                                </select>
+
+                                {{-- Editable Name Input --}}
+                                <div class="d-flex align-items-center position-relative">
+                                    <input type="text" 
+                                           wire:model.live.debounce.300ms="scannedCategories.{{ $catIndex }}.name" 
+                                           class="scanned-file-box__editable-label" 
+                                           placeholder="Enter folder name..."
+                                           title="Rename this category">
+                                </div>
+                            </div>
+
+                            {{-- Category Actions (Delete) --}}
+                            @if(count($scannedCategories) > 1)
+                                <button type="button" 
+                                        wire:click="removeScannedCategory({{ $catIndex }})" 
+                                        class="btn btn-outline-danger btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-1"
+                                        title="Delete Folder Category">
+                                    <i class="ph ph-trash"></i> Delete Category
+                                </button>
+                            @endif
+                        </div>
+
+                        {{-- Hidden File Input for this Category --}}
+                        <input type="file" 
+                               id="file_input_{{ $cat['id'] }}" 
+                               data-cat-id="{{ $cat['id'] }}" 
+                               multiple 
+                               accept=".pdf, .jpg, .jpeg, .png, .webp" 
+                               style="display: none;">
+
+                        {{-- Dropzone Area --}}
+                        <div class="file-upload-dropzone position-relative" 
+                             id="dropzone_{{ $cat['id'] }}"
+                             onclick="document.getElementById('file_input_{{ $cat['id'] }}').click()"
+                             ondragover="event.preventDefault(); this.style.borderColor='var(--dost-main-blue)';"
+                             ondragleave="this.style.borderColor='';"
+                             ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_{{ $cat['id'] }}'); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
+                            <i class="ph ph-cloud-arrow-up upload-icon"></i>
+                            <div class="upload-text">Click or drag files to add more</div>
+                            <div class="upload-hint">Supports PDF, JPG, PNG</div>
+                        </div>
+
+                        {{-- Source Files List Container (Client-Side Rendered) --}}
+                        <div class="added-files-container mb-3" id="added_files_container_{{ $cat['id'] }}" style="display: none;" wire:ignore>
+                            <label style="font-weight: 600; font-size: 0.85rem; color: #495057; margin-bottom: 0.5rem; display: block;">
+                                Source Files (<span id="source_files_count_{{ $cat['id'] }}">0</span>)
+                            </label>
+                            <div class="added-files-list" id="added_files_list_{{ $cat['id'] }}">
+                                {{-- Staged & existing items rendered dynamically --}}
+                            </div>
+                        </div>
+
+                        {{-- Document Files & Sort Order Preview Grid (Client-Side Rendered) --}}
+                        <div class="preview-grid-wrapper" id="preview_grid_wrapper_{{ $cat['id'] }}" style="display: none;" wire:ignore>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="preview-grid-title m-0">DOCUMENT FILES &amp; SORT ORDER</div>
+                                <small class="text-muted"><i class="ph ph-info me-1"></i>Drag to reorder files</small>
+                            </div>
+                            <div id="preview_container_{{ $cat['id'] }}" class="preview-container" data-cat-id="{{ $cat['id'] }}">
+                                {{-- Staged & existing preview cards rendered dynamically --}}
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Centered + Add Scanned File Category Button --}}
+                <div class="text-center mt-3">
+                    <button type="button" wire:click="addScannedCategory" class="btn-add-category-custom shadow-sm">
+                        <i class="ph ph-folder-plus text-primary fs-5"></i> Add Scanned File Category
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Form Bottom Action Bar (Discard + Save Changes) --}}
+        <div class="form-actions-bar d-flex align-items-center justify-content-end gap-3 mt-4">
+            <a href="{{ route('scholars.index', ['open_scholar' => $scholar->id]) }}" wire:navigate class="btn-discard-custom text-decoration-none">Discard</a>
+            <button type="submit" class="btn-success-custom" id="btnSubmitScholar">
+                <span id="btnSubmitScholarText">Save Changes</span>
+            </button>
+        </div>
+    </form>
 </div>
+
+@script
+<script>
+    window.__stagedCategoryFiles = window.__stagedCategoryFiles || {};
+
+    if (typeof window.pdfjsLib !== 'undefined') {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    function formatFileSize(bytes) {
+        if (!bytes || bytes <= 0) return '0 KB';
+        if (bytes >= 1048576) {
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+        return Math.max(1, Math.round(bytes / 1024)) + ' KB';
+    }
+
+    async function generatePdfThumbnail(file) {
+        try {
+            if (typeof window.pdfjsLib === 'undefined') return null;
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 0.8 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            return canvas.toDataURL('image/jpeg', 0.85);
+        } catch (e) {
+            console.warn('PDF thumbnail render warning:', e);
+            return null;
+        }
+    }
+
+    function populateInitialFiles() {
+        const dataEl = document.getElementById('existing-categories-data');
+        if (!dataEl) return;
+        try {
+            const categories = JSON.parse(dataEl.dataset.categories || '[]');
+            categories.forEach(cat => {
+                if (!window.__stagedCategoryFiles[cat.id]) {
+                    window.__stagedCategoryFiles[cat.id] = (cat.files || []).map(f => ({
+                        id: 'doc_' + f.id,
+                        dbId: f.id,
+                        name: f.name,
+                        size: f.size,
+                        sizeFormatted: formatFileSize(f.size),
+                        mimeType: f.mime_type,
+                        isPdf: f.is_pdf,
+                        isImage: f.is_image,
+                        isExisting: true,
+                        downloadUrl: f.download_url || f.url,
+                        previewUrl: f.thumbnail_url || (f.is_image ? f.url : null)
+                    }));
+                }
+            });
+        } catch (e) {
+            console.error('Error parsing existing categories:', e);
+        }
+    }
+
+    function updateCategoryUI(catId) {
+        const staged = window.__stagedCategoryFiles[catId] || [];
+        const filesContainer = document.getElementById(`added_files_container_${catId}`);
+        const filesList = document.getElementById(`added_files_list_${catId}`);
+        const filesCount = document.getElementById(`source_files_count_${catId}`);
+        const previewWrapper = document.getElementById(`preview_grid_wrapper_${catId}`);
+        const previewContainer = document.getElementById(`preview_container_${catId}`);
+
+        if (!filesContainer || !filesList || !previewWrapper || !previewContainer) return;
+
+        if (staged.length === 0) {
+            filesContainer.style.display = 'none';
+            previewWrapper.style.display = 'none';
+            filesList.innerHTML = '';
+            previewContainer.innerHTML = '';
+            return;
+        }
+
+        filesContainer.style.display = 'block';
+        previewWrapper.style.display = 'block';
+        if (filesCount) filesCount.textContent = staged.length;
+
+        // Render source files list
+        filesList.innerHTML = '';
+        staged.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'added-file-item';
+            row.dataset.fileId = item.id;
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'file-info';
+
+            const icon = document.createElement('i');
+            icon.className = item.isPdf ? 'ph ph-file-pdf text-danger fs-5' : 'ph ph-image text-primary fs-5';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'file-name text-truncate';
+            nameSpan.title = item.name;
+            nameSpan.textContent = item.name;
+
+            const sizeSpan = document.createElement('span');
+            sizeSpan.className = 'text-muted small ms-2';
+            sizeSpan.textContent = `(${item.sizeFormatted})`;
+
+            infoDiv.appendChild(icon);
+            infoDiv.appendChild(nameSpan);
+            infoDiv.appendChild(sizeSpan);
+
+            if (item.isExisting && item.downloadUrl) {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = item.downloadUrl;
+                downloadLink.target = '_blank';
+                downloadLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
+                downloadLink.title = 'View file';
+                downloadLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
+                infoDiv.appendChild(downloadLink);
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-remove-file';
+            removeBtn.title = item.isExisting ? 'Delete existing file' : 'Remove staged file';
+            removeBtn.innerHTML = '<i class="ph ph-trash"></i>';
+            removeBtn.onclick = function () {
+                removeStagedFile(catId, item.id);
+            };
+
+            row.appendChild(infoDiv);
+            row.appendChild(removeBtn);
+            filesList.appendChild(row);
+        });
+
+        // Render preview cards
+        previewContainer.innerHTML = '';
+        staged.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'preview-card-item';
+            card.dataset.fileId = item.id;
+
+            const mediaContainer = document.createElement('div');
+            mediaContainer.className = 'preview-media-container';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-remove-page';
+            removeBtn.title = item.isExisting ? 'Delete file' : 'Remove file';
+            removeBtn.innerHTML = '<i class="ph ph-x"></i>';
+            removeBtn.onclick = function () {
+                removeStagedFile(catId, item.id);
+            };
+            mediaContainer.appendChild(removeBtn);
+
+            if (item.previewUrl) {
+                const img = document.createElement('img');
+                img.src = item.previewUrl;
+                img.alt = item.name;
+                img.loading = 'lazy';
+                mediaContainer.appendChild(img);
+            } else if (item.isPdf) {
+                const pdfPlaceholder = document.createElement('div');
+                pdfPlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
+                pdfPlaceholder.innerHTML = `<i class="ph ph-file-pdf text-danger fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                mediaContainer.appendChild(pdfPlaceholder);
+            } else {
+                const filePlaceholder = document.createElement('div');
+                filePlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
+                filePlaceholder.innerHTML = `<i class="ph ph-file text-primary fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                mediaContainer.appendChild(filePlaceholder);
+            }
+
+            const meta = document.createElement('div');
+            meta.className = 'preview-meta';
+            const badge = document.createElement('span');
+            badge.className = 'page-badge';
+            badge.textContent = `File ${idx + 1}`;
+            meta.appendChild(badge);
+
+            card.appendChild(mediaContainer);
+            card.appendChild(meta);
+            previewContainer.appendChild(card);
+        });
+
+        // Initialize Sortable if not already
+        if (!previewContainer._sortable && typeof Sortable !== 'undefined') {
+            previewContainer._sortable = new Sortable(previewContainer, {
+                animation: 250,
+                draggable: '.preview-card-item',
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                onEnd: function () {
+                    const cards = previewContainer.querySelectorAll('.preview-card-item');
+                    const orderedIds = Array.from(cards).map(c => c.dataset.fileId);
+                    const currentStaged = window.__stagedCategoryFiles[catId] || [];
+                    const reordered = [];
+                    orderedIds.forEach(id => {
+                        const found = currentStaged.find(f => f.id === id);
+                        if (found) reordered.push(found);
+                    });
+                    currentStaged.forEach(f => {
+                        if (!reordered.includes(f)) reordered.push(f);
+                    });
+                    window.__stagedCategoryFiles[catId] = reordered;
+
+                    const badges = previewContainer.querySelectorAll('.page-badge');
+                    badges.forEach((b, i) => { b.textContent = `File ${i + 1}`; });
+                }
+            });
+        }
+    }
+
+    function removeStagedFile(catId, fileId) {
+        if (!window.__stagedCategoryFiles[catId]) return;
+        const index = window.__stagedCategoryFiles[catId].findIndex(f => f.id === fileId);
+        if (index !== -1) {
+            const removed = window.__stagedCategoryFiles[catId].splice(index, 1)[0];
+            if (removed && removed.isExisting && removed.dbId) {
+                $wire.deleteExistingDocument(removed.dbId);
+            }
+            if (removed && removed.previewUrl && removed.previewUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(removed.previewUrl);
+            }
+        }
+        updateCategoryUI(catId);
+    }
+
+    async function handleFileSelection(catId, fileList) {
+        if (!fileList || fileList.length === 0) return;
+
+        window.__stagedCategoryFiles[catId] = window.__stagedCategoryFiles[catId] || [];
+        const filesArray = Array.from(fileList);
+
+        for (const file of filesArray) {
+            const fileId = 'staged_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            const isPdf = (file.type && file.type.includes('pdf')) || file.name.toLowerCase().endsWith('.pdf');
+            const isImage = file.type && file.type.startsWith('image/');
+            let previewUrl = null;
+
+            if (isImage) {
+                previewUrl = URL.createObjectURL(file);
+            }
+
+            const item = {
+                id: fileId,
+                file: file,
+                name: file.name,
+                size: file.size,
+                sizeFormatted: formatFileSize(file.size),
+                mimeType: file.type || (isPdf ? 'application/pdf' : 'application/octet-stream'),
+                isPdf: isPdf,
+                isImage: isImage,
+                isExisting: false,
+                previewUrl: previewUrl
+            };
+
+            window.__stagedCategoryFiles[catId].push(item);
+        }
+
+        // Render UI instantaneously (0ms lag)
+        updateCategoryUI(catId);
+
+        // Generate PDF thumbnails asynchronously in the background
+        for (const item of window.__stagedCategoryFiles[catId]) {
+            if (item.isPdf && !item.previewUrl && item.file) {
+                generatePdfThumbnail(item.file).then(thumb => {
+                    if (thumb) {
+                        item.previewUrl = thumb;
+                        const card = document.querySelector(`.preview-card-item[data-file-id="${item.id}"]`);
+                        if (card) {
+                            const media = card.querySelector('.preview-media-container');
+                            if (media) {
+                                const oldPlaceholder = media.querySelector('img, div');
+                                const newImg = document.createElement('img');
+                                newImg.src = thumb;
+                                newImg.alt = item.name;
+                                newImg.loading = 'lazy';
+                                if (oldPlaceholder) oldPlaceholder.replaceWith(newImg);
+                                else media.appendChild(newImg);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function initCategoryUploaders() {
+        populateInitialFiles();
+
+        document.querySelectorAll('input[type="file"][data-cat-id]').forEach(input => {
+            const catId = input.dataset.catId;
+
+            if (!input._hasUploadListener) {
+                input._hasUploadListener = true;
+                input.addEventListener('change', function () {
+                    handleFileSelection(catId, this.files);
+                    this.value = '';
+                });
+            }
+
+            updateCategoryUI(catId);
+        });
+
+        const scholarForm = document.getElementById('scholarEditForm');
+        if (scholarForm && !scholarForm._hasSubmitIntercept) {
+            scholarForm._hasSubmitIntercept = true;
+            scholarForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const allFiles = [];
+                const manifest = [];
+                let uploadIdx = 0;
+
+                const categoryBoxes = document.querySelectorAll('.scanned-file-box');
+                categoryBoxes.forEach(box => {
+                    const catInput = box.querySelector('input[type="file"][data-cat-id]');
+                    if (!catInput) return;
+                    const catId = catInput.dataset.catId;
+
+                    const catSelect = box.querySelector('.scanned-file-box__category-select');
+                    const catNameInput = box.querySelector('.scanned-file-box__editable-label');
+                    let catName = 'General Documents';
+                    if (catNameInput && catNameInput.value.trim() !== '') {
+                        catName = catNameInput.value.trim();
+                    } else if (catSelect && catSelect.value && catSelect.value !== 'custom') {
+                        catName = catSelect.value;
+                    }
+
+                    const staged = window.__stagedCategoryFiles[catId] || [];
+                    staged.forEach(item => {
+                        if (!item.isExisting && item.file) {
+                            allFiles.push(item.file);
+                            manifest.push({
+                                index: uploadIdx++,
+                                cat_id: catId,
+                                cat_name: catName,
+                                name: item.name,
+                                file_size: item.size,
+                                mime_type: item.mimeType,
+                                is_pdf: item.isPdf,
+                                is_image: item.isImage,
+                                is_existing: false
+                            });
+                        }
+                    });
+                });
+
+                const submitBtn = document.getElementById('btnSubmitScholar');
+
+                if (allFiles.length === 0) {
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving Changes...';
+                    }
+                    $wire.saveScholarWithStagedFiles([]);
+                    return;
+                }
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving Scholar & Uploading Documents...';
+                }
+
+                @this.uploadMultiple('pendingUploads', allFiles, () => {
+                    $wire.saveScholarWithStagedFiles(manifest);
+                }, (err) => {
+                    console.error('Upload failed:', err);
+                    alert('Upload failed. Please try again.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<span>Save Changes</span>';
+                    }
+                });
+            });
+        }
+    }
+
+    document.addEventListener('livewire:navigated', () => {
+        window.__stagedCategoryFiles = {};
+        setTimeout(initCategoryUploaders, 100);
+    });
+
+    document.addEventListener('livewire:initialized', () => {
+        setTimeout(initCategoryUploaders, 100);
+    });
+
+    Livewire.hook('commit', ({ succeed }) => {
+        succeed(() => {
+            setTimeout(initCategoryUploaders, 100);
+            const submitBtn = document.getElementById('btnSubmitScholar');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Save Changes</span>';
+            }
+        });
+    });
+</script>
+@endscript
