@@ -1,11 +1,9 @@
 <?php
 
-<<<<<<< HEAD
-use App\Models\File;
-=======
 use App\Models\Document;
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
+use App\Models\File;
 use App\Models\Scholar;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
 
@@ -97,11 +95,7 @@ new class extends Component
         }
     }
 
-<<<<<<< HEAD
     public function openDocument(string $folderName, int $index): void
-=======
-    public function openDocument(string $title, string $imageUrl = '', string $fileType = 'pdf', int $documentIndex = 1, int $totalPages = 1, int $fileId = 0): void
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
     {
         $folderFiles = $this->file_groups[$folderName] ?? [];
         $file = $folderFiles[$index] ?? null;
@@ -114,56 +108,67 @@ new class extends Component
         $secureStreamUrl = route('documents.view', ['file' => $file['id']]);
 
         $this->dispatch('open-document-viewer',
-<<<<<<< HEAD
             title: (string) ($file['file_type_name'] ?? $file['file_name'] ?? 'Document'),
             fileUrl: (string) $secureStreamUrl,
             scholarName: (string) ($this->scholarData['name'] ?? 'Scholar'),
             fileType: str_contains($file['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
             documentIndex: (int) ($index + 1),
             scholarId: (int) ($this->scholarId ?? -1),
-            fileId: (int) ($file['id'] ?? 4),
-=======
-            title: $title,
-            fileUrl: $imageUrl,
-            scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.',
-            fileType: $fileType,
-            documentIndex: $documentIndex,
-            scholarId: $this->scholarId ?? 1,
-            fileId: $fileId,
-            extraData: [
-                'totalPages' => $totalPages,
-                'currentPage' => 1,
-            ]
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
+            documentId: (string) ($file['id'] ?? ''),
         );
     }
 
 
     public function loadScholar(): void
     {
-<<<<<<< HEAD
         $dbScholar = Scholar::with(['scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])
             ->find($this->scholarId);
         
         // load all files
         
-        $files = File::fromQuery("
+        $files = DB::select("
+            WITH RankedVersions AS (
+                SELECT 
+                    document_id,
+                    file_type_id,
+                    file_name,
+                    file_path,
+                    file_size,
+                    uploaded_by,
+                    uploaded_at,
+                    ROW_NUMBER() OVER(PARTITION BY document_id ORDER BY version_number DESC) as rn
+                FROM document_versions
+            )
             SELECT 
-                f.id,
+                d.id,
+                d.documentable_id AS scholar_id,
                 ft.name as file_type_name,
-                f.file_name,
-                f.file_path,
-                f.updated_at,
-                f.file_size,
-                f.mime_type,
-                f.metadata
-            FROM files as f
-            INNER JOIN file_types as ft ON f.file_type_id = ft.id
-            WHERE JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.scholar_id')) = :scholarId
-            ORDER BY ft.name ASC
-        ", array('scholarId' => $this->scholarId))->toArray();
+                rv.file_name,
+                rv.file_path,
+                rv.uploaded_at,
+                u.name,
+                rv.file_size,
+                d.metadata
+            FROM documents AS d
+            INNER JOIN RankedVersions AS rv ON d.id = rv.document_id AND rv.rn = 1
+            INNER JOIN file_types AS ft 
+                ON rv.file_type_id = ft.id
+            INNER JOIN users AS u 
+                ON u.id = rv.uploaded_by
+            WHERE d.documentable_type = :documentableType
+                AND d.documentable_id = :scholarId
+                AND d.deleted_at IS NULL
+            ORDER BY ft.name ASC;
+        ", [
+            "documentableType" => "App\\Models\\Scholar", 
+            "scholarId" => $this->scholarId
+        ]);
 
-        $this->file_groups = collect($files)->groupBy('file_type_name')->toArray();
+        $filesArray = json_decode(json_encode($files), true);
+        $this->file_groups = collect($filesArray)->groupBy('file_type_name')->toArray();
+        $this->expandedFolders = array_keys($this->file_groups);
+
+        // Uncomment to see if the query works as intended.
         // dd($this->file_groups);
 
         if ($dbScholar) {
@@ -177,30 +182,6 @@ new class extends Component
                 'course' => $dbScholar->course->name ?? 'null',
                 'university' => $dbScholar->school->name ? ($dbScholar->school->abbreviation ? ($dbScholar->school->name . ' (' . $dbScholar->school->abbreviation . ')') : $dbScholar->school->name) : 'null',
                 'address' => $dbScholar->barangay ? "{$dbScholar->barangay}, {$dbScholar->district}" : 'null',
-=======
-        $dbScholar = Scholar::with([
-            'scholarship',
-            'scholarshipType',
-            'school',
-            'course',
-            'region',
-            'clearanceStatus',
-            'documents.fileType',
-        ])->find($this->scholarId);
-
-        if ($dbScholar) {
-            $this->scholarData = [
-                'id' => $dbScholar->id,
-                'name' => trim("{$dbScholar->last_name}, {$dbScholar->first_name} ".($dbScholar->middle_name ?? '')),
-                'spas_id' => $dbScholar->spas_no ?? 'null',
-                'program' => $dbScholar->program ?? ($dbScholar->scholarship->name ?? 'null'),
-                'program_type' => $dbScholar->scholarshipType->name ?? 'null',
-                'year_of_award' => (string) ($dbScholar->year_of_award ?? 'null'),
-                'clearance_date' => $dbScholar->clearance_date ? \Carbon\Carbon::parse($dbScholar->clearance_date, 'Asia/Manila')->format('m / d / Y') : 'None (Not Cleared)',
-                'course' => $dbScholar->course->name ?? 'null',
-                'university' => $dbScholar->school ? ($dbScholar->school->abbreviation ? ($dbScholar->school->name.' ('.$dbScholar->school->abbreviation.')') : $dbScholar->school->name) : 'null',
-                'address' => $dbScholar->barangay ? "{$dbScholar->barangay}".($dbScholar->district ? ", {$dbScholar->district}" : '') : 'null',
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
                 'municipality' => $dbScholar->municipality ?? 'null',
                 'province' => $dbScholar->province ?? 'null',
                 'region' => $dbScholar->region->name ?? 'null',
@@ -210,36 +191,6 @@ new class extends Component
                 'sex' => $dbScholar->sex ?? 'null',
                 'status' => $dbScholar->clearanceStatus->name ?? 'null',
             ];
-
-            // Dynamically load and group active documents
-            $documents = $dbScholar->documents->where('status', 'active');
-            if ($documents->isNotEmpty()) {
-                $grouped = [];
-                foreach ($documents as $doc) {
-                    $typeName = $doc->fileType->name ?? 'General Documents';
-                    if (!isset($grouped[$typeName])) {
-                        $isImage = str_contains($doc->mime_type ?? '', 'image');
-                        $grouped[$typeName] = [
-                            'name' => $typeName,
-                            'type' => $isImage ? 'image' : 'pdf',
-                            'items' => [],
-                        ];
-                    }
-                    $index = count($grouped[$typeName]['items']) + 1;
-                    $grouped[$typeName]['items'][] = [
-                        'id' => $doc->id,
-                        'title' => $typeName,
-                        'sub' => $doc->original_filename ?: "Document {$index}",
-                        'index' => $index,
-                        'totalPages' => 1,
-                        'url' => route('documents.download', $doc->id),
-                    ];
-                }
-                $this->fileGroups = array_values($grouped);
-                $this->expandedFolders = array_keys($grouped);
-            } else {
-                $this->fileGroups = [];
-            }
         } elseif (!$this->scholarData) {
             // Demonstration mock data matching Screenshots
             $this->scholarData = [
@@ -270,7 +221,7 @@ new class extends Component
 <div>
     {{-- Slide-over Backdrop Overlay --}}
     @if($isOpen)
-        <div wire:click="closeDrawer" class="scholar-drawer-backdrop"></div>
+    <div wire:click="closeDrawer" class="scholar-drawer-backdrop"></div>
     @endif
 
     {{-- Slide-over Right Panel with Gray Header & White Folder Body --}}
@@ -404,18 +355,21 @@ new class extends Component
                         <span class="small text-muted fw-medium">Scanned Files</span>
                     </div>
 
-<<<<<<< HEAD
                     @foreach ($file_groups as $folderName => $items)
-                        <div class="folder-accordion mb-2">
+                        @php 
+                            $isFolderExpanded = in_array($folderName, $expandedFolders, true); 
+                        @endphp
+                        
+                        <div class="folder-accordion mb-2 {{ $isFolderExpanded ? 'folder-accordion--open' : '' }}">
                             <button wire:click="toggleFolder('{{ $folderName }}')" type="button" class="folder-tab-btn">
                                 <span>{{ $folderName }}</span>
                             </button>
 
-                            @if(in_array($folderName, $expandedFolders, true))
+                            @if($isFolderExpanded)
                                 <div class="folder-accordion__content">
                                     <div class="d-flex gap-3 overflow-auto pb-2">
                                         @foreach ($items as $index => $file)
-                                            <div wire:click="openDocument('{{ $folderName }}', {{ $index }})" class="doc-thumbnail-card" role="button">
+                                            <div wire:click="openDocument('{{ $folderName }}', {{ $index }})" id="{{ $folderName }}" class="doc-thumbnail-card" role="button">
                                                 <div class="doc-thumbnail-card__preview">
                                                     <div class="doc-mini-paper">
                                                         <div class="doc-mini-header">
@@ -427,71 +381,16 @@ new class extends Component
                                                             <div class="doc-mini-line"></div>
                                                             <div class="doc-mini-line short"></div>
                                                             <div class="doc-mini-table"></div>
-=======
-                    @php
-                        $displayFileGroups = $fileGroups;
-                        if (empty($displayFileGroups) && !$scholarId) {
-                            $displayFileGroups = [
-                                [
-                                    'name' => 'Amendatory Agreement',
-                                    'type' => 'pdf',
-                                    'items' => [
-                                        ['id' => 1, 'title' => 'Amendatory Agreement', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 10, 'url' => ''],
-                                        ['id' => 2, 'title' => 'Amendatory Agreement', 'sub' => 'Document 2', 'index' => 2, 'totalPages' => 10, 'url' => ''],
-                                        ['id' => 3, 'title' => 'Amendatory Agreement', 'sub' => 'Document 3', 'index' => 3, 'totalPages' => 10, 'url' => ''],
-                                    ]
-                                ],
-                                [
-                                    'name' => 'Report of Grades',
-                                    'type' => 'pdf',
-                                    'items' => [
-                                        ['id' => 4, 'title' => 'Report of Grades', 'sub' => 'Document 1', 'index' => 1, 'totalPages' => 1, 'url' => 'https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1000&auto=format&fit=crop'],
-                                    ]
-                                ]
-                            ];
-                        }
-                    @endphp
-
-                    @if(empty($displayFileGroups))
-                        <div class="text-center py-4 text-muted">
-                            <i class="ph ph-folder-dashed fs-2 d-block mb-1 opacity-50"></i>
-                            <span class="small">No scanned files uploaded for this scholar yet.</span>
-                        </div>
-                    @else
-                        @foreach($displayFileGroups as $group)
-                            <div class="folder-accordion mb-2">
-                                <button wire:click="toggleFolder('{{ $group['name'] }}')" type="button" class="folder-tab-btn">
-                                    <span>{{ $group['name'] }}</span>
-                                </button>
-
-                                @if(in_array($group['name'], $expandedFolders, true))
-                                    <div class="folder-accordion__content">
-                                        <div class="d-flex gap-3 overflow-auto pb-2">
-                                            @foreach($group['items'] as $docItem)
-                                                <div wire:click="openDocument('{{ $docItem['title'] }}', '{{ $docItem['url'] }}', '{{ $group['type'] }}', {{ $docItem['index'] }}, {{ $docItem['totalPages'] }}, {{ $docItem['id'] ?? 0 }})" class="doc-thumbnail-card" role="button">
-                                                    <div class="doc-thumbnail-card__preview">
-                                                        <div class="doc-mini-paper">
-                                                            <div class="doc-mini-header">
-                                                                <div class="doc-mini-logo"></div>
-                                                                <div class="doc-mini-title">{{ $docItem['title'] }}</div>
-                                                                <div class="doc-mini-sub">{{ $docItem['sub'] }}</div>
-                                                            </div>
-                                                            <div class="doc-mini-body">
-                                                                <div class="doc-mini-line"></div>
-                                                                <div class="doc-mini-line short"></div>
-                                                                <div class="doc-mini-table"></div>
-                                                            </div>
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
-                                        </div>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
         @endif
@@ -519,4 +418,3 @@ new class extends Component
         </div>
     @endif
 </div>
-

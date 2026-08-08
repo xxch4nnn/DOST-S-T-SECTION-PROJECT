@@ -51,8 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/add-file', AddFile::class)->name('add-file.index');
     });
 
-    // // Audit Logs
-    // Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    // Audit Logs
+    Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
 
     // Document View / Stream
     Route::get('/documents/{file}/view', [DocumentController::class, 'viewFile'])->name('documents.view');

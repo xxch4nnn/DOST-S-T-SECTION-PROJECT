@@ -39,4 +39,8 @@ class Scholar extends Model
     public function clearanceStatus(){
         return $this->belongsTo(ClearanceStatus::class, "clearance_status_id");
     }
+
+    public function documents(){
+        return $this->morphMany(Document::class, 'documentable');
+    }
 }

@@ -261,10 +261,11 @@
                             {{-- Dropzone Area Matching Edit Scholar File Reference --}}
                             <div class="file-upload-dropzone position-relative" 
                                  id="dropzone_{{ $cat['id'] }}"
-                                 onclick="document.getElementById('file_input_{{ $cat['id'] }}').click()"
+                                 data-cat-id="{{ $cat['id'] }}"
+                                 onclick="document.getElementById('file_input_' + this.dataset.catId).click()"
                                  ondragover="event.preventDefault(); this.style.borderColor='var(--dost-main-blue)';"
                                  ondragleave="this.style.borderColor='';"
-                                 ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_{{ $cat['id'] }}'); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
+                                 ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_' + this.dataset.catId); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
                                 <i class="ph ph-cloud-arrow-up upload-icon"></i>
                                 <div class="upload-text">Click or drag files to add more</div>
                                 <div class="upload-hint">Supports PDF, JPG, PNG</div>

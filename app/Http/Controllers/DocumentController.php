@@ -12,33 +12,69 @@ class DocumentController extends Controller
     use AuthorizesRequests;
 
     /**
-     * Download the specified document.
+     * Download the specified document or file.
      */
-    // public function download(File $document)
-    // {
-    //     // Check file exists
-    //     if (! Storage::disk('local')->exists('documents/'.$document->stored_filename)) {
-    //         abort(404, 'File not found on server.');
-    //     }
-
-    //     $path = Storage::disk('local')->path('documents/'.$document->stored_filename);
-
-    //     return response()->download($path, $document->original_filename);
-    // }
-
-    public function viewFile(File $file)
+    public function download(string|int $id)
     {
-        $this->authorize('download', $file);
+        session_write_close();
 
-        if (! Storage::disk('local')->exists('documents/'.$file->file_name)) {
+        $relativePath = null;
+        $fileName = null;
+
+        $doc = Document::find($id);
+        if ($doc) {
+            $version = $doc->documentVersion()->orderByDesc('version_number')->first();
+            $relativePath = $version?->file_path;
+            $fileName = $version?->file_name;
+        } else {
+            $relativePath = $id;
+        }
+
+        if ($relativePath && Storage::disk('local')->exists($relativePath)) {
+            $absolutePath = Storage::disk('local')->path($relativePath);
+        } elseif ($relativePath && file_exists($relativePath)) {
+            $absolutePath = $relativePath;
+        } else {
             abort(404, 'File not found on server.');
         }
 
-        $mimeType = $file->mime_type ?? (function_exists('mime_content_type') ? @mime_content_type($file->file_path) : null) ?? 'application/pdf';
+        return response()->download($absolutePath, $fileName ?? basename($absolutePath));
+    }
 
-        return response()->file($file->file_path, [
+    /**
+     * View/Stream the specified file inline.
+     */
+    public function viewFile(string|int $id)
+    {
+        session_write_close();
+
+        $relativePath = null;
+        $fileName = null;
+
+        $doc = Document::find($id);
+        if ($doc) {
+            $version = $doc->documentVersion()->orderByDesc('version_number')->first();
+            $relativePath = $version?->file_path;
+            $fileName = $version?->file_name;
+        } else {
+            $relativePath = $id;
+        }
+
+        if ($relativePath && Storage::disk('local')->exists($relativePath)) {
+            $absolutePath = Storage::disk('local')->path($relativePath);
+        } elseif ($relativePath && file_exists($relativePath)) {
+            $absolutePath = $relativePath;
+        } else {
+            abort(404, 'File not found on server.');
+        }
+
+        $mimeType = (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null) 
+            ?? 'application/pdf';
+
+        return response()->file($absolutePath, [
             'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="' . ($file->file_name ?? basename($file->file_path)) . '"',
+            'Content-Disposition' => 'inline; filename="' . ($fileName ?? basename($absolutePath)) . '"',
+            'Cache-Control' => 'public, max-age=3600',
         ]);
     }
 }

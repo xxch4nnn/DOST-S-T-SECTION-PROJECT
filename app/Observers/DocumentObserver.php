@@ -2,27 +2,24 @@
 
 namespace App\Observers;
 
-use App\Models\File;
+use App\Models\Document;
 
-class FileObserver
+class DocumentObserver
 {
     // Ensures the FTS data gets updated immediately after a file is created or updated 
     public bool $afterCommit = true;
 
-    public function creating(File $file){
+    public function creating(Document $file){
         if ($file->file_path) 
             $file->file_path = str_replace('/', '\\', $file->file_path);
-
-        if (empty($file->mime_type))
-            $file->mime_type = 'application/pdf';
 
         $file->metadata = $file->metadata ?? [];
     }
 
     /**
-     * Handle the File "created" event.
+     * Handle the Document "created" event.
      */
-    public function created(File $file): void
+    public function created(Document $file): void
     {
         
         // Create a new column given the file information
@@ -30,44 +27,41 @@ class FileObserver
     }
 
     // A function run before saving the entire query...
-    public function updating(File $file){
+    public function updating(Document $file){
         if ($file->file_path) 
             $file->file_path = str_replace('/', '\\', $file->file_path);
-
-        if (empty($file->mime_type))
-            $file->mime_type = 'application/pdf';
 
         $file->metadata = $file->metadata ?? [];
     }
 
     /**
-     * Handle the File "updated" event.
+     * Handle the Document "updated" event.
      */
-    public function updated(File $file): void
+    public function updated(Document $file): void
     {
         // Make an audit log 
     }
 
     /**
-     * Handle the File "deleted" event.
+     * Handle the Document "deleted" event.
      */
-    public function deleted(File $file): void
+    public function deleted(Document $file): void
     {
         //
     }
 
     /**
-     * Handle the File "restored" event.
+     * Handle the Document "restored" event.
      */
-    public function restored(File $file): void
+    public function restored(Document $file): void
     {
         //
     }
 
     /**
-     * Handle the File "force deleted" event.
+     * Handle the Document "force deleted" event.
      */
-    public function forceDeleted(File $file): void
+    public function forceDeleted(Document $file): void
     {
         //
     }

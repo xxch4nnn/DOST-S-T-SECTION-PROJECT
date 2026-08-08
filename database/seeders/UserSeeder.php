@@ -14,13 +14,18 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $groups = [
-            ['name'=> 'Waks', 'email'=> 'maclangw26@gmail.com', 'password'=> 'Wakster2112', 'email_verified_at' => now()],
-            ['name'=> 'Admin', 'email'=> 'admin@admin', 'password'=> 'adminadmin', 'email_verified_at' => now()],
+            ['name'=> 'Waks', 'email'=> 'maclangw26@gmail.com', 'password'=> 'Wakster2112', 'role' => 'Super Admin'],
+            ['name'=> 'Admin', 'email'=> 'admin@admin', 'password'=> 'adminadmin', 'role' => 'Admin'],
         ];
 
         foreach($groups as $group){
+            $roleName = $group['role'];
+            unset($group['role']);
             $group['password'] = password_hash($group['password'], PASSWORD_BCRYPT);
-            User::firstOrCreate($group);
+            $user = User::firstOrCreate(['email' => $group['email']], $group);
+            if ($roleName) {
+                $user->assignRole($roleName);
+            }
         }
     }
 }

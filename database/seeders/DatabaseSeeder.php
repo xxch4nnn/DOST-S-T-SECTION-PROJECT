@@ -24,12 +24,32 @@ class DatabaseSeeder extends Seeder
         ]);
         $testAdmin->assignRole('Super Admin');
 
-        User::factory()->create([
-            'name' => 'admin',
+        $adminUser = User::firstOrCreate([
             'email' => 'a@a',
-            'password' => 'admin',
+        ], [
+            'name' => 'admin',
+            'password' => bcrypt('admin'),
             'email_verified_at' => now(),
         ]);
+        $adminUser->assignRole('Super Admin');
+
+        $myUser = User::firstOrCreate([
+            'email' => 'maclangw26@gmail.com',
+        ], [
+            'name' => 'Wakin Maclang',
+            'password' => bcrypt('Wakster2112'), // Change to your desired password
+            'email_verified_at' => now(),
+        ]);
+        $myUser->assignRole('Super Admin');
+
+        $lazyUser = User::firstOrCreate([
+            'email' => 'a',
+        ], [
+            'name' => 'a',
+            'password' => bcrypt('a'), // Change to your desired password
+            'email_verified_at' => now(),
+        ]);
+        $lazyUser->assignRole('Super Admin');
 
         $this->call([
             FileGroupSeeder::class,
@@ -42,7 +62,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ScholarSeeder::class,
             FileTypeSeeder::class,
-            FileSeeder::class
+            DocumentSeeder::class
         ]);
     }
 }

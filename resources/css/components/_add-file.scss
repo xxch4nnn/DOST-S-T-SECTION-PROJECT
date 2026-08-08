@@ -226,7 +226,8 @@
         cursor: pointer;
         transition: all 0.2s ease;
 
-        &:focus, &:hover {
+        &:focus,
+        &:hover {
             border-color: #3b82f6;
             background: #ffffff;
         }
@@ -244,16 +245,10 @@
         transition: all 0.2s ease;
         min-width: 200px;
 
-<<<<<<< HEAD
         &:hover,
         &:focus {
-            border-color: #cbd5e1;
-            background: #f8fafc;
-=======
-        &:hover, &:focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgb(59, 130, 246, 0.1);
->>>>>>> 079526efeb8c1beb8e0742515d01b57dc18ee614
         }
     }
 }

@@ -42,6 +42,7 @@ Every bullet **must** start with:
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit) (#52).
 
 ### Changed
+- **2026-08-05 13:38:00 +08:00** · **Chan** (`@xxch4nnn`) — Update `database/migrations/2026_07_20_061543_create_documents_table.php` schema definition to use `documents` table name, polymorphic `documentable_type`/`documentable_id` columns with compound index, timestamps, and soft deletes.
 - **2026-08-05 00:30:00 +08:00** · **Chan** (`@xxch4nnn`) — `AGENTS.md` / `CONTRIBUTING.md`: migrated Bible doc ID, Dependabot Paths A/B/C, CODEOWNER hold-release, Windows shell matrix, handoff ownership, changelog examples; re-pin concurrently **10.0.4** in `docs/TECH_STACK_DOCS.md` after #31 smoke.
 - **2026-08-05 00:27:19 +08:00** · **Chan** (`@xxch4nnn`) — Bump `concurrently` 9.2.4 → 10.0.4 (Dependabot #31; local smoke Path A/C).
 - **2026-08-05 00:13:37 +08:00** · **Chan** (`@xxch4nnn`) — Changelog policy: every `[Unreleased]` bullet must include date-time (+08:00) and user identity.
@@ -58,6 +59,12 @@ Every bullet **must** start with:
 - **2026-08-04 02:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `TASKS_DETECTED_payload.md` retired from standup/reporting/Bible sync; archived reference only (#46 / #39).
 
 ### Fixed
+- **2026-08-05 12:24:00 +08:00** · **Chan** (`@xxch4nnn`) — Remove outer scrollbar from `.doc-viewer-canvas` container in `_document-viewer.scss` and `document-viewer.blade.php` so only the internal document viewer scrollbar is visible.
+- **2026-08-05 12:12:00 +08:00** · **Chan** (`@xxch4nnn`) — Fix 404 Not Found error in `DocumentController` `viewFile` and `download` actions by correctly resolving `$file->file_path` against local storage disk and filesystem paths.
+- **2026-08-05 12:10:00 +08:00** · **Chan** (`@xxch4nnn`) — Add missing closing `</div>` tag for `.doc-thumbnail-card` inside `@foreach` loop in `resources/views/livewire/dashboard/scholar-drawer.blade.php` to prevent card nesting and vertical layout overflow.
+- **2026-08-05 12:00:00 +08:00** · **Chan** (`@xxch4nnn`) — Fix inline JS Blade single-quote parsing issue in dropzone element by using dataset attribute `data-cat-id` in `resources/views/livewire/add-file.blade.php`.
+- **2026-08-05 11:57:00 +08:00** · **Chan** (`@xxch4nnn`) — Update `UserSeeder`, `DatabaseSeeder`, and `RolesAndPermissionsSeeder` to assign Spatie roles (`Super Admin` / `Admin`) to seeded user accounts so login permissions pass.
+- **2026-08-05 11:42:25 +08:00** · **Chan** (`@xxch4nnn`) — Replace `@this` with `$wire` in Blade JavaScript blocks to resolve IDE "Decorators are not valid here" syntax errors in `add-file.blade.php`, `scholars/edit.blade.php`, and `scholars/files/edit.blade.php`.
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Test alignment for taxonomy / FileType without `year` (#35).
 
 ---
