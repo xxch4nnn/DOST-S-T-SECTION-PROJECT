@@ -448,6 +448,7 @@ class AddFile extends Component
                     'mime_type' => $mimeType,
                     'file_size_kb' => $fileSizeKb,
                     'status' => 'active',
+                    'metadata' => ['category' => $catName],
                     'uploaded_by' => auth()->id(),
                 ]);
 
@@ -500,6 +501,7 @@ class AddFile extends Component
                             'mime_type' => $mimeType,
                             'file_size_kb' => $fileSizeKb,
                             'status' => 'active',
+                            'metadata' => ['category' => $categoryName],
                             'uploaded_by' => auth()->id(),
                         ]);
 
@@ -599,6 +601,7 @@ class AddFile extends Component
                         'mime_type' => $mimeType,
                         'file_size_kb' => $fileSizeKb,
                         'status' => 'active',
+                        'metadata' => ['category' => $categoryName],
                         'uploaded_by' => auth()->id(),
                     ]);
 

@@ -20,6 +20,8 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Document versioning (`DocumentVersion`) creation for staged file uploads in `AddFile` and `Scholars/Edit` (#65).
 - **2026-08-06 01:45:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin Q1–Q12 vs mother implementation matrix + DB adoption guide (`planning/WAKIN_Q12_VS_IMPLEMENTATION_2026-08-06.md`); PR #65 cross-check addendum (`planning/PR65_REVIEW_2026-08-06.md`).
@@ -69,6 +71,8 @@ Every bullet **must** start with:
 
 ### Fixed
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Enforced strict `Scholar::findOrFail` in `Scholars/Edit` mount to 404 instead of falling back to Wakin mock profile (#65).
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Removed mock scholar list injection from `Scholars/Index`; empty DB shows empty groups (#65).
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — `Scholars/Edit` staged save uses manifest **or** temp categories (not both) to prevent duplicate documents (#65).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Test alignment for taxonomy / FileType without `year` (#35).
 
 ---
