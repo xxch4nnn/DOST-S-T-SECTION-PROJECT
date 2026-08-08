@@ -11,6 +11,7 @@ use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -18,6 +19,7 @@ use Livewire\WithFileUploads;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
     use WithFileUploads;
 
     public $scholar;
@@ -44,12 +46,15 @@ class Edit extends Component
     public string $spas_no = '';
 
     public string $sex = 'Male';
+    public string $sex = 'Male';
 
+    public string $birthdate = '';
     public string $birthdate = '';
 
     public string $contact_number = '';
+    public string $contact_number = '';
 
-    public string $email_address = '';
+    public string string $email_address = '' = '';
 
     public $school_id = '';
 
@@ -356,6 +361,7 @@ class Edit extends Component
                     'mime_type' => $mimeType,
                     'file_size_kb' => $fileSizeKb,
                     'status' => 'active',
+                    'metadata' => ['category' => $categoryName],
                     'uploaded_by' => auth()->id(),
                 ]);
 
@@ -367,50 +373,58 @@ class Edit extends Component
                     'replaced_by_user_id' => auth()->id(),
                 ]);
             }
-        }
+        } else {
+            // Manifest empty: persist temp files staged via processPendingUploads only (avoid double insert).
+            foreach ($this->scannedCategories as $cat) {
+                $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
+                if (empty($cat['files'])) {
+                    continue;
+                }
 
-        // Also check if any scannedCategories contain temporary server files from processPendingUploads
-        foreach ($this->scannedCategories as $cat) {
-            $categoryName = trim($cat['name'] ?? '') ?: 'General Documents';
-            if (! empty($cat['files'])) {
                 $fileType = FileType::firstOrCreate(['name' => $categoryName]);
 
                 foreach ($cat['files'] as $fileMeta) {
                     if (! empty($fileMeta['is_existing'])) {
                         continue;
                     }
+
                     $tempPath = $fileMeta['temp_path'] ?? null;
-                    if ($tempPath && Storage::disk('local')->exists($tempPath)) {
-                        $originalName = $fileMeta['name'] ?? 'Document';
-                        $mimeType = $fileMeta['mime_type'] ?? 'application/pdf';
-                        $fileSizeKb = max(1, (int) round(($fileMeta['size'] ?? 1024) / 1024));
-
-                        $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($fileMeta['is_pdf']) ? 'pdf' : 'png');
-                        $storedFilename = 'doc_'.uniqid().'.'.$extension;
-                        $targetPath = 'documents/'.$storedFilename;
-
-                        Storage::disk('local')->move($tempPath, $targetPath);
-
-                        $doc = Document::create([
-                            'documentable_type' => Scholar::class,
-                            'documentable_id' => $this->scholar->id,
-                            'file_type_id' => $fileType->id,
-                            'original_filename' => $originalName,
-                            'stored_filename' => $storedFilename,
-                            'mime_type' => $mimeType,
-                            'file_size_kb' => $fileSizeKb,
-                            'status' => 'active',
-                            'uploaded_by' => auth()->id(),
-                        ]);
-
-                        $doc->versions()->create([
-                            'stored_filename' => $storedFilename,
-                            'original_filename' => $originalName,
-                            'file_size_kb' => $fileSizeKb,
-                            'version_number' => 1,
-                            'replaced_by_user_id' => auth()->id(),
+                    if (! $tempPath || ! Storage::disk('local')->exists($tempPath)) {
+                        throw ValidationException::withMessages([
+                            'scanned_files' => 'Uploaded file payload missing for '.($fileMeta['name'] ?? 'Document').'.',
                         ]);
                     }
+
+                    $originalName = $fileMeta['name'] ?? 'Document';
+                    $mimeType = $fileMeta['mime_type'] ?? 'application/pdf';
+                    $fileSizeKb = max(1, (int) round(($fileMeta['size'] ?? 1024) / 1024));
+
+                    $extension = pathinfo($originalName, PATHINFO_EXTENSION) ?: (! empty($fileMeta['is_pdf']) ? 'pdf' : 'png');
+                    $storedFilename = 'doc_'.uniqid().'.'.$extension;
+                    $targetPath = 'documents/'.$storedFilename;
+
+                    Storage::disk('local')->move($tempPath, $targetPath);
+
+                    $doc = Document::create([
+                        'documentable_type' => Scholar::class,
+                        'documentable_id' => $this->scholar->id,
+                        'file_type_id' => $fileType->id,
+                        'original_filename' => $originalName,
+                        'stored_filename' => $storedFilename,
+                        'mime_type' => $mimeType,
+                        'file_size_kb' => $fileSizeKb,
+                        'status' => 'active',
+                        'metadata' => ['category' => $categoryName],
+                        'uploaded_by' => auth()->id(),
+                    ]);
+
+                    $doc->versions()->create([
+                        'stored_filename' => $storedFilename,
+                        'original_filename' => $originalName,
+                        'file_size_kb' => $fileSizeKb,
+                        'version_number' => 1,
+                        'replaced_by_user_id' => auth()->id(),
+                    ]);
                 }
             }
         }

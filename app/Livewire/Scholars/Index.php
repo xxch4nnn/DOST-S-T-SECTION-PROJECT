@@ -19,12 +19,9 @@ class Index extends Component
 
     public function mount(): void
     {
-        // Default expand the first year group if available
         $firstYear = Scholar::query()->distinct()->pluck('year_of_award')->sortDesc()->first();
         if ($firstYear) {
             $this->expandedYears[] = (string) $firstYear;
-        } else {
-            $this->expandedYears[] = '2023';
         }
     }
 
@@ -59,58 +56,30 @@ class Index extends Component
     public function openScholar($scholarId): void
     {
         $scholarId = (int) $scholarId;
-        // Find the scholar in DB, or fallback to mock data
-        $scholar = Scholar::with(['scholarshipProgram', 'scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
-        
+        $scholar = Scholar::with(['scholarshipType', 'school', 'course', 'region', 'clearanceStatus'])->find($scholarId);
+
         $scholarData = null;
         if ($scholar) {
             $scholarData = [
                 'id' => $scholar->id,
                 'name' => "{$scholar->last_name}, {$scholar->first_name} {$scholar->middle_name}",
-                'spas_id' => $scholar->spas_number ?? 'null',
-                'program' => $scholar->scholarshipProgram->name ?? 'null',
-                'program_type' => $scholar->scholarshipProgramType->name ?? 'null',
-                'year_of_award' => $scholar->year_of_award ?? 'null',
-                'clearance_date' => $scholar->clearance_date ? $scholar->clearance_date->format('d / m / Y') : 'null',
-                'course' => $scholar->course->name ?? 'null',
-                'university' => $scholar->school->name ?? 'null',
-                'address' => $scholar->barangay ? "{$scholar->barangay}, {$scholar->district}" : 'null',
-                'municipality' => $scholar->municipality ?? 'null',
-                'province' => $scholar->province ?? 'null',
-                'region' => $scholar->region->name ?? 'null',
-                'email' => $scholar->email_address ?? 'null',
-                'contact' => $scholar->contact_number ?? 'null',
-                'birthdate' => $scholar->birthdate ? $scholar->birthdate->format('m / d / Y') : 'null',
-                'sex' => $scholar->sex ?? 'null',
-                'status' => $scholar->clearanceStatus->name ?? 'Not Cleared',
-                'clearance_date'=>$scholar->clearanceDate ?? 'None (Not Cleared)'
+                'spas_id' => $scholar->spas_no,
+                'program' => $scholar->scholarshipType->code ?? ($scholar->scholarshipType->name ?? '—'),
+                'program_type' => $scholar->scholarshipType->name ?? '—',
+                'year_of_award' => $scholar->year_of_award ?? '—',
+                'clearance_date' => $scholar->clearance_date ? $scholar->clearance_date->format('d / m / Y') : '—',
+                'course' => $scholar->course->name ?? '—',
+                'university' => $scholar->school->name ?? '—',
+                'address' => $scholar->barangay ? trim("{$scholar->barangay}, {$scholar->district}", ' ,') : '—',
+                'municipality' => $scholar->municipality ?? '—',
+                'province' => $scholar->province ?? '—',
+                'region' => $scholar->region->name ?? '—',
+                'email' => $scholar->email_address ?? '—',
+                'contact' => $scholar->contact_number ?? '—',
+                'birthdate' => $scholar->birthdate ? $scholar->birthdate->format('m / d / Y') : '—',
+                'sex' => $scholar->sex ?? '—',
+                'status' => $scholar->clearanceStatus->name ?? '—',
             ];
-        } else {
-            // Find in mock data
-            $mockScholars = $this->getMockScholars();
-            $mockScholar = $mockScholars->firstWhere('id', $scholarId);
-            if ($mockScholar) {
-                $scholarData = [
-                    'id' => $mockScholar->id,
-                    'name' => "{$mockScholar->last_name}, {$mockScholar->first_name} {$mockScholar->middle_name}",
-                    'spas_id' => $mockScholar->spas_no,
-                    'program' => $mockScholar->scholarship->name,
-                    'program_type' => $mockScholar->scholarshipType->name,
-                    'year_of_award' => $mockScholar->year_of_award,
-                    'clearance_date' => '23 / 06 / 2027',
-                    'course' => 'BS in Computer Science Major in Data Science',
-                    'university' => 'University of Southeastern Philippines',
-                    'address' => 'Brgy. 34 - D, C.M. Recto St. Poblacion District',
-                    'municipality' => 'Davao City',
-                    'province' => 'Davao del Sur',
-                    'region' => 'Region XI - Davao Region',
-                    'email' => strtolower($mockScholar->first_name).'@gmail.com',
-                    'contact' => '09762941445',
-                    'birthdate' => '08 / 23 / 2005',
-                    'sex' => 'Male',
-                    'status' => $mockScholar->clearanceStatus->name,
-                ];
-            }
         }
 
         $this->dispatch('open-scholar-drawer', scholarId: $scholarId, scholarData: $scholarData);
@@ -159,7 +128,7 @@ class Index extends Component
 
         // Group scholars by year_of_award for the new Folder UI
         $groupedScholars = $scholars->groupBy(function ($scholar) {
-            return (string) ($scholar->year_of_award ?? '2023');
+            return (string) ($scholar->year_of_award ?? 'Unknown');
         });
 
         if ($groupedScholars->isEmpty()) {

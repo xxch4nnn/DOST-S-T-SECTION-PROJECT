@@ -22,6 +22,10 @@ Every bullet **must** start with:
 ### Added
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Document versioning (`DocumentVersion`) creation for staged file uploads in `AddFile` and `Scholars/Edit` (#65).
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Document versioning (`DocumentVersion`) creation for staged file uploads in `AddFile` and `Scholars/Edit` (#65).
 - **2026-08-06 01:45:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin Q1–Q12 vs mother implementation matrix + DB adoption guide (`planning/WAKIN_Q12_VS_IMPLEMENTATION_2026-08-06.md`); PR #65 cross-check addendum (`planning/PR65_REVIEW_2026-08-06.md`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — AWS production deployment design prompt (planning SoT only; Decision Gate before provision) (`planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`).
 - **2026-08-05 00:40:00 +08:00** · **Chan** (`@xxch4nnn`) — CI Path 3: `synthetic-smoke` job (PHPUnit `@group smoke` + live `/health`/`/login` curl) and gated manual `deploy.yml` (staging/prod; requires `confirm_aws_gates=APPROVED`).
@@ -44,10 +48,14 @@ Every bullet **must** start with:
 ### Security
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Gated `notifications.index` route behind `permission:viewNotifications` and verified email/auth (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Authorized document deletion in `Scholars/Edit` with `DocumentPolicy::delete` check and scoped composite `documentable_type` + `documentable_id` filtering against cross-morph deletion (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Gated `notifications.index` route behind `permission:viewNotifications` and verified email/auth (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Authorized document deletion in `Scholars/Edit` with `DocumentPolicy::delete` check and scoped composite `documentable_type` + `documentable_id` filtering against cross-morph deletion (#65).
 - **2026-08-04 15:42:00 +08:00** · **Chan** (`@xxch4nnn`) — Unauthorized roles receive HTTP 403 on gated routes and document downloads (Encoder blocked from audit logs / admin create+edit) (#52).
 
 ### Changed
 - **2026-08-05 13:38:00 +08:00** · **Chan** (`@xxch4nnn`) — Update `database/migrations/2026_07_20_061543_create_documents_table.php` schema definition to use `documents` table name, polymorphic `documentable_type`/`documentable_id` columns with compound index, timestamps, and soft deletes.
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `Notifications/Index` component refactored to query real unread `AuditLog` records instead of hardcoded session mocks (#65).
+- **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Livewire pagination theme configured to `bootstrap` in `config/livewire.php` (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `Notifications/Index` component refactored to query real unread `AuditLog` records instead of hardcoded session mocks (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Livewire pagination theme configured to `bootstrap` in `config/livewire.php` (#65).
 - **2026-08-05 00:30:00 +08:00** · **Chan** (`@xxch4nnn`) — `AGENTS.md` / `CONTRIBUTING.md`: migrated Bible doc ID, Dependabot Paths A/B/C, CODEOWNER hold-release, Windows shell matrix, handoff ownership, changelog examples; re-pin concurrently **10.0.4** in `docs/TECH_STACK_DOCS.md` after #31 smoke.
@@ -69,13 +77,9 @@ Every bullet **must** start with:
 - **2026-08-04 02:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `TASKS_DETECTED_payload.md` retired from standup/reporting/Bible sync; archived reference only (#46 / #39).
 
 ### Fixed
-- **2026-08-05 12:24:00 +08:00** · **Chan** (`@xxch4nnn`) — Remove outer scrollbar from `.doc-viewer-canvas` container in `_document-viewer.scss` and `document-viewer.blade.php` so only the internal document viewer scrollbar is visible.
-- **2026-08-05 12:12:00 +08:00** · **Chan** (`@xxch4nnn`) — Fix 404 Not Found error in `DocumentController` `viewFile` and `download` actions by correctly resolving `$file->file_path` against local storage disk and filesystem paths.
-- **2026-08-05 12:10:00 +08:00** · **Chan** (`@xxch4nnn`) — Add missing closing `</div>` tag for `.doc-thumbnail-card` inside `@foreach` loop in `resources/views/livewire/dashboard/scholar-drawer.blade.php` to prevent card nesting and vertical layout overflow.
-- **2026-08-05 12:00:00 +08:00** · **Chan** (`@xxch4nnn`) — Fix inline JS Blade single-quote parsing issue in dropzone element by using dataset attribute `data-cat-id` in `resources/views/livewire/add-file.blade.php`.
-- **2026-08-05 11:57:00 +08:00** · **Chan** (`@xxch4nnn`) — Update `UserSeeder`, `DatabaseSeeder`, and `RolesAndPermissionsSeeder` to assign Spatie roles (`Super Admin` / `Admin`) to seeded user accounts so login permissions pass.
-- **2026-08-05 11:42:25 +08:00** · **Chan** (`@xxch4nnn`) — Replace `@this` with `$wire` in Blade JavaScript blocks to resolve IDE "Decorators are not valid here" syntax errors in `add-file.blade.php`, `scholars/edit.blade.php`, and `scholars/files/edit.blade.php`.
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Enforced strict `Scholar::findOrFail` in `Scholars/Edit` mount to 404 instead of falling back to Wakin mock profile (#65).
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Removed mock scholar list injection from `Scholars/Index`; empty DB shows empty groups (#65).
+- **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — `Scholars/Edit` staged save uses manifest **or** temp categories (not both) to prevent duplicate documents (#65).
 - **2026-08-04 01:30:00 +08:00** · **Chan** (`@xxch4nnn`) — Test alignment for taxonomy / FileType without `year` (#35).
 
 ---

@@ -447,6 +447,7 @@ class AddFile extends Component
                     'mime_type' => $mimeType,
                     'file_size_kb' => $fileSizeKb,
                     'status' => 'active',
+                    'metadata' => ['category' => $catName],
                     'uploaded_by' => auth()->id(),
                 ]);
 
@@ -499,6 +500,7 @@ class AddFile extends Component
                             'mime_type' => $mimeType,
                             'file_size_kb' => $fileSizeKb,
                             'status' => 'active',
+                            'metadata' => ['category' => $categoryName],
                             'uploaded_by' => auth()->id(),
                         ]);
 
@@ -598,6 +600,7 @@ class AddFile extends Component
                         'mime_type' => $mimeType,
                         'file_size_kb' => $fileSizeKb,
                         'status' => 'active',
+                        'metadata' => ['category' => $categoryName],
                         'uploaded_by' => auth()->id(),
                     ]);
 
@@ -648,12 +651,12 @@ class AddFile extends Component
     public function render()
     {
         return view('livewire.add-file', [
-            'scholarships' => ScholarshipProgram::orderBy('name')->get(),
-            'scholarshipTypes' => ScholarshipProgramType::orderBy('name')->get(),
+            'scholarships' => Scholarship::orderBy('name')->get(),
+            'scholarshipTypes' => ScholarshipType::orderBy('name')->get(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'clearanceStatuses' => ClearanceStatus::orderBy('name')->get(),
-            'regions' => Region::get(),
+            'regions' => Region::orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

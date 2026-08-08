@@ -10,17 +10,11 @@ class Edit extends Component
 {
     use WithFileUploads;
 
-    public $scholar_id;
-
-    public $file_id;
-
     #[Url]
     public $return_url = '/scholars';
 
     // Mock Data models
     public $fileTypes = [];
-
-    public $file;
 
     // Form fields
     public $file_type_id = '';
@@ -31,9 +25,7 @@ class Edit extends Component
 
     public $file_size = '';
 
-    public $compiledFile;
-
-    public function mount($scholar, $file): void
+    public function mount($scholar = null, $file = null): void
     {
         abort(501, 'Document file editor is under construction.');
     }
@@ -64,3 +56,4 @@ class Edit extends Component
         return view('livewire.scholars.files.edit')->layout('layouts.app');
     }
 }
+

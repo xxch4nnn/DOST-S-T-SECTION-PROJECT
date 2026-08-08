@@ -95,6 +95,20 @@ new class extends Component
         }
     }
 
+    public function zoomIn(): void
+    {
+        if ($this->zoom < 200) {
+            $this->zoom += 25;
+        }
+    }
+
+    public function zoomOut(): void
+    {
+        if ($this->zoom > 50) {
+            $this->zoom -= 25;
+        }
+    }
+
     public function prevPage(): void
     {
         if ($this->currentPage > 1) {

@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Document;
-use App\Models\File;
 use App\Models\Scholar;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -121,8 +120,15 @@ new class extends Component
 
     public function loadScholar(): void
     {
-        $dbScholar = Scholar::with(['scholarshipProgramType', 'school', 'course', 'region', 'clearanceStatus'])
-            ->find($this->scholarId);
+        $dbScholar = Scholar::with([
+            'scholarship',
+            'scholarshipType',
+            'school',
+            'course',
+            'region',
+            'clearanceStatus',
+            'documents.fileType',
+        ])->find($this->scholarId);
         
         // load all files
         
