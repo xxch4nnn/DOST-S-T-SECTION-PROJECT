@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('document_versions', function (Blueprint $table) {
-            $table->id('id')->primary();
+            $table->id();
             $table->foreignUuid('document_id')->constrained('documents', 'id')->cascadeOnDelete();
             $table->integer('version_number')->nullable(false);
             $table->string('file_name', 200)->nullable(false);
