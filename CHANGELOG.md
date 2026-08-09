@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — `viewNotifications` permission in `RolesAndPermissionsSeeder`, assigned to Super Admin, Admin, and Encoder roles (#65).
