@@ -97,6 +97,8 @@ return new class extends Migration
         });
 
         Schema::table('documents', function (Blueprint $table) {
+            // SQLite cannot drop a column while its unique index still exists.
+            $table->dropUnique(['uuid']);
             $table->dropColumn('uuid');
         });
     }
