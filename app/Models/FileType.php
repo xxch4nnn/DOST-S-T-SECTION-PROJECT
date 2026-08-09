@@ -26,8 +26,8 @@ class FileType extends Model
         return $this->belongsTo(FileGroup::class);
     }
 
-    public function documents()
+    public function versions()
     {
-        return $this->hasMany(Document::class);
+        return $this->hasMany(DocumentVersion::class);
     }
 }

@@ -99,7 +99,9 @@ class Edit extends Component
         }
 
         // Load existing documents grouped by category if model exists
-        $documents = $this->scholar->exists ? $this->scholar->documents()->with('fileType')->get() : collect();
+        $documents = $this->scholar->exists
+            ? $this->scholar->documents()->with(['currentVersion.fileType'])->get()
+            : collect();
 
         if ($documents->isEmpty()) {
             $defaultType = FileType::first();
@@ -305,8 +307,12 @@ class Edit extends Component
 
             foreach ($toDelete as $doc) {
                 $this->authorize('delete', $doc);
-                if ($doc->stored_filename) {
-                    Storage::disk('local')->delete('documents/'.$doc->stored_filename);
+                foreach ($doc->versions as $version) {
+                    if ($version->file_path) {
+                        Storage::disk('local')->delete($version->file_path);
+                    } elseif ($version->stored_filename) {
+                        Storage::disk('local')->delete('documents/'.$version->stored_filename);
+                    }
                 }
                 $doc->delete();
             }
@@ -349,26 +355,23 @@ class Edit extends Component
                     ]);
                 }
 
-                $doc = Document::create([
-                    'documentable_type' => Scholar::class,
-                    'documentable_id' => $this->scholar->id,
-                    'file_type_id' => $fileType->id,
-                    'original_filename' => $originalName,
-                    'stored_filename' => $storedFilename,
-                    'mime_type' => $mimeType,
-                    'file_size_kb' => $fileSizeKb,
-                    'status' => 'active',
-                    'metadata' => ['category' => $categoryName],
-                    'uploaded_by' => auth()->id(),
-                ]);
-
-                $doc->versions()->create([
-                    'stored_filename' => $storedFilename,
-                    'original_filename' => $originalName,
-                    'file_size_kb' => $fileSizeKb,
-                    'version_number' => 1,
-                    'replaced_by_user_id' => auth()->id(),
-                ]);
+                Document::createWithInitialVersion(
+                    [
+                        'documentable_type' => Scholar::class,
+                        'documentable_id' => $this->scholar->id,
+                        'status' => 'active',
+                        'metadata' => ['category' => $categoryName],
+                    ],
+                    [
+                        'file_type_id' => $fileType->id,
+                        'original_filename' => $originalName,
+                        'stored_filename' => $storedFilename,
+                        'file_path' => $targetPath,
+                        'mime_type' => $mimeType,
+                        'file_size_kb' => $fileSizeKb,
+                        'uploaded_by' => auth()->id(),
+                    ]
+                );
             }
         } else {
             // Manifest empty: persist temp files staged via processPendingUploads only (avoid double insert).
@@ -402,26 +405,23 @@ class Edit extends Component
 
                     Storage::disk('local')->move($tempPath, $targetPath);
 
-                    $doc = Document::create([
-                        'documentable_type' => Scholar::class,
-                        'documentable_id' => $this->scholar->id,
-                        'file_type_id' => $fileType->id,
-                        'original_filename' => $originalName,
-                        'stored_filename' => $storedFilename,
-                        'mime_type' => $mimeType,
-                        'file_size_kb' => $fileSizeKb,
-                        'status' => 'active',
-                        'metadata' => ['category' => $categoryName],
-                        'uploaded_by' => auth()->id(),
-                    ]);
-
-                    $doc->versions()->create([
-                        'stored_filename' => $storedFilename,
-                        'original_filename' => $originalName,
-                        'file_size_kb' => $fileSizeKb,
-                        'version_number' => 1,
-                        'replaced_by_user_id' => auth()->id(),
-                    ]);
+                    Document::createWithInitialVersion(
+                        [
+                            'documentable_type' => Scholar::class,
+                            'documentable_id' => $this->scholar->id,
+                            'status' => 'active',
+                            'metadata' => ['category' => $categoryName],
+                        ],
+                        [
+                            'file_type_id' => $fileType->id,
+                            'original_filename' => $originalName,
+                            'stored_filename' => $storedFilename,
+                            'file_path' => $targetPath,
+                            'mime_type' => $mimeType,
+                            'file_size_kb' => $fileSizeKb,
+                            'uploaded_by' => auth()->id(),
+                        ]
+                    );
                 }
             }
         }

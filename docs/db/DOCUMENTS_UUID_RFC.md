@@ -278,11 +278,13 @@ class DocumentVersion extends Model
 
 ## Open Questions for Wakin
 
-1. **Dual-key transition?** Should we keep `documents.id` (bigint) alongside `uuid` temporarily, or drop it immediately? Keeping it is safer for rollback but adds a dead column.
+> **Interim defaults shipped in #73** (override in a follow-up if needed):
 
-2. **`file_path` format:** Full relative path from storage root (e.g., `uploads/scholars/{uuid}/{version}.pdf`)? Or just the filename with disk config handling the prefix?
+1. **Dual-key transition?** ✅ V1 keeps `documents.id` (bigint PK) + unique `uuid`. App relations/FK use `uuid`; route binding still uses bigint `id` for now.
 
-3. **`file_size_bytes` type:** `bigint` (supports files >2GB) or `unsignedInteger` (max 4GB, saves bytes)?
+2. **`file_path` format:** ✅ Relative from storage disk root, e.g. `documents/{stored_filename}` (matches current `Storage::disk('local')` layout).
+
+3. **`file_size_bytes` type:** ✅ `unsignedBigInteger` / bigint.
 
 ---
 

@@ -58,15 +58,17 @@ class EditScholarTest extends TestCase
         ]);
 
         $fileType = FileType::create(['name' => 'Scholarship Agreement']);
-        $doc = Document::create([
+        $doc = Document::createWithInitialVersion([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
+            'status' => 'active',
+        ], [
             'file_type_id' => $fileType->id,
             'original_filename' => 'agreement.pdf',
             'stored_filename' => 'doc_test.pdf',
+            'file_path' => 'documents/'.'doc_test.pdf',
             'mime_type' => 'application/pdf',
             'file_size_kb' => 100,
-            'status' => 'active',
             'uploaded_by' => $user->id,
         ]);
 
@@ -146,15 +148,17 @@ class EditScholarTest extends TestCase
         ]);
 
         $fileType = FileType::create(['name' => 'Scholarship Agreement']);
-        $oldDoc = Document::create([
+        $oldDoc = Document::createWithInitialVersion([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
+            'status' => 'active',
+        ], [
             'file_type_id' => $fileType->id,
             'original_filename' => 'old_agreement.pdf',
             'stored_filename' => 'doc_old.pdf',
+            'file_path' => 'documents/'.'doc_old.pdf',
             'mime_type' => 'application/pdf',
             'file_size_kb' => 100,
-            'status' => 'active',
             'uploaded_by' => $user->id,
         ]);
 
@@ -191,6 +195,8 @@ class EditScholarTest extends TestCase
         $this->assertDatabaseHas('documents', [
             'documentable_id' => $scholar->id,
             'documentable_type' => Scholar::class,
+        ]);
+        $this->assertDatabaseHas('document_versions', [
             'original_filename' => 'new_cor.pdf',
         ]);
     }
@@ -228,15 +234,17 @@ class EditScholarTest extends TestCase
         ]);
 
         $fileType = FileType::create(['name' => 'Administrative Order']);
-        $adminDoc = Document::create([
+        $adminDoc = Document::createWithInitialVersion([
             'documentable_type' => AdministrativeRecord::class,
             'documentable_id' => $adminRecord->id,
+            'status' => 'active',
+        ], [
             'file_type_id' => $fileType->id,
             'original_filename' => 'admin_memo.pdf',
             'stored_filename' => 'doc_admin.pdf',
+            'file_path' => 'documents/'.'doc_admin.pdf',
             'mime_type' => 'application/pdf',
             'file_size_kb' => 50,
-            'status' => 'active',
             'uploaded_by' => $user->id,
         ]);
 

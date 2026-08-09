@@ -11,18 +11,26 @@ class DocumentController extends Controller
     use AuthorizesRequests;
 
     /**
-     * Download the specified document.
+     * Download the specified document (current version).
      */
     public function download(Document $document)
     {
         $this->authorize('download', $document);
 
-        if (! Storage::disk('local')->exists('documents/'.$document->stored_filename)) {
+        $version = $document->currentVersion;
+        if (! $version) {
             abort(404, 'File not found on server.');
         }
 
-        $path = Storage::disk('local')->path('documents/'.$document->stored_filename);
+        $path = $version->file_path ?: ('documents/'.$version->stored_filename);
 
-        return response()->download($path, $document->original_filename);
+        if (! Storage::disk('local')->exists($path)) {
+            abort(404, 'File not found on server.');
+        }
+
+        return response()->download(
+            Storage::disk('local')->path($path),
+            $version->original_filename
+        );
     }
 }
