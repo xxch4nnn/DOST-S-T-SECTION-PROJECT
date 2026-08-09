@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\ScholarObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy(ScholarObserver::class)]
 class Scholar extends Model
 {
     use HasFactory;
