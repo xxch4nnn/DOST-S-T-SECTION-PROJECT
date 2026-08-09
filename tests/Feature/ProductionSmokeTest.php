@@ -6,6 +6,7 @@ use App\Livewire\Scholars\Show;
 use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
+use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -136,13 +137,17 @@ class ProductionSmokeTest extends TestCase
             'created_by' => $owner->id,
         ]);
 
-        $document = $record->documents()->create([
+        $document = Document::createWithInitialVersion([
+            'documentable_type' => AdministrativeRecord::class,
+            'documentable_id' => $record->id,
+            'status' => 'active',
+        ], [
             'file_type_id' => $fileType->id,
             'original_filename' => 'smoke-denied.pdf',
             'stored_filename' => 'smoke-denied.pdf',
+            'file_path' => 'documents/'.'smoke-denied.pdf',
             'mime_type' => 'application/pdf',
             'file_size_kb' => 1,
-            'status' => 'active',
             'uploaded_by' => $owner->id,
         ]);
 

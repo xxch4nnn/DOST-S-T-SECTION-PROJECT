@@ -19,6 +19,9 @@ Every bullet **must** start with:
 
 ## [Unreleased]
 
+### Changed
+- **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
+
 ### Added
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — UUID Documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`): additive migration plan for thin UUID `documents` shell + file data on `document_versions`, per CHAN_ACK Q05=B.
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — CHAN_ACK Q02=B, Q05=B, Q07=C on Wakin Q01–Q16 answers lock; all blockers resolved, automation unblocked for thin slice PRs.

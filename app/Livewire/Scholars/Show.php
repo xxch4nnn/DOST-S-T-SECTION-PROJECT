@@ -6,6 +6,7 @@ use App\Models\AuditLog;
 use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Scholar;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -37,7 +38,7 @@ class Show extends Component
     {
         $this->documents = $this->scholar->documents()
             ->withTrashed()
-            ->with(['fileType', 'uploader'])
+            ->with(['currentVersion.fileType', 'currentVersion.uploader'])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -49,10 +50,9 @@ class Show extends Component
             'file_type_id' => 'required|exists:file_types,id',
         ]);
 
-        // Check for duplicate active document of same type
         $duplicate = $this->scholar->documents()
-            ->where('file_type_id', $this->file_type_id)
             ->where('status', 'active')
+            ->whereHas('currentVersion', fn ($q) => $q->where('file_type_id', $this->file_type_id))
             ->first();
 
         if ($duplicate) {
@@ -72,20 +72,26 @@ class Show extends Component
         $storedFilename = $uuid.'.'.$extension;
         $originalFilename = $this->file->getClientOriginalName();
         $mimeType = $this->file->getMimeType();
-        $fileSizeKb = round($this->file->getSize() / 1024);
+        $fileSizeBytes = max(1, (int) $this->file->getSize());
 
-        // Store flat UUID in local private disk (as per ADR-005)
         $this->file->storeAs('documents', $storedFilename, 'local');
 
-        $document = $this->scholar->documents()->create([
-            'file_type_id' => $this->file_type_id,
-            'original_filename' => $originalFilename,
-            'stored_filename' => $storedFilename,
-            'mime_type' => $mimeType,
-            'file_size_kb' => $fileSizeKb,
-            'status' => 'active',
-            'uploaded_by' => auth()->id(),
-        ]);
+        $document = Document::createWithInitialVersion(
+            [
+                'documentable_type' => Scholar::class,
+                'documentable_id' => $this->scholar->id,
+                'status' => 'active',
+            ],
+            [
+                'file_type_id' => $this->file_type_id,
+                'original_filename' => $originalFilename,
+                'stored_filename' => $storedFilename,
+                'file_path' => 'documents/'.$storedFilename,
+                'mime_type' => $mimeType,
+                'file_size_bytes' => $fileSizeBytes,
+                'uploaded_by' => auth()->id(),
+            ]
+        );
 
         $this->logAudit('upload', $document);
 
@@ -112,51 +118,54 @@ class Show extends Component
         $storedFilename = $uuid.'.'.$extension;
         $originalFilename = $this->file->getClientOriginalName();
         $mimeType = $this->file->getMimeType();
-        $fileSizeKb = round($this->file->getSize() / 1024);
+        $fileSizeBytes = max(1, (int) $this->file->getSize());
 
         if ($option === 'keep_history') {
-            \DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeKb) {
-                // Move current active document values to version table
-                $this->duplicateDocument->versions()->create([
-                    'stored_filename' => $this->duplicateDocument->stored_filename,
-                    'original_filename' => $this->duplicateDocument->original_filename,
-                    'file_size_kb' => $this->duplicateDocument->file_size_kb,
-                    'version_number' => $this->duplicateDocument->versions()->count() + 1,
-                    'replaced_by_user_id' => auth()->id(),
-                ]);
+            DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeBytes) {
+                $before = $this->duplicateDocument->load('currentVersion')->toArray();
 
-                // Store new file physically
                 $this->file->storeAs('documents', $storedFilename, 'local');
 
-                // Update active document metadata
-                $before = $this->duplicateDocument->toArray();
-                $this->duplicateDocument->update([
+                $this->duplicateDocument->versions()->create([
+                    'file_type_id' => $this->file_type_id,
                     'stored_filename' => $storedFilename,
                     'original_filename' => $originalFilename,
+                    'file_path' => 'documents/'.$storedFilename,
                     'mime_type' => $mimeType,
-                    'file_size_kb' => $fileSizeKb,
+                    'file_size_bytes' => $fileSizeBytes,
+                    'version_number' => ($this->duplicateDocument->versions()->max('version_number') ?? 0) + 1,
+                    'uploaded_by' => auth()->id(),
                 ]);
 
-                $this->logAudit('overwrite', $this->duplicateDocument, $before);
+                $this->logAudit('overwrite', $this->duplicateDocument->fresh('currentVersion'), $before);
             });
         } elseif ($option === 'overwrite') {
-            \DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeKb) {
-                // Delete old file physically
-                Storage::disk('local')->delete('documents/'.$this->duplicateDocument->stored_filename);
+            DB::transaction(function () use ($storedFilename, $originalFilename, $mimeType, $fileSizeBytes) {
+                $document = $this->duplicateDocument->load('currentVersion');
+                $before = $document->toArray();
+                $current = $document->currentVersion;
 
-                // Store new file
+                if ($current?->file_path) {
+                    Storage::disk('local')->delete($current->file_path);
+                } elseif ($current?->stored_filename) {
+                    Storage::disk('local')->delete('documents/'.$current->stored_filename);
+                }
+
                 $this->file->storeAs('documents', $storedFilename, 'local');
 
-                // Update active document metadata
-                $before = $this->duplicateDocument->toArray();
-                $this->duplicateDocument->update([
-                    'stored_filename' => $storedFilename,
-                    'original_filename' => $originalFilename,
-                    'mime_type' => $mimeType,
-                    'file_size_kb' => $fileSizeKb,
-                ]);
+                if ($current) {
+                    $current->update([
+                        'file_type_id' => $this->file_type_id,
+                        'stored_filename' => $storedFilename,
+                        'original_filename' => $originalFilename,
+                        'file_path' => 'documents/'.$storedFilename,
+                        'mime_type' => $mimeType,
+                        'file_size_bytes' => $fileSizeBytes,
+                        'uploaded_by' => auth()->id(),
+                    ]);
+                }
 
-                $this->logAudit('overwrite', $this->duplicateDocument, $before);
+                $this->logAudit('overwrite', $document->fresh('currentVersion'), $before);
             });
         }
 

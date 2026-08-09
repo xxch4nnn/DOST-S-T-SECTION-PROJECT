@@ -40,19 +40,30 @@ class DocumentFixtureSeeder extends Seeder
             $relative = 'documents/'.$stored;
             Storage::disk('local')->put($relative, file_get_contents($sourcePath));
 
-            Document::query()->firstOrCreate(
+            $exists = Document::query()
+                ->where('documentable_type', Scholar::class)
+                ->where('documentable_id', $scholar->id)
+                ->whereHas('currentVersion', fn ($q) => $q->where('original_filename', basename($sourcePath)))
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            Document::createWithInitialVersion(
                 [
                     'documentable_type' => Scholar::class,
                     'documentable_id' => $scholar->id,
-                    'original_filename' => basename($sourcePath),
+                    'status' => 'active',
+                    'metadata' => null,
                 ],
                 [
                     'file_type_id' => $fileType->id,
+                    'original_filename' => basename($sourcePath),
                     'stored_filename' => $stored,
+                    'file_path' => $relative,
                     'mime_type' => 'application/pdf',
-                    'file_size_kb' => (int) max(1, (int) ceil(filesize($sourcePath) / 1024)),
-                    'status' => 'active',
-                    'metadata' => null,
+                    'file_size_bytes' => filesize($sourcePath) ?: 1024,
                     'uploaded_by' => $user->id,
                 ]
             );

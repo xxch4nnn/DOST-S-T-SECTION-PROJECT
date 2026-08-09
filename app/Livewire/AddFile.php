@@ -439,26 +439,23 @@ class AddFile extends Component
                     ]);
                 }
 
-                $doc = Document::create([
-                    'documentable_type' => Scholar::class,
-                    'documentable_id' => $scholar->id,
-                    'file_type_id' => $fileType->id,
-                    'original_filename' => $originalName,
-                    'stored_filename' => $storedFilename,
-                    'mime_type' => $mimeType,
-                    'file_size_kb' => $fileSizeKb,
-                    'status' => 'active',
-                    'metadata' => ['category' => $catName],
-                    'uploaded_by' => auth()->id(),
-                ]);
-
-                $doc->versions()->create([
-                    'stored_filename' => $storedFilename,
-                    'original_filename' => $originalName,
-                    'file_size_kb' => $fileSizeKb,
-                    'version_number' => 1,
-                    'replaced_by_user_id' => auth()->id(),
-                ]);
+                Document::createWithInitialVersion(
+                    [
+                        'documentable_type' => Scholar::class,
+                        'documentable_id' => $scholar->id,
+                        'status' => 'active',
+                        'metadata' => ['category' => $catName],
+                    ],
+                    [
+                        'file_type_id' => $fileType->id,
+                        'original_filename' => $originalName,
+                        'stored_filename' => $storedFilename,
+                        'file_path' => $targetPath,
+                        'mime_type' => $mimeType,
+                        'file_size_kb' => $fileSizeKb,
+                        'uploaded_by' => auth()->id(),
+                    ]
+                );
 
                 $uploadedCount++;
             }
@@ -492,26 +489,23 @@ class AddFile extends Component
                             ]);
                         }
 
-                        $doc = Document::create([
-                            'documentable_type' => Scholar::class,
-                            'documentable_id' => $scholar->id,
-                            'file_type_id' => $fileType->id,
-                            'original_filename' => $originalName,
-                            'stored_filename' => $storedFilename,
-                            'mime_type' => $mimeType,
-                            'file_size_kb' => $fileSizeKb,
-                            'status' => 'active',
-                            'metadata' => ['category' => $categoryName],
-                            'uploaded_by' => auth()->id(),
-                        ]);
-
-                        $doc->versions()->create([
-                            'stored_filename' => $storedFilename,
-                            'original_filename' => $originalName,
-                            'file_size_kb' => $fileSizeKb,
-                            'version_number' => 1,
-                            'replaced_by_user_id' => auth()->id(),
-                        ]);
+                        Document::createWithInitialVersion(
+                            [
+                                'documentable_type' => Scholar::class,
+                                'documentable_id' => $scholar->id,
+                                'status' => 'active',
+                                'metadata' => ['category' => $categoryName],
+                            ],
+                            [
+                                'file_type_id' => $fileType->id,
+                                'original_filename' => $originalName,
+                                'stored_filename' => $storedFilename,
+                                'file_path' => $targetPath,
+                                'mime_type' => $mimeType,
+                                'file_size_kb' => $fileSizeKb,
+                                'uploaded_by' => auth()->id(),
+                            ]
+                        );
 
                         $uploadedCount++;
                     }
@@ -592,26 +586,23 @@ class AddFile extends Component
                         ]);
                     }
 
-                    $doc = Document::create([
-                        'documentable_type' => Scholar::class,
-                        'documentable_id' => $scholar->id,
-                        'file_type_id' => $fileType->id,
-                        'original_filename' => $originalName,
-                        'stored_filename' => $storedFilename,
-                        'mime_type' => $mimeType,
-                        'file_size_kb' => $fileSizeKb,
-                        'status' => 'active',
-                        'metadata' => ['category' => $categoryName],
-                        'uploaded_by' => auth()->id(),
-                    ]);
-
-                    $doc->versions()->create([
-                        'stored_filename' => $storedFilename,
-                        'original_filename' => $originalName,
-                        'file_size_kb' => $fileSizeKb,
-                        'version_number' => 1,
-                        'replaced_by_user_id' => auth()->id(),
-                    ]);
+                    Document::createWithInitialVersion(
+                        [
+                            'documentable_type' => Scholar::class,
+                            'documentable_id' => $scholar->id,
+                            'status' => 'active',
+                            'metadata' => ['category' => $categoryName],
+                        ],
+                        [
+                            'file_type_id' => $fileType->id,
+                            'original_filename' => $originalName,
+                            'stored_filename' => $storedFilename,
+                            'file_path' => $targetPath,
+                            'mime_type' => $mimeType,
+                            'file_size_kb' => $fileSizeKb,
+                            'uploaded_by' => auth()->id(),
+                        ]
+                    );
 
                     $uploadedCount++;
                 }

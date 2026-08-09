@@ -65,9 +65,11 @@ class ScholarDocumentUploadTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('documents', [
-            'original_filename' => 'test_document.pdf',
             'documentable_id' => $scholar->id,
             'documentable_type' => Scholar::class,
+        ]);
+        $this->assertDatabaseHas('document_versions', [
+            'original_filename' => 'test_document.pdf',
         ]);
 
         $document = clone $scholar->fresh()->documents()->first();
