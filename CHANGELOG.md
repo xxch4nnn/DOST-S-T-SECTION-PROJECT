@@ -20,6 +20,14 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — UUID Documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`): additive migration plan for thin UUID `documents` shell + file data on `document_versions`, per CHAN_ACK Q05=B.
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — CHAN_ACK Q02=B, Q05=B, Q07=C on Wakin Q01–Q16 answers lock; all blockers resolved, automation unblocked for thin slice PRs.
+
+### Changed
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Folders RFC (`planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`) status: Open → **Decided: Park for post-V1** (Q07=C).
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
+
+### Added
 - **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).

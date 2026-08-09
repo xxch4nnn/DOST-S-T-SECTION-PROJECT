@@ -38,14 +38,14 @@ PIN_SHA: 9097ccf
 | Q | Letter | Meaning | Agent status |
 |---|--------|---------|--------------|
 | **Q01** | A | Thin cherry-picks from `master`; **do not merge #68 as-is** | **Active** — draft/close #68 after slice PRs exist |
-| **Q02** | B | Prefer Wakin’s side on conflicts, then rewrite master callers | **BLOCKED** — needs `CHAN_ACK Q02: B` (or force to A) |
+| **Q02** | B | Prefer Wakin’s side on conflicts, then rewrite master callers | ✅ **CHAN_ACK Q02: B** — 2026-08-10 03:01 +08:00 |
 | **Q03** | A | Keep mother `scholarships` / `scholarship_types` | **Active** — strip `ScholarshipProgram*` from ports |
 | **Q04** | A | Keep `spas_no` | **Active** |
-| **Q05** | B | UUID thin `documents` + bytes on versions | **BLOCKED** — needs `CHAN_ACK Q05: B` **and** RFC PR in `docs/db/` before any schema merge |
+| **Q05** | B | UUID thin `documents` + bytes on versions | ✅ **CHAN_ACK Q05: B** — 2026-08-10 03:01 +08:00 · RFC: `docs/db/DOCUMENTS_UUID_RFC.md` |
 | **Q06** | A | Keep `audit_logs.record_type` / `record_id` | **Active** — no `loggable_*` rename |
 | **Q07** | C | Folders code may exist but **unmigrated / no routes** | **Active** — do not run folders migration in default seed |
 | **Q08** | C | Port **ScholarObserver only** now; Document later | **Active** — PR `feat/be-58-scholar-observer` → #56 |
-| **Q09** | A | Port search after documents shape + primary-key ACK | **BLOCKED by Q05=B** — questionnaire required Q05=A for this path; need re-answer or Chan hybrid |
+| **Q09** | A | Port search after documents shape + primary-key ACK | ✅ **Unblocked** — Q05=B ACK'd; search ports against UUID `document_versions` shape after viewer lands |
 | **Q10** | A | Port viewer/print/download/zoom first | **Active** — first UI PR from `master` |
 | **Q11** | A | Relative `database/sample_pdfs/**` only | **Active** |
 | **Q12** | A | Fixture emails only | **Active** |
@@ -65,13 +65,11 @@ PIN_SHA: 9097ccf
 
 ### C2 — Q02=B vs Q01=A / Q03=A
 - Preferring “yours everywhere” fights mother scholarship naming (Q03=A) and thin-pick strategy.  
-- **Needs Chan:** either `CHAN_ACK Q02: B` with explicit file exceptions, or override to **Q02=A** (recommended).
+- **Resolved:** `CHAN_ACK Q02: B` (2026-08-10). Prefer Wakin on remaining conflicts **except** scholarship naming (Q03=A) and `audit_logs.record_*` (Q06=A); rewrite master callers to match.
 
 ### C3 — Q05=B vs Q09=A and Q10=A
 - Search (Q09) and practical viewer port (Q10) assume mother document APIs unless UUID RFC is merged first.  
-- **Needs Chan:**  
-  - `CHAN_ACK Q05: B` + RFC track, **or**  
-  - Ask Wakin to switch to **Q05=A** (or **C** hybrid) so viewer/search can ship now.
+- **Resolved:** `CHAN_ACK Q05: B` + RFC `docs/db/DOCUMENTS_UUID_RFC.md`. Slice order: RFC → uuid-migration → viewer → scholar-observer → search.
 
 ### C4 — Still conflicting after “handled conflicts”
 - Tip `9097ccf` claims conflict handling; GitHub still reports **DIRTY** (at least `CHANGELOG.md`).  
@@ -85,43 +83,26 @@ PIN_SHA: 9097ccf
 ## Chan ACK checklist (required before automation)
 
 ```text
-CHAN_ACK Q02: <A|B>     # recommend A
-CHAN_ACK Q05: <A|B|C>   # recommend A or C; B only with RFC
-CHAN_ACK Q07: C         # confirm folders stay unmigrated (optional confirm)
+CHAN_ACK Q02: B     ✅ decided 2026-08-10 03:01 +08:00
+CHAN_ACK Q05: B     ✅ decided 2026-08-10 03:01 +08:00 — RFC written: docs/db/DOCUMENTS_UUID_RFC.md
+CHAN_ACK Q07: C     ✅ decided 2026-08-10 03:01 +08:00 — folders stay dormant
 ```
 
-Recommended Chan pack for fastest land of viewer:
-
-```text
-CHAN_ACK Q02: A
-CHAN_ACK Q05: A
-CHAN_ACK Q07: C
-```
-
-If Chan wants Wakin’s UUID redesign:
-
-```text
-CHAN_ACK Q02: A
-CHAN_ACK Q05: B
-CHAN_ACK Q07: C
-```
-Then agents open `docs/db/DOCUMENTS_UUID_RFC.md` PR **before** any code port that depends on UUID docs; Q09/Q10 wait on that RFC merge (or port viewer against mother interim).
+Chan chose to follow Wakin's answers across the board. RFC created at `docs/db/DOCUMENTS_UUID_RFC.md`.
 
 ---
 
-## Executable slice order (after Chan ACK)
-
-Assuming recommended Chan pack (**Q02=A, Q05=A**):
+## Executable slice order (ACK’d — Q05=B)
 
 | Order | Branch | Scope | Source |
 |------:|--------|-------|--------|
-| 1 | `feat/be-58-viewer` | Viewer/print/download/zoom on mother Document APIs | Port from `PIN_SHA` / tip; Q10=A |
-| 2 | `feat/be-58-scholar-observer` | ScholarObserver → `record_*` | Q08=C |
-| 3 | `feat/be-58-search` | Dashboard search | Q09=A after Q9 primary-key ACK |
-| — | — | Folders | Q07=C — no migration in seed |
+| 0 | `docs/uuid-documents-rfc` | UUID documents RFC (docs-only) | This lock + `docs/db/DOCUMENTS_UUID_RFC.md` |
+| 1 | `feat/be-58-uuid-migration` | Additive migrations + models/factories | RFC merged; answer RFC open Qs first |
+| 2 | `feat/be-58-viewer` | Viewer/print/download/zoom via `currentVersion` | Migration merged; Q10=A |
+| 3 | `feat/be-58-scholar-observer` | ScholarObserver → `record_*` | Migration merged; Q08=C |
+| 4 | `feat/be-58-search` | Dashboard search on `document_versions` | Viewer merged; Q09=A |
+| — | — | Folders | Q07=C — parked; no migration/routes |
 | — | — | #68 | Convert to **Draft** or close as superseded |
-
-If Chan ACKs **Q05=B** instead: insert RFC PR as slice 0; delay 1–3 until schema RFC merged **or** still do slice 1 against mother temporarily (viewer only).
 
 ---
 
@@ -140,6 +121,9 @@ If Chan ACKs **Q05=B** instead: insert RFC PR as slice 0; delay 1–3 until sche
 | Item | State |
 |------|--------|
 | Answers received | ✅ |
-| Automation ready | ❌ blocked on Chan ACK Q02/Q05 (+ clarify C1 with Wakin if needed) |
-| #68 mergeable | ❌ |
-| Next human action | Chan posts `CHAN_ACK` lines on #68 or #58 |
+| Chan ACKs posted | ✅ Q02=B, Q05=B, Q07=C — 2026-08-10 03:01 +08:00 |
+| UUID RFC written | ✅ `docs/db/DOCUMENTS_UUID_RFC.md` |
+| Folders RFC decided | ✅ Parked (Q07=C) — `planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md` |
+| Automation ready | ✅ unblocked — slice PRs can begin |
+| #68 mergeable | ❌ — convert to Draft; cherry-pick via thin slice PRs |
+| Next action | Wakin opens slice PRs from `master` per execution order below |
