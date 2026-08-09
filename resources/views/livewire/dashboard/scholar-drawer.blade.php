@@ -91,20 +91,20 @@ new class extends Component
         }
     }
 
-    public function openDocument(string $title, string $imageUrl = '', string $fileType = 'pdf', int $documentIndex = 1, int $totalPages = 1, int $fileId = 0): void
+    public function openDocument(string $title, string $imageUrl = '', string $fileType = 'pdf', int $documentIndex = 1, int $totalPages = 1, int $documentId = 0): void
     {
+        $viewUrl = $documentId > 0
+            ? route('documents.view', $documentId)
+            : $imageUrl;
+
         $this->dispatch('open-document-viewer',
             title: $title,
-            fileUrl: $imageUrl,
-            scholarName: $this->scholarData['name'] ?? 'Maclang, Wakin Cean C.',
+            fileUrl: $viewUrl,
+            scholarName: $this->scholarData['name'] ?? 'Scholar',
             fileType: $fileType,
             documentIndex: $documentIndex,
             scholarId: $this->scholarId ?? 1,
-            fileId: $fileId,
-            extraData: [
-                'totalPages' => $totalPages,
-                'currentPage' => 1,
-            ]
+            documentId: (string) $documentId,
         );
     }
 
@@ -117,7 +117,7 @@ new class extends Component
             'course',
             'region',
             'clearanceStatus',
-            'documents.fileType',
+            'documents.currentVersion.fileType',
         ])->find($this->scholarId);
 
         if ($dbScholar) {
@@ -142,13 +142,13 @@ new class extends Component
                 'status' => $dbScholar->clearanceStatus->name ?? 'null',
             ];
 
-            // Dynamically load and group active documents
+            // Dynamically load and group active documents (file payload via currentVersion)
             $documents = $dbScholar->documents->where('status', 'active');
             if ($documents->isNotEmpty()) {
                 $grouped = [];
                 foreach ($documents as $doc) {
                     $typeName = $doc->fileType->name ?? 'General Documents';
-                    if (!isset($grouped[$typeName])) {
+                    if (! isset($grouped[$typeName])) {
                         $isImage = str_contains($doc->mime_type ?? '', 'image');
                         $grouped[$typeName] = [
                             'name' => $typeName,
@@ -163,7 +163,7 @@ new class extends Component
                         'sub' => $doc->original_filename ?: "Document {$index}",
                         'index' => $index,
                         'totalPages' => 1,
-                        'url' => route('documents.download', $doc->id),
+                        'url' => route('documents.view', $doc->id),
                     ];
                 }
                 $this->fileGroups = array_values($grouped);
