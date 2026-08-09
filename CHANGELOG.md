@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Changed
+- **2026-08-10 04:35:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — ScholarObserver (#75 / Q08=C): audit create/update/delete onto `audit_logs.record_*` (no `loggable_*`, no FTS column, no DocumentObserver).
 - **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
 
 ### Added
