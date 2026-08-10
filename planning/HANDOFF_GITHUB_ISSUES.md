@@ -16,7 +16,7 @@ Copy/paste ready. Labels suggested: `security`, `backend`, `frontend`, `docs`, `
 | 8 | [#43](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/43) Audit-log user-deletion policy | @WakenMac | Open |
 | 9 | [#44](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/44) phpunit/CI evidence | @xxch4nnn | ✅ Closed |
 | 10 | [#45](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/45) Super Admin seed guarantee | @WakenMac | Open |
-| 11 | [TBD] Implement Backend Logic for Dashboard Recent Searches | @WakenMac | Open |
+| 11 | [#85](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/85) Implement Backend Logic for Dashboard Recent Searches | @WakenMac | Open |
 
 Next team sync: **2026-08-06 10:00 AM** — confirm Rui/Miguel GitHub handles (`Mushimuche`?).
 
