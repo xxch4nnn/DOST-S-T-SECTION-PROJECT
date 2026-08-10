@@ -18,61 +18,43 @@ new class extends Component
 
         if (trim($this->query) !== '') {
             $searchTerm = trim($this->query);
+            $like = '%'.$searchTerm.'%';
 
-            $dbResults = Scholar::with(['scholarshipType', 'clearanceStatus'])
-                ->where('first_name', 'like', "%{$searchTerm}%")
-                ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                ->orWhere('spas_no', 'like', "%{$searchTerm}%")
-                ->orWhere('year_of_award', 'like', "%{$searchTerm}%")
-                ->limit(6)
+            // Scholar fields + document_versions filename/type (Q09=A / UUID shape).
+            $dbResults = Scholar::query()
+                ->with(['scholarship', 'scholarshipType', 'clearanceStatus'])
+                ->where(function ($q) use ($like) {
+                    $q->where('first_name', 'like', $like)
+                        ->orWhere('last_name', 'like', $like)
+                        ->orWhere('middle_name', 'like', $like)
+                        ->orWhere('spas_no', 'like', $like)
+                        ->orWhere('year_of_award', 'like', $like)
+                        ->orWhere('email_address', 'like', $like)
+                        ->orWhere('contact_number', 'like', $like)
+                        ->orWhereHas('documents', function ($dq) use ($like) {
+                            $dq->where('status', 'active')
+                                ->whereHas('versions', function ($vq) use ($like) {
+                                    $vq->where('original_filename', 'like', $like)
+                                        ->orWhere('stored_filename', 'like', $like)
+                                        ->orWhereHas('fileType', function ($ft) use ($like) {
+                                            $ft->where('name', 'like', $like);
+                                        });
+                                });
+                        });
+                })
+                ->limit(15)
                 ->get();
 
-            if ($dbResults->isNotEmpty()) {
-                foreach ($dbResults as $scholar) {
-                    $results[] = [
-                        'id' => $scholar->id,
-                        'last_name' => $scholar->last_name,
-                        'first_name' => $scholar->first_name,
-                        'spas_no' => $scholar->spas_no ?? '2023-00855-9102',
-                        'program_type' => $scholar->scholarshipType->code ?? 'RA 10612',
-                        'program_level' => $scholar->program ?? 'Undergrad',
-                        'status' => $scholar->clearanceStatus->name ?? 'Not Cleared',
-                        'status_class' => ($scholar->clearanceStatus->name ?? '') === 'Cleared' ? 'badge-status-cleared' : 'badge-status-not-cleared',
-                    ];
-                }
-            } else {
-                // Demonstration fallback matching Figma prototype screenshot
-                $results = [
-                    [
-                        'id' => 1,
-                        'last_name' => 'Maclang',
-                        'first_name' => 'Wakin Cean',
-                        'spas_no' => '2023-00855-9102',
-                        'program_type' => 'RA 10612',
-                        'program_level' => 'Undergrad',
-                        'status' => 'Not Cleared',
-                        'status_class' => 'badge-status-not-cleared',
-                    ],
-                    [
-                        'id' => 2,
-                        'last_name' => 'Palabon',
-                        'first_name' => 'Rui',
-                        'spas_no' => '2023-00855-9102',
-                        'program_type' => 'RA 10612',
-                        'program_level' => 'Undergrad',
-                        'status' => 'Not Cleared',
-                        'status_class' => 'badge-status-not-cleared',
-                    ],
-                    [
-                        'id' => 3,
-                        'last_name' => 'Rizal Mercado',
-                        'first_name' => 'Jose Protasio Alonzo Realonda',
-                        'spas_no' => '2023-00855-9102',
-                        'program_type' => 'RA 10612',
-                        'program_level' => 'Undergrad',
-                        'status' => 'Not Cleared',
-                        'status_class' => 'badge-status-not-cleared',
-                    ],
+            foreach ($dbResults as $scholar) {
+                $results[] = [
+                    'id' => $scholar->id,
+                    'last_name' => $scholar->last_name,
+                    'first_name' => $scholar->first_name,
+                    'spas_no' => $scholar->spas_no ?? '—',
+                    'program_type' => $scholar->scholarship->name ?? '—',
+                    'program_level' => $scholar->scholarshipType->name ?? ($scholar->program ?? '—'),
+                    'status' => $scholar->clearanceStatus->name ?? 'Not Cleared',
+                    'status_class' => ($scholar->clearanceStatus->name ?? '') === 'Cleared' ? 'badge-status-cleared' : 'badge-status-not-cleared',
                 ];
             }
         }
