@@ -97,14 +97,14 @@ new class extends Component
     public function openDocument(string $folderName, int $index): void
     {
         $folderFiles = $this->file_groups[$folderName] ?? [];
-        $file = $folderFiles[$index] ?? null;
+        $document = $folderFiles[$index] ?? null;
 
-        if (!$file) {
+        if (!$document) {
             return;
         }
 
         // Generate secure authenticated route URL for local private storage file
-        $secureStreamUrl = route('documents.view', ['file' => $file['id']]);
+        $secureStreamUrl = route('documents.view', ['document' => $document['uuid']]);
 
         $this->dispatch('open-document-viewer',
             title: (string) ($file['file_type_name'] ?? $file['file_name'] ?? 'Document'),
@@ -127,7 +127,6 @@ new class extends Component
             'course',
             'region',
             'clearanceStatus',
-            'documents.fileType',
         ])->find($this->scholarId);
         
         // load all files
@@ -135,18 +134,18 @@ new class extends Component
         $files = DB::select("
             WITH RankedVersions AS (
                 SELECT 
-                    document_id,
+                    document_uuid,
                     file_type_id,
-                    file_name,
+                    original_filename as file_name,
                     file_path,
-                    file_size,
+                    file_size_bytes as file_size,
                     uploaded_by,
-                    uploaded_at,
-                    ROW_NUMBER() OVER(PARTITION BY document_id ORDER BY version_number DESC) as rn
+                    created_at as uploaded_at,
+                    ROW_NUMBER() OVER(PARTITION BY document_uuid ORDER BY version_number DESC) as rn
                 FROM document_versions
             )
             SELECT 
-                d.id,
+                d.uuid,
                 d.documentable_id AS scholar_id,
                 ft.name as file_type_name,
                 rv.file_name,
@@ -156,7 +155,7 @@ new class extends Component
                 rv.file_size,
                 d.metadata
             FROM documents AS d
-            INNER JOIN RankedVersions AS rv ON d.id = rv.document_id AND rv.rn = 1
+            INNER JOIN RankedVersions AS rv ON d.uuid = rv.document_uuid AND rv.rn = 1
             INNER JOIN file_types AS ft 
                 ON rv.file_type_id = ft.id
             INNER JOIN users AS u 
@@ -180,9 +179,9 @@ new class extends Component
         if ($dbScholar) {
             $this->scholarData = [
                 'name' => "{$dbScholar->last_name}, {$dbScholar->first_name} {$dbScholar->middle_name}",
-                'spas_id' => $dbScholar->spas_number ?? 'null',
-                'program' => $dbScholar->scholarshipProgram->name ??  'null',
-                'program_type' => $dbScholar->scholarshipProgramType->name ?? 'null',
+                'spas_id' => $dbScholar->spas_no ?? 'null',
+                'program' => $dbScholar->scholarship->name ??  'null',
+                'program_type' => $dbScholar->scholarshipType->name ?? 'null',
                 'year_of_award' => $dbScholar->year_of_award ?? 'null',
                 'clearance_date' => $dbScholar->clearance_date ? \Carbon\Carbon::parse($dbScholar->clearance_date, 'Asia/Manila')->format('m / d / Y') : 'None (Not Cleared)',
                 'course' => $dbScholar->course->name ?? 'null',
@@ -292,11 +291,11 @@ new class extends Component
                 {{-- Metadata 2-Column Grid --}}
                 <div class="scholar-drawer__grid">
                     <div class="scholar-meta-item">
-                        <label>Scholarship Program</label>
+                        <label>Scholarship</label>
                         <value>{{ $scholarData['program'] }}</value>
                     </div>
                     <div class="scholar-meta-item">
-                        <label>Scholarship Program Type</label>
+                        <label>Scholarship Type</label>
                         <value>{{ $scholarData['program_type'] }}</value>
                     </div>
 

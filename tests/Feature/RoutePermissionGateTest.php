@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\AdministrativeRecord;
+use App\Models\Document;
 use App\Models\FileType;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -118,13 +119,17 @@ class RoutePermissionGateTest extends TestCase
             'created_by' => $owner->id,
         ]);
 
-        $document = $record->documents()->create([
+        $document = Document::createWithInitialVersion([
+            'documentable_type' => AdministrativeRecord::class,
+            'documentable_id' => $record->id,
+            'status' => 'active',
+        ], [
             'file_type_id' => $fileType->id,
             'original_filename' => 'gate-test.pdf',
             'stored_filename' => 'gate-test.pdf',
+            'file_path' => 'documents/'.'gate-test.pdf',
             'mime_type' => 'application/pdf',
             'file_size_kb' => 1,
-            'status' => 'active',
             'uploaded_by' => $owner->id,
         ]);
 

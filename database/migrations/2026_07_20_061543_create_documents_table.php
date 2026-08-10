@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('uuid')->primary();
             
             // Polymorphic parent link:
             // - Scholarly Files: documentable_type = 'App\Models\Scholar', documentable_id = '45'
@@ -21,7 +21,8 @@ return new class extends Migration
             $table->string('documentable_type', 150)->nullable(false);
             $table->string('documentable_id', 45)->nullable(false);
 
-            $table->json('metadata')->nullable(false);
+            $table->string('status', 50)->default('active');
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

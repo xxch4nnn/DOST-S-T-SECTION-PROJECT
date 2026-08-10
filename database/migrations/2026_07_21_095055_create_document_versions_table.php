@@ -10,15 +10,17 @@ return new class extends Migration
     {
         Schema::create('document_versions', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('document_id')->constrained('documents', 'id')->cascadeOnDelete();
-            $table->integer('version_number')->nullable(false);
-            $table->string('file_name', 200)->nullable(false);
-            $table->string('file_path', 500)->unique()->nullable(false);
-            $table->integer('file_size')->nullable(false);
-            $table->foreignId('file_type_id')->nullable(false)->constrained('file_types', 'id')->restrictOnDelete();
-            $table->foreignId('uploaded_by')->constrained('users')->restrictOnDelete();
-            $table->timestamp('uploaded_at')->default(now());
-            $table->unique(['document_id', 'version_number'], 'version_number_unique');
+            $table->foreignUuid('document_uuid')->constrained('documents', 'uuid')->cascadeOnDelete();
+            $table->foreignId('file_type_id')->nullable()->constrained('file_types')->nullOnDelete();
+            $table->string('original_filename', 255)->nullable();
+            $table->string('stored_filename', 255)->nullable();
+            $table->string('file_path', 500)->nullable();
+            $table->string('mime_type', 100)->nullable();
+            $table->unsignedBigInteger('file_size_bytes')->nullable();
+            $table->integer('version_number')->default(1);
+            $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamps();
+            $table->unique(['document_uuid', 'version_number'], 'version_number_unique');
         });
     }
 
@@ -27,3 +29,4 @@ return new class extends Migration
         Schema::dropIfExists('document_versions');
     }
 };
+

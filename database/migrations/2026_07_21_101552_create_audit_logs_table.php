@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('action')->nullable(false); // e.g., 'created', 'updated', 'deleted'
             
             // Polymorphic columns: what table and what row was affected
-            $table->string('loggable_type', 150)->nullable(false); // e.g., 'App\Models\Scholar'
-            $table->string('loggable_id', 45)->nullable(false); // e.g., Scholar ID #45
+            $table->string('record_type', 150)->nullable(false); // e.g., 'App\Models\Scholar'
+            $table->string('record_id', 45)->nullable(false); // e.g., Scholar ID #45
 
             // For documents and documents versions, the JSON snapshot of what exactly changed
             $table->json('before_payload')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             
             $table->string('ip_address')->nullable();
             $table->timestamps();
-            $table->index(['loggable_type', 'loggable_id']);
+            $table->index(['record_type', 'record_id']);
         });
     }
 

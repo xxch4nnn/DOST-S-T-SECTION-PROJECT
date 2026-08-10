@@ -45,24 +45,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $adminUser->assignRole('Super Admin');
 
-        $myUser = User::firstOrCreate([
-            'email' => 'maclangw26@gmail.com',
-        ], [
-            'name' => 'Wakin Maclang',
-            'password' => bcrypt('Wakster2112'), // Change to your desired password
-            'email_verified_at' => now(),
-        ]);
-        $myUser->assignRole('Super Admin');
-
-        $lazyUser = User::firstOrCreate([
-            'email' => 'a',
-        ], [
-            'name' => 'a',
-            'password' => bcrypt('a'), // Change to your desired password
-            'email_verified_at' => now(),
-        ]);
-        $lazyUser->assignRole('Super Admin');
-
         $this->call([
             FileGroupSeeder::class,
             RegionSeeder::class,

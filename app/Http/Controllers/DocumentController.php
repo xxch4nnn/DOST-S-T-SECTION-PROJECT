@@ -12,7 +12,7 @@ class DocumentController extends Controller
     use AuthorizesRequests;
 
     /**
-     * Download the specified document or file.
+     * Download the specified document (current version).
      */
     public function download(string|int $id)
     {
@@ -21,13 +21,13 @@ class DocumentController extends Controller
         $relativePath = null;
         $fileName = null;
 
-        $doc = Document::find($id);
+        $doc = Document::where('uuid', $id)->first();
         if ($doc) {
-            $version = $doc->documentVersion()->orderByDesc('version_number')->first();
+            $version = $doc->currentVersion;
             $relativePath = $version?->file_path;
-            $fileName = $version?->file_name;
+            $fileName = $version?->original_filename ?? $version?->stored_filename;
         } else {
-            $relativePath = $id;
+            $relativePath = (string) $id;
         }
 
         if ($relativePath && Storage::disk('local')->exists($relativePath)) {
@@ -51,13 +51,13 @@ class DocumentController extends Controller
         $relativePath = null;
         $fileName = null;
 
-        $doc = Document::find($id);
+        $doc = Document::where('uuid', $id)->first();
         if ($doc) {
-            $version = $doc->documentVersion()->orderByDesc('version_number')->first();
+            $version = $doc->currentVersion;
             $relativePath = $version?->file_path;
-            $fileName = $version?->file_name;
+            $fileName = $version?->original_filename ?? $version?->stored_filename;
         } else {
-            $relativePath = $id;
+            $relativePath = (string) $id;
         }
 
         if ($relativePath && Storage::disk('local')->exists($relativePath)) {

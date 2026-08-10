@@ -12,7 +12,7 @@ class AuditLog extends Model
     // public $timestamps = false;
 
     protected $fillable = [
-        'user_id', 'action', 'loggable_type', 'loggable_id',
+        'user_id', 'action', 'record_type', 'record_id',
         'before_payload', 'after_payload', 'ip_address',
     ];
 

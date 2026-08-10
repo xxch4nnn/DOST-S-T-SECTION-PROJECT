@@ -47,8 +47,8 @@ class LoginForm extends Form
         AuditLog::create([
             'user_id' => $user->id,
             'action' => 'login',
-            'loggable_type' => User::class,
-            'loggable_id' => $user->id,
+            'record_type' => User::class,
+            'record_id' => $user->id,
             'before_payload' => null,
             'after_payload' => json_encode($user),
             'ip_address' => request()->ip() ?? '127.0.0.1',

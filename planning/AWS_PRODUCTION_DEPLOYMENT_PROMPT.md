@@ -11,6 +11,7 @@
 |------|--------|
 | A. CI synthetic smoke (health / auth / upload / download + live `/health` curl) | Required now |
 | B. Manual staging deploy workflow (secrets + `confirm_aws_gates=APPROVED`) | Scaffolded; remote curl when `STAGING_URL` set |
+| B2. EC2 single-box staging sandbox (not prod) | Runbook: `planning/AWS_STAGING_EC2_RUNBOOK.md` |
 | C. AWS Phases 1–6 / IaC under `infrastructure/aws/` | **Blocked** on Decision Gate |
 
 ---

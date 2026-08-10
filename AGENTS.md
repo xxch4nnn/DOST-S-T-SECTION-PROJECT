@@ -60,6 +60,7 @@ Use these rules whenever this repo is the working directory.
 
 ## Deploy / AWS (sequenced)
 - AWS design SoT only until Decision Gate: `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md` — **do not provision** without PM/DOST approval.
+- EC2 staging sandbox (single-box, not production): `planning/AWS_STAGING_EC2_RUNBOOK.md` + `scripts/deploy-staging.sh`.
 - CI synthetic smoke (required): job `synthetic-smoke` in `.github/workflows/test.yml` + `php artisan test --group=smoke`.
 - Gated remote staging/prod: manual `.github/workflows/deploy.yml` (`confirm_aws_gates=APPROVED`; staging needs `STAGING_URL`).
 

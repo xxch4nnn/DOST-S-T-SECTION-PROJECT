@@ -66,7 +66,10 @@ new class extends Component
             return 1;
         }
 
-        $doc = \App\Models\Document::with('latestVersion')->find($this->documentId);
+        $doc = \App\Models\Document::with('latestVersion')
+            ->where('uuid', $this->documentId)
+            ->first();
+    
         $filePath = $doc?->latestVersion?->file_path;
 
         if ($filePath && \Illuminate\Support\Facades\Storage::disk('local')->exists($filePath)) {

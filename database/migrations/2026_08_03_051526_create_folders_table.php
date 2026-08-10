@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('description')->nullable(false);
             $table->timestamps();
             $table->softDeletes();
-            $table->index('parent_id');
             $table->index('user_id');
             $table->unique(['parent_id', 'name'], 'unique_folder_name_per_parent');
         });

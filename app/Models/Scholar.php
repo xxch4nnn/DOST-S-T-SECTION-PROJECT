@@ -53,6 +53,6 @@ class Scholar extends Model
     }
 
     public function documents(){
-        return $this->morphMany(Document::class, 'documentable');
+        return $this->morphMany(Document::class, 'documentable_type');
     }
 }

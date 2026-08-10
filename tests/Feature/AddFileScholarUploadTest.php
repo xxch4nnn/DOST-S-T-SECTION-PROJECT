@@ -89,22 +89,16 @@ class AddFileScholarUploadTest extends TestCase
         $this->assertNotNull($scholar);
 
         // Verify documents created and linked to scholar
-        $this->assertDatabaseHas('documents', [
-            'documentable_id' => $scholar->id,
-            'documentable_type' => Scholar::class,
+        $this->assertEquals(2, $scholar->documents()->count());
+        $this->assertDatabaseHas('document_versions', [
             'original_filename' => 'signed_agreement.pdf',
         ]);
-
-        $this->assertDatabaseHas('documents', [
-            'documentable_id' => $scholar->id,
-            'documentable_type' => Scholar::class,
+        $this->assertDatabaseHas('document_versions', [
             'original_filename' => 'grade_sheet.png',
         ]);
 
-        $this->assertEquals(2, $scholar->documents()->count());
-
         // Verify file was saved in storage
-        $storedDocs = $scholar->documents()->get();
+        $storedDocs = $scholar->documents()->with('currentVersion')->get();
         foreach ($storedDocs as $doc) {
             Storage::disk('local')->assertExists('documents/'.$doc->stored_filename);
             Storage::disk('local')->delete('documents/'.$doc->stored_filename);
@@ -252,20 +246,14 @@ class AddFileScholarUploadTest extends TestCase
         $fileTypeCor = FileType::where('name', 'Certificate of Registration')->first();
 
         // Verify documents created and linked to scholar
-        $this->assertDatabaseHas('documents', [
-            'documentable_id' => $scholar->id,
-            'documentable_type' => Scholar::class,
+        $this->assertEquals(2, $scholar->documents()->count());
+        $this->assertDatabaseHas('document_versions', [
             'original_filename' => 'agreement.pdf',
             'file_type_id' => $fileTypeAgreement->id,
         ]);
-
-        $this->assertDatabaseHas('documents', [
-            'documentable_id' => $scholar->id,
-            'documentable_type' => Scholar::class,
+        $this->assertDatabaseHas('document_versions', [
             'original_filename' => 'cor.jpg',
             'file_type_id' => $fileTypeCor->id,
         ]);
-
-        $this->assertEquals(2, $scholar->documents()->count());
     }
 }

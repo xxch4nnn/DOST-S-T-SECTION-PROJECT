@@ -16,8 +16,8 @@ class ScholarObserver
         AuditLog::create([
             'user_id' => Auth::id() ?? 2,
             'action' => 'created',
-            'loggable_type' => Scholar::class,
-            'loggable_id' => $scholar->id,
+            'record_type' => Scholar::class,
+            'record_id' => $scholar->id,
             'before_payload' => null,
             'after_payload' => $scholar->toArray(),
             'ip_address' => request()->ip(),
@@ -33,8 +33,8 @@ class ScholarObserver
             AuditLog::create([
                 'user_id' => Auth::id() ?? 2,
                 'action' => 'updated',
-                'loggable_type' => Scholar::class,
-                'loggable_id' => $scholar->id,
+                'record_type' => Scholar::class,
+                'record_id' => $scholar->id,
                 'before_payload' => $scholar->getOriginal(),
                 'after_payload' => $scholar->getChanges(),
                 'ip_address' => request()->ip(),
@@ -76,8 +76,8 @@ class ScholarObserver
         AuditLog::create([
             'user_id' => Auth::id() ?? 2,
             'action' => 'deleted',
-            'loggable_type' => Scholar::class,
-            'loggable_id' => $scholar->id,
+            'record_type' => Scholar::class,
+            'record_id' => $scholar->id,
             'before_payload' => $scholar->toArray(),
             'after_payload' => null,
             'ip_address' => request()->ip(),

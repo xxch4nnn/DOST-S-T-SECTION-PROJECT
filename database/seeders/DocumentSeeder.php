@@ -79,24 +79,25 @@ class DocumentSeeder extends Seeder
             $fileType = FileType::where('name', $typeName)->first();
             $fileTypeId = $fileType ? $fileType->id : 1;
 
-            DB::transaction(function () use ($group, $uuid, $fileName, $fileTypeId, $destinationRelativePath, $fileSize){   
-                Document::firstOrCreate([
-                    'id'=>$uuid,
-                    'documentable_type'=>Scholar::class,
-                    'documentable_id'=>(string) $group['scholar_id'],
-                    'metadata'=>[]
-                ]);
-
-                DocumentVersion::firstOrCreate([
-                    'document_id'=>$uuid,
-                    'version_number'=>1,
-                    'file_name'=>$fileName,
-                    'file_path'=>$destinationRelativePath,
-                    'file_size' => $fileSize,
-                    'file_type_id'=>$fileTypeId,
-                    'uploaded_by'=>3
-                ]);
-            });
+            Document::createWithInitialVersion(
+                [
+                    'uuid' => $uuid,
+                    'documentable_type' => Scholar::class,
+                    'documentable_id' => (string) $group['scholar_id'],
+                    'status' => 'active',
+                    'metadata' => [],
+                ],
+                [
+                    'file_type_id' => $fileTypeId,
+                    'original_filename' => $fileName,
+                    'stored_filename' => $uuidName,
+                    'file_path' => $destinationRelativePath,
+                    'mime_type' => $mimeType,
+                    'file_size_bytes' => $fileSize,
+                    'version_number' => 1,
+                    'uploaded_by' => 3,
+                ]
+            );
         }
     }
 }

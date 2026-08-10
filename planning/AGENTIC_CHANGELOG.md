@@ -22,6 +22,34 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-10
+
+- **Date:** 2026-08-10
+- **Time:** 03:01:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Chan / Antigravity
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update — CHAN_ACK decisions + UUID RFC
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Chan ACK'd Wakin Q02=B, Q05=B, Q07=C. Created UUID documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`). Folders RFC marked decided/parked. Answers lock fully unblocked for thin slice PRs.
+- **Linked:** `docs/db/DOCUMENTS_UUID_RFC.md`, `planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`, `planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`, `CHANGELOG.md`
+
+---
+
+## 2026-08-08
+
+- **Date:** 2026-08-08
+- **Time:** 16:56:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update + script
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Added EC2 single-box staging sandbox runbook and host deploy script; cross-linked from AGENTS and AWS production prompt (sandbox ≠ Decision Gate prod).
+- **Linked:** `planning/AWS_STAGING_EC2_RUNBOOK.md`, `scripts/deploy-staging.sh`, `AGENTS.md`, `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`, `CHANGELOG.md`
+
+---
+
 ## 2026-08-06
 
 - **Date:** 2026-08-06

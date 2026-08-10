@@ -50,9 +50,11 @@ class AdminRecordDocumentUploadTest extends TestCase
             ->assertHasNoErrors();
 
         $this->assertDatabaseHas('documents', [
-            'original_filename' => 'admin_memo.pdf',
             'documentable_id' => $record->id,
             'documentable_type' => AdministrativeRecord::class,
+        ]);
+        $this->assertDatabaseHas('document_versions', [
+            'original_filename' => 'admin_memo.pdf',
         ]);
 
         $document = $record->fresh()->documents()->first();
