@@ -63,6 +63,16 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-10
 
 - **Date:** 2026-08-10
+- **Time:** 15:05:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/dashboard-search-recent-ui`
+- **Action:** UI refactor + Handoff Issue
+- **Commit/PR:** pending
+- **Summary:** Refactored Dashboard search UI to eliminate flex-shrink jumping, added Recent Searches mocked UI, added Alpine.js animations, and filed backend handoff Issue 11.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `resources/css/components/_file-search.scss`, `planning/HANDOFF_GITHUB_ISSUES.md`, `CHANGELOG.md`
+
+- **Date:** 2026-08-10
 - **Time:** 03:01:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Chan / Antigravity

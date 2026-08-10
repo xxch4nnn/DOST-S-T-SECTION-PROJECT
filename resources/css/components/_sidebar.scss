@@ -24,24 +24,20 @@
     overflow: hidden;
 
     &--collapsed {
-        width: 64px;
+        width: 66px;
         padding: 0.75rem 0.5rem;
-        align-items: center;
         overflow: visible;
 
-        .sidebar-label {
-            display: none !important;
-            opacity: 0;
-            width: 0;
-            overflow: hidden;
-        }
-
         .sidebar-item {
-            justify-content: center;
-            padding: 0.625rem 0;
-            width: 100%;
-            gap: 0;
             overflow: visible;
+            width: 100%; // Ensure it stretches
+
+            .sidebar-label {
+                opacity: 0;
+                max-width: 0;
+                margin-left: 0;
+                visibility: hidden;
+            }
 
             &:hover {
                 .sidebar-tooltip {
@@ -52,17 +48,12 @@
                 }
             }
         }
-
-        .sidebar-icon {
-            margin: 0 auto;
-        }
     }
 }
 
 .sidebar-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     padding: 0.625rem 0.875rem;
     border-radius: 0.5rem;
     color: var(--dost-main-blue);
@@ -88,10 +79,14 @@
     }
 
     .sidebar-label {
+        margin-left: 0.75rem;
+        max-width: 180px;
+        visibility: visible;
         opacity: 1;
-        transition: opacity 0.2s ease;
+        transition: opacity 0.25s ease, max-width 0.25s ease, margin-left 0.25s ease, visibility 0.25s ease;
         line-height: 1.2;
         white-space: nowrap;
+        overflow: hidden;
         color: var(--dost-dark-blue);
     }
 
@@ -129,10 +124,14 @@
 
 .sidebar-toggle {
     margin-bottom: 0.25rem;
+    height: 44px;
 }
 
 .sidebar-logo-toggle {
     position: relative;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
 
     .sidebar-collapsed-logo {
         width: 28px;
