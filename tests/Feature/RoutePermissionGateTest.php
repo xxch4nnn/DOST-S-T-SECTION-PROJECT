@@ -143,8 +143,16 @@ class RoutePermissionGateTest extends TestCase
             ->get(route('documents.download', $document))
             ->assertForbidden();
 
+        $this->actingAs($denied)
+            ->get(route('documents.view', $document))
+            ->assertForbidden();
+
         $this->actingAs($owner)
             ->get(route('documents.download', $document))
+            ->assertOk();
+
+        $this->actingAs($owner)
+            ->get(route('documents.view', $document))
             ->assertOk();
     }
 
