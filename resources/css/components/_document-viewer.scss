@@ -217,20 +217,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: auto;
+    overflow: auto;
     scroll-behavior: smooth;
-
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
 
     img {
         user-select: none;
-        -webkit-user-select: none;
-        -webkit-user-drag: none;
-        -webkit-touch-callout: none;
         pointer-events: auto;
     }
 }
