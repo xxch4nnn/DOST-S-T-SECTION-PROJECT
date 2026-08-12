@@ -20,24 +20,50 @@ class DocumentSeeder extends Seeder
         $groups = [
             // #[Fillable(['file_type_id', 'file_name', 'file_path', 'file_size', 'uploaded_at', 'updated_at', 'deleted_at', 'mime_type', 'metadata'])]
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 2nd Sem.pdf',
-                'scholar_id'=>1                
+                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 2nd Sem.pdf',  
+                'scholar_id'=>1,
+                'date_issued'=>'2026-01-12',
+                'metadata'=>[
+                    'semester'=> '2nd Semester',
+                    'year'=>2026,
+                ]
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 3rd Sem.pdf',
-                'scholar_id'=>1                
+                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 3rd Sem.pdf', 
+                'scholar_id'=>1, 
+                'date_issued'=>'2026-06-10',      
+                'metadata'=>[
+                    'semester'=> 'Off-Semester',
+                    'year'=>2026,
+                ]  
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_1st Year 1st Sem.pdf',
-                'scholar_id'=>1                
+                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_1st Year 1st Sem.pdf',     
+                'scholar_id'=>1,  
+                'date_issued'=>'2026-07-28' ,
+                'metadata'=>[
+                    'semester'=> '1st Semester',
+                    'year'=>2023,
+                ]       
             ],
             [
                 'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_3rd Year 2nd Sem.pdf',
-                'scholar_id'=>1                
+                'scholar_id'=>1,
+                'date_issued'=>'2026-07-28',
+                'metadata'=>[
+                    'semester'=> '2nd Semester',
+                    'year'=>2026,
+                ]      
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',
-                'scholar_id'=>1                
+                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',  
+                'scholar_id'=>1,  
+                'date_issued'=>'2026-05-08', 
+                'metadata'=>[
+                    'series_number'=> '20260508',
+                    'subject'=>'Conduct of Special Internal Elections for Clubs and Organizations',
+                    'description'=>'MEMORANDUM No. 02, s. 2026',
+                ]     
             ],
         ];
 
@@ -84,8 +110,9 @@ class DocumentSeeder extends Seeder
                     'uuid' => $uuid,
                     'documentable_type' => Scholar::class,
                     'documentable_id' => (string) $group['scholar_id'],
+                    'date_issued' => $group['date_issued'],
                     'status' => 'active',
-                    'metadata' => [],
+                    'metadata' => $group['metadata'] ?? [],
                 ],
                 [
                     'file_type_id' => $fileTypeId,
@@ -94,7 +121,7 @@ class DocumentSeeder extends Seeder
                     'file_path' => $destinationRelativePath,
                     'mime_type' => $mimeType,
                     'file_size_bytes' => $fileSize,
-                    'version_number' => 1,
+                    'version_number' => 1, 
                     'uploaded_by' => 3,
                 ]
             );

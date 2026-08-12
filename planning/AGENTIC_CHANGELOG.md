@@ -25,6 +25,16 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-10
 
 - **Date:** 2026-08-10
+- **Time:** 22:18:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Fixed PHP TypeError in `App\Livewire\Scholars\Files\Edit`: removed typed `$file_types` property expectation mismatch and called `->get()` to set `$fileTypes` collection.
+- **Linked:** `app/Livewire/Scholars/Files/Edit.php`, `CHANGELOG.md`
+
+- **Date:** 2026-08-10
 - **Time:** 03:01:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Chan / Antigravity

@@ -68,13 +68,27 @@ class DocumentController extends Controller
             abort(404, 'File not found on server.');
         }
 
+        $lastModified = file_exists($absolutePath) ? filemtime($absolutePath) : time();
+        $versionKey = $version ? ($version->id . '-' . $version->version_number) : $id;
+        $etag = '"' . md5($versionKey . '-' . $lastModified) . '"';
+
+        // Check if client sent If-None-Match header matching current ETag
+        $ifNoneMatch = request()->header('If-None-Match');
+        if ($ifNoneMatch && (trim($ifNoneMatch) === $etag || trim($ifNoneMatch) === '*')) {
+            return response()->noContent(304, [
+                'ETag'          => $etag,
+                'Cache-Control' => 'private, no-cache, revalidate',
+            ]);
+        }
+
         $mimeType = (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null) 
             ?? 'application/pdf';
 
         return response()->file($absolutePath, [
-            'Content-Type' => $mimeType,
+            'Content-Type'        => $mimeType,
             'Content-Disposition' => 'inline; filename="' . ($fileName ?? basename($absolutePath)) . '"',
-            'Cache-Control' => 'public, max-age=3600',
+            'ETag'                => $etag,
+            'Cache-Control'       => 'private, no-cache, revalidate',
         ]);
     }
 }

@@ -19,6 +19,10 @@ Every bullet **must** start with:
 
 ## [Unreleased]
 
+### Fixed
+- **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
+- **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
+
 ### Changed
 - **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
 

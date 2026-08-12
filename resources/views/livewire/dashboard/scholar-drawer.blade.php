@@ -103,17 +103,17 @@ new class extends Component
             return;
         }
 
-        // Generate secure authenticated route URL for local private storage file
-        $secureStreamUrl = route('documents.view', ['document' => $document['uuid']]);
+        $uploadedAt = strtotime($document['uploaded_at'] ?? 'now');
+        $secureStreamUrl = route('documents.view', ['document' => $document['uuid']]) . '?v=' . $uploadedAt;
 
         $this->dispatch('open-document-viewer',
-            title: (string) ($file['file_type_name'] ?? $file['file_name'] ?? 'Document'),
+            title: (string) ($document['file_type_name'] ?? $document['file_name'] ?? 'Document'),
             fileUrl: (string) $secureStreamUrl,
             scholarName: (string) ($this->scholarData['name'] ?? 'Scholar'),
-            fileType: str_contains($file['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
+            fileType: str_contains($document['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
             documentIndex: (int) $index,
             scholarId: (int) ($this->scholarId ?? -1),
-            documentId: (string) ($file['id'] ?? ''),
+            documentId: (string) ($document['uuid'] ?? ''),
         );
     }
 

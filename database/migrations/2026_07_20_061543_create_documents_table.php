@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('documentable_id', 45)->nullable(false);
 
             $table->string('status', 50)->default('active');
+            $table->date('date_issued')->nullable(false);
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

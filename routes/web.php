@@ -35,8 +35,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/scholars/create', Create::class)->name('scholars.create');
     Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
     
-    // MOCK Edit File UI
-    Route::get('/scholars/{scholar}/files/{file}/edit', \App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
     Route::middleware('permission:viewScholars')->group(function () {
         Route::get('/scholars', Index::class)->name('scholars.index');
         Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
@@ -44,6 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('permission:editScholars')->group(function () {
         Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
+
+        // MOCK Edit File UI (inside scholar context)
+        Route::get('/scholars/{scholar}/file/{document}/edit', \App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
     });
 
     Route::middleware('permission:uploadDocuments')->group(function () {

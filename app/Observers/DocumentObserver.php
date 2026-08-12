@@ -10,9 +10,6 @@ class DocumentObserver
     public bool $afterCommit = true;
 
     public function creating(Document $file){
-        if ($file->file_path) 
-            $file->file_path = str_replace('/', '\\', $file->file_path);
-
         $file->metadata = $file->metadata ?? [];
     }
 
@@ -28,9 +25,6 @@ class DocumentObserver
 
     // A function run before saving the entire query...
     public function updating(Document $file){
-        if ($file->file_path) 
-            $file->file_path = str_replace('/', '\\', $file->file_path);
-
         $file->metadata = $file->metadata ?? [];
     }
 

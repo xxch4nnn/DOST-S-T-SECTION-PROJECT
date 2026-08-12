@@ -19,14 +19,14 @@
                         <h3>Edit Scholar File</h3>
                     </div>
 
-                    <form wire:submit="save" id="file_upload_form">
+                    <form id="file_upload_form">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group-custom">
                                     <label for="file_type">Document Type <span class="text-danger">*</span></label>
-                                    <select wire:model.live="file_type_id" id="file_type" class="form-select" data-file-types="{{ json_encode($fileTypes) }}" required>
+                                    <select wire:model="file_type_id" id="file_type" class="form-select" required>
                                         <option value="" disabled>Select Document Type</option>
-                                        @foreach ($fileTypes as $fileType)
+                                        @foreach ($this->fileTypes as $fileType)
                                             <option value="{{ $fileType->id }}">
                                                 {{ $fileType->name }}
                                             </option>
@@ -52,7 +52,7 @@
                         <input type="file" id="uploaded_files" multiple accept=".pdf, .jpg, .jpeg, .png" style="display: none;">
 
                         <!-- Dynamic Metadata (Placeholder for JS generation) -->
-                        <div id="dynamic_metadata_container" class="row mb-3"></div>
+                        <div id="dynamic_metadata_container" class="row mb-3" wire:ignore></div>
 
                         <!-- Drag and Drop Zone -->
                         <div class="file-upload-dropzone" onclick="document.getElementById('uploaded_files').click()">
@@ -62,13 +62,13 @@
                         </div>
 
                         <!-- Added Files List -->
-                        <div id="added_files_container" style="display: none;">
+                        <div id="added_files_container" style="display: none;" wire:ignore>
                             <label style="font-weight: 600; font-size: 0.85rem; color: #495057; margin-bottom: 0.5rem; display: block;">Source Files</label>
                             <div id="added_files_list" class="added-files-list"></div>
                         </div>
 
                         <!-- Preview Grid -->
-                        <div class="preview-grid-wrapper" id="preview-grid-wrapper" style="display: none;">
+                        <div class="preview-grid-wrapper" id="preview-grid-wrapper" style="display: none;" wire:ignore>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="preview-grid-title m-0">Document Pages & Sort Order</div>
                                 <small class="text-muted"><i class="ph ph-info me-1"></i>Drag to reorder pages</small>
@@ -89,11 +89,12 @@
         </div>
     </div>
 
+    <script type='module' src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
     @script
-    <script>
+    <script type="module">
         // Use Livewire's script scope to prevent globals leaking
         const fileTypeSelect = document.getElementById('file_type');
         const fileInput = document.getElementById("uploaded_files");
@@ -114,6 +115,198 @@
                 fallbackClass: 'sortable-fallback',
                 onEnd: updatePreviewNumbers
             });
+        }
+
+        // Insert the metadata logic
+        /**
+         * Add a new div for the new metadata fields
+         * Get the pre-existing div and prepare to append children to them
+         * Load the necessary data following the art style and logic of the edit.blade.php
+         * 
+         * addEventListener('change', generateMetadataFields);
+         */
+
+        async function getMetadataFields(selectedTypeId = null){
+            if (!metadataContainer) return;
+            metadataContainer.innerHTML = '';
+
+            const fileTypes = @js($this->fileTypes);
+            const currentId = selectedTypeId ?? (fileTypeSelect ? fileTypeSelect.value : @js($file_type_id));
+            const fileType = fileTypes.find(ft => ft.id == currentId);
+
+            if (!fileType || !fileType['metadata_template']) {
+                return;
+            }
+
+            let metadata = fileType['metadata_template'];
+            if (typeof metadata === 'string') {
+                try { metadata = JSON.parse(metadata); } catch(e) { metadata = []; }
+            }
+
+            if (!Array.isArray(metadata)) return;
+
+            const existingMetadata = @js($metadata) || {};
+
+            for (let i = 0; i < metadata.length; i++) {
+                const field = metadata[i];
+                if (!field || !field.field_name) continue;
+
+                const prefill_data = existingMetadata[field.field_name];
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'col-md-6 form-group-custom';
+
+                const label = document.createElement('label');
+                label.htmlFor = 'meta_' + field.field_name;
+                label.textContent = field.label || field.field_name;
+                if (field.required !== false) {
+                    const reqSpan = document.createElement('span');
+                    reqSpan.className = 'text-danger ms-1';
+                    reqSpan.textContent = '*';
+                    label.appendChild(reqSpan);
+                }
+                wrapper.appendChild(label);
+
+                const inputName = `metadata[${field.field_name}]`;
+                
+                if (field.datatype === 'enum' && Array.isArray(field.values)) {
+                    const select = document.createElement('select');
+                    select.name = inputName;
+                    select.id = 'meta_' + field.field_name;
+                    select.className = 'form-select';
+                    if (field.required !== false) select.required = true;
+
+                    const defaultOpt = document.createElement('option');
+                    defaultOpt.value = '';
+                    defaultOpt.disabled = true;
+                    if (prefill_data == null || prefill_data === '') {
+                        defaultOpt.selected = true;
+                    }
+                    defaultOpt.textContent = `Select ${field.label || 'option'}`;
+                    select.appendChild(defaultOpt);
+
+                    field.values.forEach(val => {
+                        const opt = document.createElement('option');
+                        opt.value = val;
+                        opt.textContent = val;
+                        if (prefill_data != null && String(val) === String(prefill_data)) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                    wrapper.appendChild(select);
+                } else if (field.foreign_key) {
+                    const select = document.createElement('select');
+                    select.name = inputName;
+                    select.id = 'meta_' + field.field_name;
+                    select.className = 'form-select';
+                    if (field.required !== false) select.required = true;
+                    
+                    const loadingOpt = document.createElement('option');
+                    loadingOpt.value = "";
+                    loadingOpt.textContent = `Loading ${field.label}...`;
+                    select.appendChild(loadingOpt);
+                    wrapper.appendChild(select);
+
+                    fetch(`/api/metadata-options/${field.foreign_key}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            select.innerHTML = '';
+                            const defaultOpt = document.createElement('option');
+                            defaultOpt.value = '';
+                            defaultOpt.disabled = true;
+                            if (prefill_data == null || prefill_data === '') {
+                                defaultOpt.selected = true;
+                            }
+                            defaultOpt.textContent = `Select ${field.label || 'option'}`;
+                            select.appendChild(defaultOpt);
+
+                            data.forEach(item => {
+                                const opt = document.createElement('option');
+                                opt.value = item.id;
+                                opt.textContent = item.name || `ID: ${item.id}`; 
+                                if (prefill_data != null && item.id == prefill_data) {
+                                    opt.selected = true;
+                                }
+                                select.appendChild(opt);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching foreign key data:', error);
+                            select.innerHTML = '<option value="" disabled>Error loading options</option>';
+                        });
+                } else {
+                    const input = document.createElement('input');
+                    input.name = inputName;
+                    input.id = 'meta_' + field.field_name;
+                    input.className = 'form-control';
+                    if (field.required !== false) input.required = true;
+                    input.placeholder = `Enter ${field.label || field.field_name}`;
+                    
+                    if (field.datatype === 'int' || field.datatype === 'integer' || field.datatype === 'number') {
+                        input.type = 'number';
+                    } else if (field.datatype === 'date') {
+                        input.type = 'date';
+                    } else {
+                        input.type = 'text';
+                    }
+                    input.value = prefill_data ?? '';
+                    wrapper.appendChild(input);
+                }
+
+                metadataContainer.appendChild(wrapper);
+            }
+        }
+
+        // Initial render
+        getMetadataFields(@js($file_type_id));
+
+        // Listen for DOM select change
+        if (fileTypeSelect) {
+            fileTypeSelect.addEventListener('change', function(e) {
+                getMetadataFields(e.target.value);
+            });
+        }
+
+        // Listen for Livewire property changes
+        if (typeof $wire !== 'undefined') {
+            $wire.watch('file_type_id', (newVal) => {
+                getMetadataFields(newVal);
+            });
+        }
+
+        async function loadSecurePDF() {
+            if (!@js($document?->uuid)){
+                console.error('No document is found.')
+                return;
+            } 
+
+            try {
+                const fileId = 'existing_file';
+                const streamUrl = @js(route('documents.view', ['document' => $document->uuid])) + '?v=' + Date.now();
+                const fileName = @js($file_name ?: 'Existing Document.pdf');
+
+                addFileToListUI(fileName, fileId);
+
+                const response = await fetch(streamUrl, {
+                    headers: {
+                        'Accept': 'application/pdf',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': Failed to fetch PDF stream.');
+                }
+
+                const buffer = await response.arrayBuffer();
+                await segmentAndPreviewPDF(buffer, fileId);
+            } catch (error) {
+                console.error("Error loading secure PDF into editor:", error);
+            }
         }
 
         fileInput.addEventListener('change', function(e) {
@@ -356,9 +549,24 @@
             if (isCompiling) return;
             
             const cards = previewContainer.querySelectorAll('.preview-card-item');
+
+            // Function to gather metadata inputs from DOM
+            const getMetadataFromDOM = () => {
+                const metadataObj = {};
+                if (metadataContainer) {
+                    const metaInputs = metadataContainer.querySelectorAll('[name^="metadata["]');
+                    metaInputs.forEach(input => {
+                        const match = input.name.match(/^metadata\[(.+)\]$/);
+                        if (match && match[1]) {
+                            metadataObj[match[1]] = input.value;
+                        }
+                    });
+                }
+                return metadataObj;
+            };
+
             if (cards.length === 0) {
-                // If there's no files, we just run Livewire's normal save.
-                $wire.save();
+                alert("A document must contain at least one page or file. Please add a file before saving.");
                 return;
             }
 
@@ -368,8 +576,7 @@
             submitBtn.disabled = true;
 
             try {
-                // PDF Compilation is temporarily disabled as requested
-                /*
+                // PDF Compilation
                 const { jsPDF } = window.jspdf;
                 if (!jsPDF) throw new Error("The jsPDF library failed to load.");
                 
@@ -383,7 +590,7 @@
                     const img = card.querySelector('img');
 
                     if (canvas) {
-                        imgData = canvas.toDataURL('image/jpeg', 1.0);
+                        imgData = canvas.toDataURL('image/jpeg', .90);
                     } else if (img) {
                         imgData = img.src;
                     } else if (card.dataset.imageSrc) {
@@ -393,7 +600,7 @@
                     if (!imgData) continue;
 
                     const imgObj = await loadImage(imgData);
-                    const compressedImgData = compressImage(imgObj, 0.95);
+                    const compressedImgData = compressImage(imgObj, 1);
 
                     const isLandscape = imgObj.width > imgObj.height;
                     const orientation = isLandscape ? "landscape" : "portrait";
@@ -427,44 +634,35 @@
 
                 const pdfBlob = doc.output('blob');
                 
+                // Creates a destined URL to view the file, debugging whether the PDF is being compiled properly
+                // const blobUrl = URL.createObjectURL(pdfBlob);
+                
+                // Open compiled PDF blob preview in a new browser tab for inspection
+                // window.open(blobUrl, '_blank');
+                
                 let customName = $wire.get('file_name');
                 if (!customName || customName.trim() === '') customName = 'compiled_document';
                 const finalName = customName.endsWith('.pdf') ? customName : `${customName}.pdf`;
-                
-                const compiledFile = new File([pdfBlob], finalName, { 
-                    type: "application/pdf" 
-                });
 
-                // Upload the file via Livewire
-                $wire.upload('compiledFile', compiledFile, (uploadedFilename) => {
-                    // Success!
-                    $wire.save();
-                    
-                    // Reset button after Livewire finishes request
-                    setTimeout(() => {
+                // Sync metadata to Livewire client-side property
+                $wire.metadata = getMetadataFromDOM();
+
+                // Convert PDF Blob to Base64 data URL and send directly to Livewire backend
+                const reader = new FileReader();
+                reader.readAsDataURL(pdfBlob);
+                reader.onloadend = async function() {
+                    try {
+                        const base64Data = reader.result;
+                        console.log('Sending compiled PDF base64 payload to server...', `size: ${pdfBlob.size}`);
+                        await $wire.saveCompiledPdf(base64Data, finalName);
+                    } catch (err) {
+                        console.error('Save error:', err);
+                        alert('Error saving compiled PDF: ' + (err.message || err));
                         submitBtn.innerHTML = originalBtnHtml;
                         submitBtn.disabled = false;
                         isCompiling = false;
-                    }, 1000);
-                }, () => {
-                    // Error
-                    alert('Failed to upload file to the server.');
-                    submitBtn.innerHTML = originalBtnHtml;
-                    submitBtn.disabled = false;
-                    isCompiling = false;
-                }, (event) => {
-                    // Progress callback
-                });
-                */
-                
-                // Simulate success since compilation is disabled
-                setTimeout(() => {
-                    alert("Edits saved (Compilation skipped for now).");
-                    submitBtn.innerHTML = originalBtnHtml;
-                    submitBtn.disabled = false;
-                    isCompiling = false;
-                }, 1000);
-
+                    }
+                };
             } catch (error) {
                 console.error(error);
                 alert('Error compiling PDF: ' + error.message);
@@ -473,6 +671,9 @@
                 isCompiling = false;
             }
         });
+
+        // Execute immediately when Livewire mounts the component script
+        loadSecurePDF();
     </script>
     @endscript
 </div>
