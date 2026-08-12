@@ -1,5 +1,11 @@
-// --- Main Canvas Floating Card Shadow ---
+// --- Main Canvas Floating Card ---
 .main-canvas {
+    background-color: #f4f6fa;
+    min-width: 0;
+    height: 100vh;
+    overflow: hidden;
+    border-top-left-radius: 36px;
+    border-bottom-left-radius: 36px;
     box-shadow: -10px 0 30px rgb(0, 0, 0, 0.05), 0 10px 30px rgb(0, 0, 0, 0.03);
 }
 
