@@ -21,6 +21,26 @@ Next team sync: **2026-08-06 10:00 AM** — confirm Rui/Miguel GitHub handles (`
 
 See also stitch backlog issues filed 2026-08-04 late (PR-D/E/F, DomPDF, db-integration) in AGENTIC_CHANGELOG / GitHub.
 
+## Filed on 2026-08-13 (open-PR triage)
+
+| Issue | Owner | Path | Status |
+|-------|--------|------|--------|
+| [#22](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/22) / PR [#81](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/81) Layout overflow + inline cleanup | `@Mushimuche` | A — UI prereq | ✅ Merged `534fd3d` (2026-08-13) |
+| [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) Finish PR #86 recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` | A — UI | Open — **next**; rebase onto master after #81 |
+| [#94](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/94) Path A merge Dependabot #88–#91 + re-pin TECH_STACK_DOCS | `@xxch4nnn` | B — deps | Open |
+| [#95](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/95) Slim `date_issued` + DocumentObserver delta (supersede #92/#87/#68) | `@WakenMac` | C — backend | Open — **do not merge #92/#87/#68** |
+| [#96](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/96) Close superseded db-integration / layout hygiene | Chan / Wakin | D — hygiene | Open — #22 closed via #81; still close #68/#87 when #95 lands |
+
+### Blocker note — Wakin `#92` vs queue `#93`
+
+PR [#92](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/92) (`feat/be-56-document-scholar-observers`) **must not be merged**. It still uses pre-rename `ScholarshipProgram` / `ScholarshipProgramType` naming and touches `DocumentController`, `Document`, `Scholar`, `ScholarObserver`, plus `document-viewer` / `file-search` / `scholar-drawer` Blade views.
+
+**File overlap with #93 / PR #86:** `resources/views/livewire/dashboard/file-search.blade.php` (also shared changelog paths). Treat #92 as a **blocker for any #95 cherry-pick into search UI**, and when working #93 only edit the #86 tip rebased on post-#81 `master` — do not pull #92 into that branch.
+
+Cross-links: [#56](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/56), [#58](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/58), [#85](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/85).
+
+Suggested order: ~~merge #81~~ → **#93** → Path B (#94) in parallel → #95/#96 with Wakin.
+
 ---
 
 ## Issue 1: Enforce Spatie permissions on all protected routes

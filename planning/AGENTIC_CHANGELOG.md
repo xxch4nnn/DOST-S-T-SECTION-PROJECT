@@ -22,6 +22,30 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-13
+
+- **Date:** 2026-08-13
+- **Time:** 23:40:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** PR merged + docs update (triage turn 1)
+- **Commit/PR:** #81 → `534fd3d` (closes #22); docs for #93–#96 queue
+- **Summary:** Squash-merged layout PR #81. Flagged #92 file overlap with #93/#86 on `file-search.blade.php` plus pre-rename ScholarshipProgram* debt — do not merge #92/#87/#68. Next turn: #93 rebase/fix #86.
+- **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/AGENTIC_CHANGELOG.md`
+
+- **Date:** 2026-08-13
+- **Time:** 16:11:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** audit + issue filing + PR reviews
+- **Commit/PR:** reviews on #81 (approve) / #92 (request changes); issues #93–#96
+- **Summary:** Triaged 9 open PRs; approved #81; requested changes on #92; filed Path A–D tracking issues #93 (UI #86), #94 (Dependabot + TECH_STACK), #95 (slim BE delta), #96 (PR hygiene); cross-linked #22/#56/#58/#85.
+- **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`
+
+---
+
 ## 2026-08-12
 
 - **Date:** 2026-08-12
