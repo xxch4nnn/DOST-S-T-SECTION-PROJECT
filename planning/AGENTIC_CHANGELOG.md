@@ -25,6 +25,16 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-13
 
 - **Date:** 2026-08-13
+- **Time:** 23:57:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `cursor/chore-deps-path-a-94-fc09`
+- **Action:** issue resolve (#94 Path A deps)
+- **Commit/PR:** consolidates Dependabot #88–#91 + TECH_STACK re-pin
+- **Summary:** Verified #86 on master (`recentSearches=[]`, `--has-dropdown`). No overlap with do-not-merge #92/#87/#68 (lockfiles only). Pinned livewire 4.3.5, volt 1.11.2, sail 1.65.0, vite 8.2.1; smoke `npm run build` + 64 tests green; re-pinned TECH_STACK_DOCS.
+- **Linked:** `docs/TECH_STACK_DOCS.md`, `composer.lock`, `package-lock.json`, `planning/HANDOFF_GITHUB_ISSUES.md`
+
+- **Date:** 2026-08-13
 - **Time:** 23:52:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Composer / Chan
