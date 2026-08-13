@@ -16,6 +16,7 @@ Copy/paste ready. Labels suggested: `security`, `backend`, `frontend`, `docs`, `
 | 8 | [#43](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/43) Audit-log user-deletion policy | @WakenMac | Open |
 | 9 | [#44](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/44) phpunit/CI evidence | @xxch4nnn | ✅ Closed |
 | 10 | [#45](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/45) Super Admin seed guarantee | @WakenMac | Open |
+| 11 | [#85](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/85) Implement Backend Logic for Dashboard Recent Searches | @WakenMac | Open |
 
 Next team sync: **2026-08-06 10:00 AM** — confirm Rui/Miguel GitHub handles (`Mushimuche`?).
 
@@ -26,7 +27,7 @@ See also stitch backlog issues filed 2026-08-04 late (PR-D/E/F, DomPDF, db-integ
 | Issue | Owner | Path | Status |
 |-------|--------|------|--------|
 | [#22](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/22) / PR [#81](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/81) Layout overflow + inline cleanup | `@Mushimuche` | A — UI prereq | ✅ Merged `534fd3d` (2026-08-13) |
-| [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) Finish PR #86 recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` | A — UI | Open — **next**; rebase onto master after #81 |
+| [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) Finish PR #86 recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` / Chan | A — UI | ✅ Resolved on `feat/dashboard-search-recent-ui` (rebase + review fixes); merge PR #86 closes this |
 | [#94](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/94) Path A merge Dependabot #88–#91 + re-pin TECH_STACK_DOCS | `@xxch4nnn` | B — deps | Open |
 | [#95](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/95) Slim `date_issued` + DocumentObserver delta (supersede #92/#87/#68) | `@WakenMac` | C — backend | Open — **do not merge #92/#87/#68** |
 | [#96](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/96) Close superseded db-integration / layout hygiene | Chan / Wakin | D — hygiene | Open — #22 closed via #81; still close #68/#87 when #95 lands |
@@ -39,7 +40,7 @@ PR [#92](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/92) (`feat/be
 
 Cross-links: [#56](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/56), [#58](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/58), [#85](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/85).
 
-Suggested order: ~~merge #81~~ → **#93** → Path B (#94) in parallel → #95/#96 with Wakin.
+Suggested order: ~~merge #81~~ → ~~**#93** / #86~~ → Path B (#94) in parallel → #95/#96 with Wakin.
 
 ---
 
@@ -257,3 +258,24 @@ Bible baseline expects PHPUnit suites and CI evidence. No test execution evidenc
 | [#58](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/58) | Remediate db-integration | @xxch4nnn |
 | [#59](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/59) | offline_queue action handlers | @WakenMac |
 
+---
+
+## Issue 11: Implement Backend Logic for Dashboard Recent Searches
+
+**Labels:** `backend`  
+**Assignee:** Wakin  
+**Priority:** P2
+
+### Description
+The frontend UI and Livewire wireframing for the "Recent Searches" dropdown in the Dashboard is complete (see PR `feat/dashboard-search-recent-ui`). Currently, it uses a mocked `$recentSearches` array. We need backend logic to store, fetch, and clear a user's recent searches.
+
+### Acceptance Criteria
+- Recent searches are stored in the database or user session/cache.
+- The Dashboard search bar correctly fetches and displays the user's recent history on focus.
+- The `clearRecentSearch($id)` and `clearAllRecentSearches()` methods correctly wipe the history from storage.
+
+### Checklist
+- [ ] Create `search_history` schema or implement cache/session storage
+- [ ] Wire up Livewire `$recentSearches` array to real data
+- [ ] Wire up delete/clear methods
+- [ ] Add backend tests for search history

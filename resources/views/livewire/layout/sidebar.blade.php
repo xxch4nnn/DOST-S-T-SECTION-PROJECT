@@ -2,9 +2,11 @@
 
 use App\Livewire\Actions\Logout;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Session;
 
 new class extends Component
 {
+    #[Session]
     public bool $expanded = false;
     public string $activeItem = '';
     public bool $isHome = false;
@@ -26,6 +28,8 @@ new class extends Component
             $this->activeItem = 'home';
         } elseif (request()->routeIs('scholars.*')) {
             $this->activeItem = 'scholars';
+        } elseif (request()->routeIs('notifications.*')) {
+            $this->activeItem = 'notifications';
         } elseif (request()->routeIs('admin-records.*')) {
             $this->activeItem = 'admin-records';
         } elseif (request()->routeIs('add-file.*')) {
