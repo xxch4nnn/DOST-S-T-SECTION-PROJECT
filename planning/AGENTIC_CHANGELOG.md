@@ -22,6 +22,20 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-12
+
+- **Date:** 2026-08-12
+- **Time:** 11:15:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `style/22-cleanup-inline-styles`
+- **Action:** code refactor + docs update
+- **Commit/PR:** #81
+- **Summary:** Fixed layout feedback: single scroll container (`.main-canvas` hidden, `<main>` scrolls), reverted background shift (`#f4f6fa`), extracted layout inlines to utility classes.
+- **Linked:** `resources/css/_utilities.scss`, `resources/css/components/_sidebar.scss`, `resources/views/layouts/app.blade.php`, `resources/views/layouts/guest.blade.php`, `CHANGELOG.md`
+
+---
+
 ## 2026-08-10
 
 - **Date:** 2026-08-10

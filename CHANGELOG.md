@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Changed
+- **2026-08-12 11:15:00 +08:00** · **Chan** (`@xxch4nnn`) — Fixed layout feedback from PR #81: single scroll container (`.main-canvas` `overflow: hidden`, `<main>` scroll), reverted silent background shift (`#f4f6fa`), and extracted remaining layout inlines to utility classes.
 - **2026-08-10 04:45:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — Dashboard search (#76 / Q09=A): match scholars via `document_versions` filename/type plus mother scholar fields; drop fake demo fallback.
 - **2026-08-10 04:35:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — ScholarObserver (#75 / Q08=C): audit create/update/delete onto `audit_logs.record_*` (no `loggable_*`, no FTS column, no DocumentObserver).
 - **2026-08-10 04:20:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — Document viewer (#74): port pdf.js viewer/print/download/zoom from `db-integration` onto `currentVersion` + `documents.view` stream route (no DomPDF; no folders).
