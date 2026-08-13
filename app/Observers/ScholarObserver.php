@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * Ports ScholarObserver from db-integration (Q08=C) onto mother audit_logs.record_*.
- * No fts_search_data / folders / DocumentObserver in this slice.
+ * No fts_search_data / folders in this slice. DocumentObserver is a separate class (#95).
  */
 class ScholarObserver
 {

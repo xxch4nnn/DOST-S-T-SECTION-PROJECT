@@ -22,6 +22,20 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-14
+
+- **Date:** 2026-08-14
+- **Time:** 00:10:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `cursor/feat-be-95-date-issued-observer-fc09`
+- **Action:** issue implement (#95 slim BE)
+- **Commit/PR:** branch (PR create blocked at token level — same as #94)
+- **Summary:** Additive `date_issued` migration + DocumentObserver (record_*, skip if no Auth::id). Did not checkout #92/#87/#68; avoided file-search overlap. Files/Edit remains 501 stub.
+- **Linked:** `app/Observers/DocumentObserver.php`, `database/migrations/2026_08_13_160000_add_date_issued_to_documents_table.php`, `tests/Feature/DocumentObserverTest.php`
+
+---
+
 ## 2026-08-13
 
 - **Date:** 2026-08-13

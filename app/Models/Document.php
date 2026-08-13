@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\DocumentObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+#[ObservedBy(DocumentObserver::class)]
 class Document extends Model
 {
     use HasFactory, SoftDeletes;
@@ -21,10 +24,12 @@ class Document extends Model
         'documentable_id',
         'status',
         'metadata',
+        'date_issued',
     ];
 
     protected $casts = [
         'metadata' => 'array',
+        'date_issued' => 'date',
     ];
 
     protected static function booted(): void
@@ -51,6 +56,7 @@ class Document extends Model
                 'documentable_id' => $shell['documentable_id'],
                 'status' => $shell['status'] ?? 'active',
                 'metadata' => $shell['metadata'] ?? null,
+                'date_issued' => $shell['date_issued'] ?? null,
             ]);
 
             $stored = $version['stored_filename'];
