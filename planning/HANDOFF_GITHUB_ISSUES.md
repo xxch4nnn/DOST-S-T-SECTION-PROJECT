@@ -28,7 +28,7 @@ See also stitch backlog issues filed 2026-08-04 late (PR-D/E/F, DomPDF, db-integ
 |-------|--------|------|--------|
 | [#22](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/22) / PR [#81](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/81) Layout overflow + inline cleanup | `@Mushimuche` | A — UI prereq | ✅ Merged `534fd3d` (2026-08-13) |
 | [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) / PR [#86](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/86) Finish recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` / Chan | A — UI | ✅ Merged `3372db8` (2026-08-13); #85 backend persistence still open |
-| [#94](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/94) Path A merge Dependabot #88–#91 + re-pin TECH_STACK_DOCS | `@xxch4nnn` | B — deps | In progress — consolidated branch `cursor/chore-deps-path-a-94-fc09` (exact pins; no #92 overlap) |
+| [#94](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/94) Path A merge Dependabot #88–#91 + re-pin TECH_STACK_DOCS | `@xxch4nnn` | B — deps | ⏳ Branch ready `cursor/chore-deps-path-a-94-fc09` @ `0f5f056` — **merge gated** (agent cannot open PR); open compare URL on #94 |
 | [#95](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/95) Slim `date_issued` + DocumentObserver delta (supersede #92/#87/#68) | `@WakenMac` | C — backend | Open — **do not merge #92/#87/#68** |
 | [#96](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/96) Close superseded db-integration / layout hygiene | Chan / Wakin | D — hygiene | Open — #22 closed via #81; still close #68/#87 when #95 lands |
 
