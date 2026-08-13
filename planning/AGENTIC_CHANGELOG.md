@@ -25,6 +25,16 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ## 2026-08-13
 
 - **Date:** 2026-08-13
+- **Time:** 23:55:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/dashboard-search-recent-ui`
+- **Action:** issue resolve + PR update (#93 / #86)
+- **Commit/PR:** #86 (rebased onto post-#81 master; review blockers fixed)
+- **Summary:** Rebased #86 (skipped duplicate #81 commit); emptied mock recentSearches; Alpine `--has-dropdown` via `@js`; wired recent rows to selectScholar; clear history label; DashboardFileSearchTest coverage. Did not pull #92.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `tests/Feature/DashboardFileSearchTest.php`, `planning/HANDOFF_GITHUB_ISSUES.md`
+
+- **Date:** 2026-08-13
 - **Time:** 23:40:00 +08:00
 - **User:** Chan (`@xxch4nnn`)
 - **Actor:** Composer / Chan

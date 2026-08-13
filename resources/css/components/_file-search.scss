@@ -42,7 +42,7 @@
     transition: color 0.2s ease;
 
     &--focused {
-        color: #60A5FA; // Tailwind blue-400
+        color: var(--main-blue-300);
     }
 }
 

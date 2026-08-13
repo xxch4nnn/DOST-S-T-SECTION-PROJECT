@@ -27,7 +27,7 @@ See also stitch backlog issues filed 2026-08-04 late (PR-D/E/F, DomPDF, db-integ
 | Issue | Owner | Path | Status |
 |-------|--------|------|--------|
 | [#22](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/22) / PR [#81](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/81) Layout overflow + inline cleanup | `@Mushimuche` | A — UI prereq | ✅ Merged `534fd3d` (2026-08-13) |
-| [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) Finish PR #86 recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` | A — UI | Open — **next**; rebase onto master after #81 |
+| [#93](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/93) Finish PR #86 recent-searches UI blockers (post-#81 rebase) | `@Mushimuche` / Chan | A — UI | ✅ Resolved on `feat/dashboard-search-recent-ui` (rebase + review fixes); merge PR #86 closes this |
 | [#94](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/94) Path A merge Dependabot #88–#91 + re-pin TECH_STACK_DOCS | `@xxch4nnn` | B — deps | Open |
 | [#95](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/95) Slim `date_issued` + DocumentObserver delta (supersede #92/#87/#68) | `@WakenMac` | C — backend | Open — **do not merge #92/#87/#68** |
 | [#96](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/96) Close superseded db-integration / layout hygiene | Chan / Wakin | D — hygiene | Open — #22 closed via #81; still close #68/#87 when #95 lands |
@@ -40,7 +40,7 @@ PR [#92](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/pull/92) (`feat/be
 
 Cross-links: [#56](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/56), [#58](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/58), [#85](https://github.com/xxch4nnn/DOST-S-T-SECTION-PROJECT/issues/85).
 
-Suggested order: ~~merge #81~~ → **#93** → Path B (#94) in parallel → #95/#96 with Wakin.
+Suggested order: ~~merge #81~~ → ~~**#93** / #86~~ → Path B (#94) in parallel → #95/#96 with Wakin.
 
 ---
 

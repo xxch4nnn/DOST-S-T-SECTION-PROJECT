@@ -72,4 +72,43 @@ class DashboardFileSearchTest extends TestCase
             ->assertSee('Luna')
             ->assertDontSee('Maclang');
     }
+
+    public function test_recent_searches_start_empty_and_clear_methods_work(): void
+    {
+        $this->seed(RolesAndPermissionsSeeder::class);
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $user->assignRole('Encoder');
+
+        Volt::actingAs($user)
+            ->test('dashboard.file-search')
+            ->assertSet('recentSearches', [])
+            ->assertDontSee('Fernandez')
+            ->assertDontSee('2023-00855-9102')
+            ->set('recentSearches', [
+                [
+                    'id' => 1,
+                    'last_name' => 'Sample',
+                    'first_name' => 'Test',
+                    'spas_no' => '0000-00000-0000',
+                    'program_type' => 'RA 10612',
+                    'program_level' => 'Undergrad',
+                    'status' => 'Not Cleared',
+                ],
+            ])
+            ->call('clearRecentSearch', 1)
+            ->assertSet('recentSearches', [])
+            ->set('recentSearches', [
+                [
+                    'id' => 2,
+                    'last_name' => 'Sample',
+                    'first_name' => 'Two',
+                    'spas_no' => '0000-00000-0001',
+                    'program_type' => 'RA 10612',
+                    'program_level' => 'Undergrad',
+                    'status' => 'Not Cleared',
+                ],
+            ])
+            ->call('clearAllRecentSearches')
+            ->assertSet('recentSearches', []);
+    }
 }

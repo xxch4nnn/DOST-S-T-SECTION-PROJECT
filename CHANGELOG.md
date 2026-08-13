@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Changed
+- **2026-08-13 23:50:00 +08:00** · **Chan** (`@xxch4nnn`) — PR #86 / #93: rebase onto post-#81 master; clear mock recent-search PII; fix Alpine `--has-dropdown` binding; wire recent rows to `selectScholar`; rename clear control to “clear history”.
 - **2026-08-12 11:15:00 +08:00** · **Chan** (`@xxch4nnn`) — Fixed layout feedback from PR #81: single scroll container (`.main-canvas` `overflow: hidden`, `<main>` scroll), reverted silent background shift (`#f4f6fa`), and extracted remaining layout inlines to utility classes.
 - **2026-08-10 15:05:00 +08:00** · **Rui** (`@Mushimuche`) — Dashboard search UI refactor: fixed visual jump on dropdown expansion by stabilizing wrapper padding/borders, added Alpine.js fade animations, and Recent Searches UI (see PR #86 / issue #93).
 - **2026-08-10 04:45:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — Dashboard search (#76 / Q09=A): match scholars via `document_versions` filename/type plus mother scholar fields; drop fake demo fallback.
