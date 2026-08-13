@@ -93,7 +93,7 @@ class Show extends Component
             ]
         );
 
-        $this->logAudit('upload', $document);
+        // DocumentObserver writes audit_logs on create (action=created); avoid duplicate upload row.
 
         $this->reset(['file', 'file_type_id', 'duplicateDocument', 'showDuplicateModal']);
         $this->loadDocuments();

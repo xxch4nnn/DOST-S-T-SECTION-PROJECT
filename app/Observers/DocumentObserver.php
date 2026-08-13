@@ -33,7 +33,8 @@ class DocumentObserver
 
     public function deleted(Document $document): void
     {
-        $this->writeAudit('deleted', $document, before: $document->toArray(), after: null);
+        // SoftDeletes sets deleted_at before this event; use originals for pre-delete snapshot.
+        $this->writeAudit('deleted', $document, before: $document->getOriginal(), after: null);
     }
 
     /**
