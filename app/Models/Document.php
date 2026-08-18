@@ -100,41 +100,55 @@ class Document extends Model
 
     public function getOriginalFilenameAttribute(): ?string
     {
-        return $this->currentVersion?->original_filename;
+        return $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->original_filename
+            : $this->currentVersion()->value('original_filename');
     }
 
     public function getStoredFilenameAttribute(): ?string
     {
-        return $this->currentVersion?->stored_filename;
+        return $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->stored_filename
+            : $this->currentVersion()->value('stored_filename');
     }
 
     public function getMimeTypeAttribute(): ?string
     {
-        return $this->currentVersion?->mime_type;
+        return $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->mime_type
+            : $this->currentVersion()->value('mime_type');
     }
 
     public function getFileSizeKbAttribute(): ?int
     {
-        $bytes = $this->currentVersion?->file_size_bytes;
+        $bytes = $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->file_size_bytes
+            : $this->currentVersion()->value('file_size_bytes');
 
         return $bytes === null ? null : max(1, (int) ceil($bytes / 1024));
     }
 
     public function getFilePathAttribute(): ?string
     {
-        return $this->currentVersion?->file_path;
+        return $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->file_path
+            : $this->currentVersion()->value('file_path');
     }
 
     public function getFileTypeIdAttribute(): ?int
     {
-        $value = $this->currentVersion?->file_type_id;
+        $value = $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->file_type_id
+            : $this->currentVersion()->value('file_type_id');
 
         return $value === null ? null : (int) $value;
     }
 
     public function getUploadedByAttribute(): ?int
     {
-        $value = $this->currentVersion?->uploaded_by;
+        $value = $this->relationLoaded('currentVersion')
+            ? $this->currentVersion?->uploaded_by
+            : $this->currentVersion()->value('uploaded_by');
 
         return $value === null ? null : (int) $value;
     }

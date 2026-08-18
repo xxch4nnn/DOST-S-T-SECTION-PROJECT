@@ -127,6 +127,7 @@ new class extends Component
             'course',
             'region',
             'clearanceStatus',
+            'documents.currentVersion.fileType',
         ])->find($this->scholarId);
         
         // load all files
@@ -196,6 +197,36 @@ new class extends Component
                 'sex' => $dbScholar->sex ?? 'null',
                 'status' => $dbScholar->clearanceStatus->name ?? 'null',
             ];
+
+            // Dynamically load and group active documents (file payload via currentVersion)
+            $documents = $dbScholar->documents->where('status', 'active');
+            if ($documents->isNotEmpty()) {
+                $grouped = [];
+                foreach ($documents as $doc) {
+                    $typeName = $doc->fileType->name ?? 'General Documents';
+                    if (! isset($grouped[$typeName])) {
+                        $isImage = str_contains($doc->mime_type ?? '', 'image');
+                        $grouped[$typeName] = [
+                            'name' => $typeName,
+                            'type' => $isImage ? 'image' : 'pdf',
+                            'items' => [],
+                        ];
+                    }
+                    $index = count($grouped[$typeName]['items']) + 1;
+                    $grouped[$typeName]['items'][] = [
+                        'id' => $doc->id,
+                        'title' => $typeName,
+                        'sub' => $doc->original_filename ?: "Document {$index}",
+                        'index' => $index,
+                        'totalPages' => 1,
+                        'url' => route('documents.view', $doc->id),
+                    ];
+                }
+                $this->fileGroups = array_values($grouped);
+                $this->expandedFolders = array_keys($grouped);
+            } else {
+                $this->fileGroups = [];
+            }
         } elseif (!$this->scholarData) {
             // Demonstration mock data matching Screenshots
             $this->scholarData = [

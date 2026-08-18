@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Observers\ScholarObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
-#[Fillable(['first_name', 'middle_name', 'last_name', 'generational_suffix', 'year_of_award', 'scholarship_id', 'scholarship_type_id', 'spas_no', 'sex', 'birthdate', 'contact_number', 'email_address', 'school_id', 'course_id', 'barangay', 'municipality', 'district', 'province', 'region_id', 'clearance_status_id', 'clearance_date', 'for_disposal', 'fts_search_data'])]
 #[ObservedBy(ScholarObserver::class)]
 class Scholar extends Model
 {

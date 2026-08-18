@@ -339,7 +339,6 @@ new class extends Component
          */
         async function renderPdfDocument(targetUrl) {
             const url = targetUrl || $wire.fileUrl;
-            console.log(url)
             if (!url){
                 console.error('Document doesn\'t exist.');
                 return;

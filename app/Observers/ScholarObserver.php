@@ -6,40 +6,29 @@ use App\Models\AuditLog;
 use App\Models\Scholar;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Ports ScholarObserver from db-integration (Q08=C) onto mother audit_logs.record_*.
+ * No fts_search_data / folders / DocumentObserver in this slice.
+ */
 class ScholarObserver
 {
-    /**
-     * Handle the Scholar "created" event.
-     */
     public function created(Scholar $scholar): void
     {
-        AuditLog::create([
-            'user_id' => Auth::id() ?? 2,
-            'action' => 'created',
-            'record_type' => Scholar::class,
-            'record_id' => $scholar->id,
-            'before_payload' => null,
-            'after_payload' => $scholar->toArray(),
-            'ip_address' => request()->ip(),
-        ]);
+        $this->writeAudit('created', $scholar, before: null, after: $scholar->toArray());
     }
 
-    /**
-     * Handle the Scholar "updated" event.
-     */
     public function updated(Scholar $scholar): void
     {
-        if($scholar->wasChanged()){
-            AuditLog::create([
-                'user_id' => Auth::id() ?? 2,
-                'action' => 'updated',
-                'record_type' => Scholar::class,
-                'record_id' => $scholar->id,
-                'before_payload' => $scholar->getOriginal(),
-                'after_payload' => $scholar->getChanges(),
-                'ip_address' => request()->ip(),
-            ]);
+        if (! $scholar->wasChanged()) {
+            return;
         }
+
+        $this->writeAudit(
+            'updated',
+            $scholar,
+            before: $scholar->getOriginal(),
+            after: $scholar->getChanges(),
+        );
     }
 
     public function saving(Scholar $scholar){
@@ -67,36 +56,31 @@ class ScholarObserver
 
         $scholar->fts_search_data = $searchData;
     }
-
-    /**
-     * Handle the Scholar "deleted" event.
-     */
+  
     public function deleted(Scholar $scholar): void
     {
-        AuditLog::create([
-            'user_id' => Auth::id() ?? 2,
-            'action' => 'deleted',
+        $this->writeAudit('deleted', $scholar, before: $scholar->toArray(), after: null);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $before
+     * @param  array<string, mixed>|null  $after
+     */
+    protected function writeAudit(string $action, Scholar $scholar, ?array $before, ?array $after): void
+    {
+        $userId = Auth::id();
+        if (! $userId) {
+            return;
+        }
+
+        AuditLog::query()->create([
+            'user_id' => $userId,
+            'action' => $action,
             'record_type' => Scholar::class,
             'record_id' => $scholar->id,
-            'before_payload' => $scholar->toArray(),
-            'after_payload' => null,
-            'ip_address' => request()->ip(),
+            'before_payload' => $before,
+            'after_payload' => $after,
+            'ip_address' => request()->ip() ?? '127.0.0.1',
         ]);
-    }
-
-    /**
-     * Handle the Scholar "restored" event.
-     */
-    public function restored(Scholar $scholar): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Scholar "force deleted" event.
-     */
-    public function forceDeleted(Scholar $scholar): void
-    {
-        //
     }
 }

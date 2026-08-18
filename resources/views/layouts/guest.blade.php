@@ -8,12 +8,12 @@
 
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
 </head>
-<body style="margin: 0; padding: 0; min-height: 100vh; background-color: #f8f9fa; font-family: 'Zalando Sans', system-ui, -apple-system, sans-serif; overflow-x: hidden;">
+<body class="bg-gray-100 overflow-x-hidden">
 
     <div class="d-flex flex-column min-vh-100">
         {{-- Row 1: Login Form (takes remaining space, centers content) --}}
         <div class="flex-grow-1 d-flex align-items-center justify-content-center">
-            <div style="width: 100%; max-width: 26rem; padding: 2rem 1rem;">
+            <div class="guest-form-container">
                 {{ $slot }}
             </div>
         </div>
