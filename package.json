@@ -14,7 +14,7 @@
         "axios": "^1.19.0",
         "bootstrap": "^5.3.3",
         "concurrently": "^10.0.4",
-        "laravel-vite-plugin": "^3.1",
+        "laravel-vite-plugin": "^3.2",
         "sass": "^1.102.0",
         "stylelint": "^17.14.1",
         "stylelint-config-standard-scss": "^17.0.0",
