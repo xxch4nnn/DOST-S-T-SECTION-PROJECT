@@ -77,6 +77,7 @@
                     <div class="col-md-4 form-field-group">
                         <label for="scholarship_id">Scholarship Program</label>
                         <select wire:model="scholarship_id" id="scholarship_id" class="form-select-custom">
+                            <option value="" disabled>Dropdown</option>
                             <option value="">Select Scholarship</option>
                             @foreach($scholarships as $sch)
                                 <option value="{{ $sch->id }}">{{ $sch->name }}</option>
@@ -87,6 +88,7 @@
                     <div class="col-md-4 form-field-group">
                         <label for="scholarship_type_id">Program Type</label>
                         <select wire:model="scholarship_type_id" id="scholarship_type_id" class="form-select-custom">
+                            <option value="" disabled>Dropdown</option>
                             <option value="">Select Program Type</option>
                             @foreach($scholarshipTypes as $st)
                                 <option value="{{ $st->id }}">{{ $st->name }}</option>
@@ -107,6 +109,7 @@
                     <div class="col-md-4 form-field-group">
                         <label for="school_id">University / School</label>
                         <select wire:model="school_id" id="school_id" class="form-select-custom">
+                            <option value="" disabled>Dropdown</option>
                             <option value="">Select School</option>
                             @foreach($schools as $school)
                                 <option value="{{ $school->id }}">{{ $school->name }} {{ $school->abbreviation ? "({$school->abbreviation})" : '' }}</option>
@@ -117,6 +120,7 @@
                     <div class="col-md-4 form-field-group">
                         <label for="course_id">Course / Degree Program</label>
                         <select wire:model="course_id" id="course_id" class="form-select-custom">
+                            <option value="" disabled>Dropdown</option>
                             <option value="">Select Course</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->id }}">{{ $course->name }}</option>
@@ -128,9 +132,9 @@
                     <div class="col-md-6 form-field-group">
                         <label for="clearance_status_id">Clearance Status</label>
                         <select wire:model="clearance_status_id" id="clearance_status_id" class="form-select-custom">
-                            <option value="">Select Status</option>
-                            @foreach($clearanceStatuses as $status)
-                                <option value="{{ $status->id }}">{{ $status->name }}</option>
+                            <option value="" disabled>Dropdown</option>
+                            @foreach($clearanceStatuses as $cs)
+                                <option value="{{ $cs->id }}">{{ $cs->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -166,6 +170,7 @@
                     <div class="col-md-3 form-field-group">
                         <label for="region_id">Region</label>
                         <select wire:model="region_id" id="region_id" class="form-select-custom">
+                            <option value="" disabled>Dropdown</option>
                             <option value="">Select Region</option>
                             @foreach($regions as $reg)
                                 <option value="{{ $reg->id }}">{{ $reg->name }}</option>
@@ -256,10 +261,11 @@
                             {{-- Dropzone Area Matching Edit Scholar File Reference --}}
                             <div class="file-upload-dropzone position-relative" 
                                  id="dropzone_{{ $cat['id'] }}"
-                                 onclick="document.getElementById('file_input_{{ $cat['id'] }}').click()"
+                                 data-cat-id="{{ $cat['id'] }}"
+                                 onclick="document.getElementById('file_input_' + this.dataset.catId).click()"
                                  ondragover="event.preventDefault(); this.style.borderColor='var(--dost-main-blue)';"
                                  ondragleave="this.style.borderColor='';"
-                                 ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_{{ $cat['id'] }}'); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
+                                 ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_' + this.dataset.catId); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
                                 <i class="ph ph-cloud-arrow-up upload-icon"></i>
                                 <div class="upload-text">Click or drag files to add more</div>
                                 <div class="upload-hint">Supports PDF, JPG, PNG</div>
@@ -700,7 +706,7 @@
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving Scholar & Uploading Documents...';
                 }
 
-                @this.uploadMultiple('pendingUploads', allFiles, () => {
+                $wire.uploadMultiple('pendingUploads', allFiles, () => {
                     $wire.saveScholarWithStagedFiles(manifest);
                 }, (err) => {
                     console.error('Upload failed:', err);

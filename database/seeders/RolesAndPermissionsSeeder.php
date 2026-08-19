@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -13,11 +12,14 @@ class RolesAndPermissionsSeeder extends Seeder
     /**
      * V1 baseline roles + permission matrix.
      * Super Admin bypasses via Gate::before; Encoder must not receive manageUsers / strikeOff / audit.
+     * Run the database seeds.
      */
     public function run(): void
     {
+        // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Define baseline permissions
         $permissions = [
             // Documents / ops
             'viewAuditLogs',
@@ -39,17 +41,19 @@ class RolesAndPermissionsSeeder extends Seeder
             'deleteAdminRecords',
         ];
 
-        foreach ($permissions as $name) {
-            Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
+        // Create permissions
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
-        $admin = Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
-        $encoder = Role::firstOrCreate(['name' => 'Encoder', 'guard_name' => 'web']);
-
+        // Create roles and assign permissions
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdmin->syncPermissions($permissions);
+
+        $admin = Role::firstOrCreate(['name' => 'Admin']);
         $admin->syncPermissions($permissions);
 
+        $encoder = Role::firstOrCreate(['name' => 'Encoder']);
         $encoder->syncPermissions([
             'uploadDocuments',
             'editDocumentMetadata',
@@ -59,11 +63,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'createScholars',
             'editScholars',
             'viewAdminRecords',
+            // Scholars
+            'viewScholars',
+            'createScholars',
+            'editScholars',
+            'deleteScholars',
+            // Admin records
+            'viewAdminRecords',
+            'createAdminRecords',
+            'editAdminRecords',
+            'deleteAdminRecords',
         ]);
-
-        $user = User::where('email', 'test@example.com')->first();
-        if ($user) {
-            $user->syncRoles([$superAdmin]);
-        }
     }
 }

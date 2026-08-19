@@ -31,11 +31,11 @@
     gap: 1.75rem;
     margin-top: 1rem;
 
-    @media (width <= 992px) {
+    @media (width <=992px) {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (width <= 576px) {
+    @media (width <=576px) {
         grid-template-columns: 1fr;
     }
 }
@@ -97,7 +97,8 @@
             border-color: var(--dost-main-blue);
             background: #f0f7ff;
 
-            .file-type-card__icon, .file-type-card__label {
+            .file-type-card__icon,
+            .file-type-card__label {
                 color: var(--dost-main-blue);
             }
         }
@@ -163,7 +164,8 @@
         }
     }
 
-    .form-control-custom, .form-select-custom {
+    .form-control-custom,
+    .form-select-custom {
         width: 100%;
         padding: 0.7rem 1rem;
         font-size: 0.925rem;
@@ -224,7 +226,8 @@
         cursor: pointer;
         transition: all 0.2s ease;
 
-        &:focus, &:hover {
+        &:focus,
+        &:hover {
             border-color: #3b82f6;
             background: #ffffff;
         }
@@ -242,7 +245,8 @@
         transition: all 0.2s ease;
         min-width: 200px;
 
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgb(59, 130, 246, 0.1);
         }

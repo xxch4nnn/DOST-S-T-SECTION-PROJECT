@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Observers\DocumentObserver;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -11,14 +15,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+#[ObservedBy([DocumentObserver::class])]
 class Document extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
 
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    public $timestamps = true;
     protected $fillable = [
         'uuid',
         'documentable_type',
         'documentable_id',
+        'date_issued',
         'status',
         'metadata',
     ];
@@ -49,6 +60,7 @@ class Document extends Model
                 'uuid' => $shell['uuid'] ?? (string) Str::uuid(),
                 'documentable_type' => $shell['documentable_type'],
                 'documentable_id' => $shell['documentable_id'],
+                'date_issued' => $shell['date_issued'],
                 'status' => $shell['status'] ?? 'active',
                 'metadata' => $shell['metadata'] ?? null,
             ]);
@@ -83,7 +95,7 @@ class Document extends Model
     public function currentVersion(): HasOne
     {
         return $this->hasOne(DocumentVersion::class, 'document_uuid', 'uuid')
-            ->latestOfMany('version_number');
+            ->latestOfMany('id');
     }
 
     public function getOriginalFilenameAttribute(): ?string
@@ -146,6 +158,11 @@ class Document extends Model
         $this->loadMissing('currentVersion.fileType');
 
         return $this->currentVersion?->fileType;
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     public function getUploaderAttribute(): ?User

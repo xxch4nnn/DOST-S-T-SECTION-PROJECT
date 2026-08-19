@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Livewire\AdminRecords\Show;
 use App\Models\AdministrativeRecord;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;

@@ -1,5 +1,6 @@
 <div x-data="notificationToasts()"
      x-on:notify.window="addToast($event.detail)"
+     x-on:document-updated.window="addToast({ message: $event.detail.message || 'Document updated successfully!', type: 'success' })"
      class="notification-toasts-container"
      aria-live="polite"
      aria-atomic="true">
@@ -40,6 +41,16 @@
                         this.addToast(payload);
                     });
                 }
+                
+                @if(session()->has('success'))
+                    this.addToast({ message: "{{ session()->get('success') }}", type: 'success' });
+                @endif
+                @if(session()->has('error'))
+                    this.addToast({ message: "{{ session()->get('error') }}", type: 'error' });
+                @endif
+                @if(session()->has('notify'))
+                    this.addToast(@json(session()->get('notify')));
+                @endif
             },
 
             addToast(detail) {

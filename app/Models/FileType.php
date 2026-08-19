@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\FileGroup;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 
+#[Fillable(['file_group_id', 'name', 'metadata_template'])]
 class FileType extends Model
 {
     use HasFactory;
