@@ -44,7 +44,7 @@ class ScholarObserverTest extends TestCase
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
             'spas_no' => '2024-OBS-1',
-        'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
+            'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
 
         $this->assertDatabaseHas('audit_logs', [
             'user_id' => $user->id,

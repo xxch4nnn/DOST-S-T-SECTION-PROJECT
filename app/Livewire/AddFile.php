@@ -39,7 +39,9 @@ class AddFile extends Component
     public string $generational_suffix = '';
 
     public string $spas_no = '';
+
     public ?string $contact_number = null;
+
     public ?string $email_address = null;
 
     public string $year_of_award = '2023';

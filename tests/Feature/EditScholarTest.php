@@ -6,6 +6,7 @@ use App\Livewire\Scholars\Edit;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -54,9 +55,9 @@ class EditScholarTest extends TestCase
             'course_id' => $course->id,
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
-        'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
+            'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
 
-        $fileType = FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        $fileType = FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
         $doc = Document::createWithInitialVersion([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
@@ -103,7 +104,7 @@ class EditScholarTest extends TestCase
             'course_id' => $course->id,
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
-        'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
+            'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
 
         Livewire::actingAs($user)
             ->test(Edit::class, ['scholar' => $scholar])
@@ -144,9 +145,9 @@ class EditScholarTest extends TestCase
             'course_id' => $course->id,
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
-        'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
+            'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
 
-        $fileType = FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        $fileType = FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
         $oldDoc = Document::createWithInitialVersion([
             'documentable_type' => Scholar::class,
             'documentable_id' => $scholar->id,
@@ -223,7 +224,7 @@ class EditScholarTest extends TestCase
             'course_id' => $course->id,
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
-        'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
+            'contact_number' => '09123456789', 'email_address' => 'test@example.com']);
 
         $adminRecord = AdministrativeRecord::create([
             'record_type' => 'Memorandum',
@@ -232,7 +233,7 @@ class EditScholarTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $fileType = FileType::firstOrCreate(['name' => 'Administrative Order', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        $fileType = FileType::firstOrCreate(['name' => 'Administrative Order', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
         $adminDoc = Document::createWithInitialVersion([
             'documentable_type' => AdministrativeRecord::class,
             'documentable_id' => $adminRecord->id,

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,7 +20,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ], [
             'name' => 'Test Admin',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'password' => Hash::make('password'),
             'email_verified_at' => now(),
         ]);
         $testAdmin->assignRole('Super Admin');
@@ -28,7 +29,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'a@a',
         ], [
             'name' => 'admin',
-            'password' => \Illuminate\Support\Facades\Hash::make('admin'),
+            'password' => Hash::make('admin'),
             'email_verified_at' => now(),
         ]);
         $adminUser->assignRole('Super Admin');

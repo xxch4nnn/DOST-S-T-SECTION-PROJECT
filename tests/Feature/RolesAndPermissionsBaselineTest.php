@@ -96,7 +96,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
         $this->seed(RolesAndPermissionsSeeder::class);
 
         $encoderUser = User::factory()->create([
-            'password' => 'password','email' => 'encoder@example.com']);
+            'password' => 'password', 'email' => 'encoder@example.com']);
         $encoderUser->assignRole('Encoder');
 
         $this->assertTrue($encoderUser->can('uploadDocuments'));

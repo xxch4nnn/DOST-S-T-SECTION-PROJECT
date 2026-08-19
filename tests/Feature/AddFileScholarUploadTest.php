@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Livewire\AddFile;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -33,8 +34,8 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
-        FileType::firstOrCreate(['name' => 'Report of Grades', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Report of Grades', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
 
         $test = Livewire::actingAs($user)
             ->test(AddFile::class)
@@ -186,8 +187,8 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
-        FileType::firstOrCreate(['name' => 'Certificate of Registration', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Certificate of Registration', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
 
         $file1 = UploadedFile::fake()->create('agreement.pdf', 500, 'application/pdf');
         $file2 = UploadedFile::fake()->image('cor.jpg', 300, 300);
