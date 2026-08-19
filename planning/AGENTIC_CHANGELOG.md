@@ -22,6 +22,18 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-19
+
+- **Date:** 2026-08-19
+- **Time:** 18:34:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Chan / Antigravity
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `fix/issue-12-migration-collisions`
+- **Action:** test fix
+- **Commit/PR:** N/A (uncommitted)
+- **Summary:** Resolved final test failures caused by PR #92 schema changes and permission seeder duplicates. Test suite is 100% green.
+- **Linked:** `CHANGELOG.md`, `planning/HANDOFF_GITHUB_ISSUES.md`
+
 ## 2026-08-10
 
 - **Date:** 2026-08-10

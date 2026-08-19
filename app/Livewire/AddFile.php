@@ -8,6 +8,8 @@ use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -37,6 +39,8 @@ class AddFile extends Component
     public string $generational_suffix = '';
 
     public string $spas_no = '';
+    public ?string $contact_number = null;
+    public ?string $email_address = null;
 
     public string $year_of_award = '2023';
 
@@ -387,6 +391,8 @@ class AddFile extends Component
             'middle_name' => 'nullable|string|max:255',
             'generational_suffix' => 'nullable|string|max:255',
             'spas_no' => 'required|string|max:255|unique:scholars,spas_no',
+            'contact_number' => 'required|string|max:11',
+            'email_address' => 'required|email|max:70',
             'year_of_award' => 'required|integer',
             'scholarship_id' => 'nullable|exists:scholarships,id',
             'scholarship_type_id' => 'nullable|exists:scholarship_types,id',
@@ -527,6 +533,8 @@ class AddFile extends Component
             'middle_name' => 'nullable|string|max:255',
             'generational_suffix' => 'nullable|string|max:255',
             'spas_no' => 'required|string|max:255|unique:scholars,spas_no',
+            'contact_number' => 'required|string|max:11',
+            'email_address' => 'required|email|max:70',
             'year_of_award' => 'required|integer',
             'scholarship_id' => 'nullable|exists:scholarships,id',
             'scholarship_type_id' => 'nullable|exists:scholarship_types,id',
@@ -646,6 +654,7 @@ class AddFile extends Component
             'courses' => Course::orderBy('name')->get(),
             'clearanceStatuses' => ClearanceStatus::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),
+            'availableFileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');
     }
 }

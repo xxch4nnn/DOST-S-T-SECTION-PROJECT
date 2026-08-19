@@ -8,8 +8,8 @@ use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
@@ -56,8 +56,6 @@ class Edit extends Component
     public $school_id = '';
 
     public $course_id = '';
-
-    public string $program = '';
 
     public string $barangay = '';
 
@@ -281,7 +279,6 @@ class Edit extends Component
             'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
             'school_id' => 'required|exists:schools,id',
             'course_id' => 'nullable|exists:courses,id',
-            'program' => 'nullable|string|max:150',
             'barangay' => 'nullable|string|max:150',
             'municipality' => 'nullable|string|max:150',
             'district' => 'nullable|string|max:150',
@@ -439,8 +436,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.scholars.edit', [
-            'scholarships' => ScholarshipProgram::all(),
-            'scholarshipTypes' => ScholarshipProgramType::all(),
+            'scholarships' => Scholarship::all(),
+            'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),

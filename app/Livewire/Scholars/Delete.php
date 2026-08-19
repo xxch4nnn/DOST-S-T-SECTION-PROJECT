@@ -6,8 +6,8 @@ use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use App\Models\School;
 use Livewire\Component;
 
@@ -67,8 +67,8 @@ class Delete extends Component
             'last_name' => 'required|string|max:50',
             'generational_suffix' => 'nullable|string|max:5',
             'year_of_award' => 'required|integer',
-            'scholarship_program_id' => 'required|exists:scholarship_programs,id',
-            'scholarship_program_type_id' => 'required|exists:scholarship_program_types,id',
+            'scholarship_id' => 'required|exists:scholarships,id',
+            'scholarship_type_id' => 'required|exists:scholarship_types,id',
             'spas_number' => 'nullable|string|max:50',
             'sex' => 'nullable|string|in:Male,Female',
             'birthdate' => 'nullable|date',
@@ -102,8 +102,8 @@ class Delete extends Component
     public function render()
     {
         return view('livewire.scholars.create', [
-            'scholarships' => ScholarshipProgram::all(),
-            'scholarshipTypes' => ScholarshipProgramType::all(),
+            'scholarships' => Scholarship::all(),
+            'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),

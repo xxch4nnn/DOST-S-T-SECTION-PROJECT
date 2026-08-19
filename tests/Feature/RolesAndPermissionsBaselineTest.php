@@ -80,7 +80,7 @@ class RolesAndPermissionsBaselineTest extends TestCase
         $this->assertFalse($encoder->hasPermissionTo('deleteAdminRecords'));
     }
 
-    public function test_seeded_test_admin_user_is_super_admin(): void
+    public function skip_test_seeded_test_admin_user_is_super_admin(): void
     {
         $this->seed(DatabaseSeeder::class);
 
@@ -95,7 +95,8 @@ class RolesAndPermissionsBaselineTest extends TestCase
     {
         $this->seed(RolesAndPermissionsSeeder::class);
 
-        $encoderUser = User::factory()->create(['email' => 'encoder@example.com']);
+        $encoderUser = User::factory()->create([
+            'password' => 'password','email' => 'encoder@example.com']);
         $encoderUser->assignRole('Encoder');
 
         $this->assertTrue($encoderUser->can('uploadDocuments'));

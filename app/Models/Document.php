@@ -62,7 +62,7 @@ class Document extends Model
                 'uuid' => $shell['uuid'] ?? (string) Str::uuid(),
                 'documentable_type' => $shell['documentable_type'],
                 'documentable_id' => $shell['documentable_id'],
-                'date_issued' => $shell['date_issued'],
+                'date_issued' => $shell['date_issued'] ?? now()->toDateString(),
                 'status' => $shell['status'] ?? 'active',
                 'metadata' => $shell['metadata'] ?? null,
             ]);

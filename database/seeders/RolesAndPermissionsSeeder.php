@@ -63,16 +63,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'createScholars',
             'editScholars',
             'viewAdminRecords',
-            // Scholars
-            'viewScholars',
-            'createScholars',
-            'editScholars',
-            'deleteScholars',
-            // Admin records
-            'viewAdminRecords',
-            'createAdminRecords',
-            'editAdminRecords',
-            'deleteAdminRecords',
         ]);
     }
 }

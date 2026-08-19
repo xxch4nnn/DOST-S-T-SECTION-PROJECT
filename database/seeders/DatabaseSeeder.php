@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ], [
             'name' => 'Test Admin',
-            'password' => bcrypt('password'),
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
             'email_verified_at' => now(),
         ]);
         $testAdmin->assignRole('Super Admin');
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'a@a',
         ], [
             'name' => 'admin',
-            'password' => bcrypt('admin'),
+            'password' => \Illuminate\Support\Facades\Hash::make('admin'),
             'email_verified_at' => now(),
         ]);
         $adminUser->assignRole('Super Admin');

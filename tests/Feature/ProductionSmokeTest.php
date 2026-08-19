@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Livewire\Scholars\Show;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
-use App\Models\Document;
 use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
@@ -81,10 +80,8 @@ class ProductionSmokeTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
         $fileGroup = FileGroup::firstOrCreate(['name' => 'Smoke Group', 'slug' => 'smoke-group', 'is_available' => true]);
-        $fileType = FileType::firstOrCreate(
-            ['name' => 'Smoke Award'],
-            ['metadata_template' => [], 'file_group_id' => $fileGroup->id]
-        );
+        $fileType = FileType::firstOrCreate(['name' => 'Smoke Award'],
+            ['metadata_template' => [], 'file_group_id' => $fileGroup->id]);
 
         $scholar = Scholar::create([
             'first_name' => 'Smoke',
@@ -120,5 +117,4 @@ class ProductionSmokeTest extends TestCase
 
         Storage::disk('local')->delete('documents/'.$document->stored_filename);
     }
-
 }

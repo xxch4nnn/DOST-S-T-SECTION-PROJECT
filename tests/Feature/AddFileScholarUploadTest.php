@@ -33,8 +33,8 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'year' => '2023']);
-        FileType::firstOrCreate(['name' => 'Report of Grades', 'year' => '2023']);
+        FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Report of Grades', 'year' => '2023', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
 
         $test = Livewire::actingAs($user)
             ->test(AddFile::class)
@@ -43,6 +43,8 @@ class AddFileScholarUploadTest extends TestCase
             ->set('last_name', 'Santos')
             ->set('middle_name', 'Clara')
             ->set('spas_no', '2023-TEST-0099')
+            ->set('contact_number', '09123456789')
+            ->set('email_address', 'test@test.com')
             ->set('year_of_award', '2023')
             ->set('scholarship_id', $scholarship->id)
             ->set('scholarship_type_id', $scholarshipType->id)
@@ -184,8 +186,8 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'year' => '2024']);
-        FileType::firstOrCreate(['name' => 'Certificate of Registration', 'year' => '2024']);
+        FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
+        FileType::firstOrCreate(['name' => 'Certificate of Registration', 'year' => '2024', 'metadata_template' => [], 'file_group_id' => \App\Models\FileGroup::firstOrCreate(['name' => 'Default Group', 'slug' => 'default-group'])->id]);
 
         $file1 = UploadedFile::fake()->create('agreement.pdf', 500, 'application/pdf');
         $file2 = UploadedFile::fake()->image('cor.jpg', 300, 300);
@@ -220,6 +222,8 @@ class AddFileScholarUploadTest extends TestCase
             ->set('last_name', 'Dela Cruz')
             ->set('middle_name', 'Protacio')
             ->set('spas_no', '2024-STAGED-001')
+            ->set('contact_number', '09123456789')
+            ->set('email_address', 'test@test.com')
             ->set('year_of_award', '2024')
             ->set('scholarship_id', $scholarship->id)
             ->set('scholarship_type_id', $scholarshipType->id)

@@ -33,13 +33,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Volt::route('dashboard', 'dashboard.main')->name('dashboard');
     });
 
-    // Scholars CRUD
-    Route::get('/scholars', Index::class)->name('scholars.index');
-    Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
-    Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
-    Route::post('/scholars/create', Create::class)->name('scholars.create');
-    Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
-
     Route::middleware('permission:viewScholars')->group(function () {
         Route::get('/scholars', Index::class)->name('scholars.index');
         Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
@@ -47,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('permission:editScholars')->group(function () {
         Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
+        Route::post('/scholars/create', Create::class)->name('scholars.create');
+        Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
 
         // MOCK Edit File UI (inside scholar context)
         Route::get('/scholars/{scholar}/file/{document}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
@@ -57,7 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Audit Logs
-    Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    Route::middleware('permission:viewAuditLogs')->group(function () {
+        Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
+    });
 
     // Document View / Stream
     Route::get('/documents/{document}/view', [DocumentController::class, 'viewFile'])->name('documents.view');

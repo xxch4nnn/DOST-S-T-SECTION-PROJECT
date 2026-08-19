@@ -42,8 +42,8 @@ class AuthenticationTest extends TestCase
         $this->assertDatabaseHas('audit_logs', [
             'user_id' => $user->id,
             'action' => 'login',
-            'loggable_type' => User::class,
-            'loggable_id' => $user->id,
+            'record_type' => User::class,
+            'record_id' => $user->id,
         ]);
 
         $this->assertSame(1, AuditLog::query()->where('action', 'login')->count());
