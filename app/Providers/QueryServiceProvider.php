@@ -21,12 +21,12 @@ class QueryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //Logs the time taken for a particular query:
+        // Logs the time taken for a particular query:
         DB::listen(function ($query) {
             Log::warning('Slow Query Detected', [
                 'sql' => $query->sql,
                 'bindings' => $query->bindings,
-                'time' => $query->time . 'ms'
+                'time' => $query->time.'ms',
             ]);
         });
     }

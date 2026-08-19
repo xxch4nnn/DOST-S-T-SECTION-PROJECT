@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DocumentVersion extends Model
 {
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'document_uuid',

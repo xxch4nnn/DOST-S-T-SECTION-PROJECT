@@ -1,9 +1,13 @@
 <?php
 
-return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\AuthServiceProvider::class,
-    App\Providers\QueryServiceProvider::class,
-    App\Providers\VoltServiceProvider::class,
-];
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\QueryServiceProvider;
+use App\Providers\VoltServiceProvider;
 
+return [
+    AppServiceProvider::class,
+    AuthServiceProvider::class,
+    QueryServiceProvider::class,
+    VoltServiceProvider::class,
+];

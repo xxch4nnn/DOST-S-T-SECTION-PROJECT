@@ -20,6 +20,8 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Fixed
+- **2026-08-19 16:58:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fixed CI smoke test regressions from PR #92: passed required `date_issued` in `Scholars/Show`, used `getKey()` for `AuditLog` `record_id` against UUID documents, passed `$doc->uuid` to document routes in views, and removed obsolete `AdministrativeRecord` download test.
+- **2026-08-19 16:38:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Resolved Issue #12: fixed database migration collisions (removed redundant 2026-08-10 reshape migrations) and fixed duplicate ObservedBy import. Formatted code via `pint` and `stylelint`.
 - **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
 - **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
 

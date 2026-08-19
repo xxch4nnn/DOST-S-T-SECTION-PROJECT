@@ -135,7 +135,7 @@ new class extends Component
 
                             <div class="search-result-item__name">
                                 <span class="fw-bold">{{ $item['last_name'] }},</span>
-                                <span class="text-secondary ms-1">{{ $item['first_name'] $item['middle_name']  }}</span>
+                                <span class="text-secondary ms-1">{{ $item['first_name'] }} {{ $item['middle_name'] ?? '' }}</span>
                             </div>
 
                             <div class="search-result-item__spas">

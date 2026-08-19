@@ -6,7 +6,6 @@ use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Scholar;
 use App\Models\School;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Index extends Component
@@ -87,13 +86,13 @@ class Index extends Component
 
     public function render()
     {
-        $searchTerm = '%' . $this->search . '%';
+        $searchTerm = '%'.$this->search.'%';
 
         // 2. Create the array of 11 bindings for the WHERE clause
         $bindings = array_fill(0, 11, $searchTerm);
 
         // 3. Execute and hydrate the Scholar models
-        $scholars = Scholar::fromQuery("
+        $scholars = Scholar::fromQuery('
             SELECT 
                 s.*,
                 clearance_statuses.name as clearance_status,
@@ -124,7 +123,7 @@ class Index extends Component
             )
             ORDER BY year_of_award DESC, last_name ASC
             LIMIT 10
-        ", $bindings);
+        ', $bindings);
 
         // Group scholars by year_of_award for the new Folder UI
         $groupedScholars = $scholars->groupBy(function ($scholar) {
@@ -138,8 +137,8 @@ class Index extends Component
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,
             'allYears' => $groupedScholars->keys()->toArray(),
-            'schools'=>School::orderBy('name', 'asc')->get(),
-            'courses'=>Course::orderBy('name', 'asc')->get()
+            'schools' => School::orderBy('name', 'asc')->get(),
+            'courses' => Course::orderBy('name', 'asc')->get(),
         ])->layout('layouts.app');
     }
 

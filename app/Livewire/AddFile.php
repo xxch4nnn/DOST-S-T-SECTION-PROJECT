@@ -8,8 +8,6 @@ use App\Models\Document;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
 use App\Models\School;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;

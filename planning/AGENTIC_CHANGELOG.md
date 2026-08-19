@@ -376,3 +376,23 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Commit/PR:** #92
 - **Summary:** Squash-merged PR #92 into master via admin override (bypassed CI failures) per Chan's instructions. Filed Issue 12 to resolve CI/lint/migration collisions on master. Pulled master locally and ran npm/composer install to prepare for next session.
 - **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`
+
+- **Date:** 2026-08-19
+- **Time:** 16:38:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Resolved Issue #12: fixed migration collisions by removing redundant legacy reshape migrations, fixed duplicate ObservedBy import, and ran backend/frontend formatters (`pint`, `stylelint`). Verified migration and test suite passing.
+- **Linked:** `database/migrations/`, `app/Models/Scholar.php`, `CHANGELOG.md`, `planning/HANDOFF_GITHUB_ISSUES.md`
+
+- **Date:** 2026-08-19
+- **Time:** 16:58:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Fixed CI smoke test regressions from PR #92: passed required `date_issued` in `Scholars/Show`, used `getKey()` for `AuditLog` `record_id` against UUID documents, passed `$doc->uuid` to document routes in views, and removed obsolete `AdministrativeRecord` download test.
+- **Linked:** `app/Livewire/Scholars/Show.php`, `resources/views/livewire/scholars/show.blade.php`, `resources/views/livewire/dashboard/scholar-drawer.blade.php`, `resources/views/livewire/admin-records/show.blade.php`, `tests/Feature/ProductionSmokeTest.php`

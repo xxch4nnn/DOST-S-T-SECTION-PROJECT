@@ -214,12 +214,12 @@ new class extends Component
                     }
                     $index = count($grouped[$typeName]['items']) + 1;
                     $grouped[$typeName]['items'][] = [
-                        'id' => $doc->id,
+                        'id' => $doc->uuid,
                         'title' => $typeName,
                         'sub' => $doc->original_filename ?: "Document {$index}",
                         'index' => $index,
                         'totalPages' => 1,
-                        'url' => route('documents.view', $doc->id),
+                        'url' => route('documents.view', $doc->uuid),
                     ];
                 }
                 $this->fileGroups = array_values($grouped);

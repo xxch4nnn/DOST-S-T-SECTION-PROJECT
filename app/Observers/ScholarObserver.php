@@ -31,7 +31,8 @@ class ScholarObserver
         );
     }
 
-    public function saving(Scholar $scholar){
+    public function saving(Scholar $scholar)
+    {
         // Prepares the full text search column
 
         $scholar->loadMissing(['school', 'course', 'scholarshipProgram', 'scholarshipProgramType', 'clearanceStatus']);
@@ -51,12 +52,12 @@ class ScholarObserver
             $scholar->contact_number,
             $scholar->email_address,
             $scholar->clearance_status?->name,      // e.g., "Cleared"
-            $scholar->clearance_date
+            $scholar->clearance_date,
         ]));
 
         $scholar->fts_search_data = $searchData;
     }
-  
+
     public function deleted(Scholar $scholar): void
     {
         $this->writeAudit('deleted', $scholar, before: $scholar->toArray(), after: null);

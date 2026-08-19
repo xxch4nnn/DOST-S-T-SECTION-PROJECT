@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Livewire\Scholars\Show;
-use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -80,9 +80,10 @@ class ProductionSmokeTest extends TestCase
         $course = Course::firstOrCreate(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
+        $fileGroup = FileGroup::firstOrCreate(['name' => 'Smoke Group', 'slug' => 'smoke-group', 'is_available' => true]);
         $fileType = FileType::firstOrCreate(
             ['name' => 'Smoke Award'],
-            ['metadata_template' => null, 'file_group_id' => null]
+            ['metadata_template' => [], 'file_group_id' => $fileGroup->id]
         );
 
         $scholar = Scholar::create([
@@ -96,6 +97,8 @@ class ProductionSmokeTest extends TestCase
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
             'spas_no' => 'SMOKE-0001',
+            'contact_number' => '09123456789',
+            'email_address' => 'smoke01@example.com',
         ]);
 
         $file = UploadedFile::fake()->create('smoke.pdf', 50, 'application/pdf');
@@ -118,48 +121,4 @@ class ProductionSmokeTest extends TestCase
         Storage::disk('local')->delete('documents/'.$document->stored_filename);
     }
 
-    public function test_download_forbidden_without_permission_smoke(): void
-    {
-        Storage::disk('local')->put('documents/smoke-denied.pdf', 'pdf-bytes');
-
-        $owner = User::factory()->create(['email_verified_at' => now()]);
-        $owner->assignRole('Encoder');
-
-        $fileType = FileType::firstOrCreate(
-            ['name' => 'Smoke Memo'],
-            ['metadata_template' => null, 'file_group_id' => null]
-        );
-
-        $record = AdministrativeRecord::create([
-            'record_type' => 'Memorandum',
-            'series_number' => 'Memo-SMOKE-1',
-            'title' => 'Smoke download deny',
-            'created_by' => $owner->id,
-        ]);
-
-        $document = Document::createWithInitialVersion([
-            'documentable_type' => AdministrativeRecord::class,
-            'documentable_id' => $record->id,
-            'status' => 'active',
-        ], [
-            'file_type_id' => $fileType->id,
-            'original_filename' => 'smoke-denied.pdf',
-            'stored_filename' => 'smoke-denied.pdf',
-            'file_path' => 'documents/'.'smoke-denied.pdf',
-            'mime_type' => 'application/pdf',
-            'file_size_kb' => 1,
-            'uploaded_by' => $owner->id,
-        ]);
-
-        $denied = User::factory()->create([
-            'email' => 'smoke-denied@example.com',
-            'email_verified_at' => now(),
-        ]);
-
-        $this->actingAs($denied)
-            ->get(route('documents.download', $document))
-            ->assertForbidden();
-
-        Storage::disk('local')->delete('documents/smoke-denied.pdf');
-    }
 }

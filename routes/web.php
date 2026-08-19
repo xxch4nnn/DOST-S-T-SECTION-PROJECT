@@ -20,7 +20,12 @@ use Livewire\Volt\Volt;
 
 Route::redirect('/', '/login');
 
-// Route::get('/health', HealthController::class)->name('health');
+Route::get('/health', fn () => response()->json([
+    'status' => 'ok',
+    'app' => 'DOSTorage',
+    'env' => app()->environment(),
+    'timestamp' => now()->toIso8601String(),
+]))->name('health');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Any staff role may open the dashboard shell.
@@ -34,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
     Route::post('/scholars/create', Create::class)->name('scholars.create');
     Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
-    
+
     Route::middleware('permission:viewScholars')->group(function () {
         Route::get('/scholars', Index::class)->name('scholars.index');
         Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
@@ -44,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
 
         // MOCK Edit File UI (inside scholar context)
-        Route::get('/scholars/{scholar}/file/{document}/edit', \App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
+        Route::get('/scholars/{scholar}/file/{document}/edit', App\Livewire\Scholars\Files\Edit::class)->name('scholars.files.edit');
     });
 
     Route::middleware('permission:uploadDocuments')->group(function () {

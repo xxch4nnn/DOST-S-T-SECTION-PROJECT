@@ -7,12 +7,12 @@ use App\Models\DocumentVersion;
 use App\Models\FileType;
 use App\Models\Scholar;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use PSpell\Dictionary;
 
 class Edit extends Component
 {
@@ -31,6 +31,7 @@ class Edit extends Component
     public $file_size = '';
 
     public array $metadata = [];
+
     public $metadataObj;
 
     public Scholar $scholar;
@@ -39,26 +40,27 @@ class Edit extends Component
 
     public $compiledFile;
 
-    public function mount(Scholar $scholar = null, Document $document = null): void
+    public function mount(?Scholar $scholar = null, ?Document $document = null): void
     {
         // Eager load the latest version and file type
         $this->document = $document;
         $this->document->load('currentVersion.fileType');
-        $this->metadata     = $this->document->metadata ?? [];
+        $this->metadata = $this->document->metadata ?? [];
         $this->metadata['date_issued'] = $this->document->date_issued;
 
         $version = $this->document->currentVersion;
         $this->file_type_id = $version?->file_type_id;
-        $this->file_name    = $version?->original_filename ?? $version?->stored_filename;
-        $this->mime_type    = $version?->mime_type;
-        $this->file_size    = $version?->file_size_bytes;
-        
+        $this->file_name = $version?->original_filename ?? $version?->stored_filename;
+        $this->mime_type = $version?->mime_type;
+        $this->file_size = $version?->file_size_bytes;
+
         // dd($version, $this->metadata);
     }
 
     #[Computed]
-    public function fileTypes(){
-        return FileType::whereHas('fileGroup', function($q){
+    public function fileTypes()
+    {
+        return FileType::whereHas('fileGroup', function ($q) {
             $q->where('slug', 'scholarly_documents');
         })->orderBy('name', 'asc')->get();
     }
@@ -69,15 +71,15 @@ class Edit extends Component
 
         $this->validate([
             'file_type_id' => 'required|exists:file_types,id',
-            'file_name'    => [
+            'file_name' => [
                 'required',
                 'string',
                 'max:255',
                 function ($attribute, $value, $fail) {
                     $exists = DocumentVersion::whereHas('document', function ($query) {
                         $query->where('documentable_type', Scholar::class)
-                              ->where('documentable_id', $this->scholar->id)
-                              ->where('uuid', '!=', $this->document->uuid);
+                            ->where('documentable_id', $this->scholar->id)
+                            ->where('uuid', '!=', $this->document->uuid);
                     })->where('original_filename', $value)->exists();
 
                     if ($exists) {
@@ -94,19 +96,20 @@ class Edit extends Component
         $pdfContent = base64_decode($base64Data);
         unset($base64Data);
 
-        if (!$pdfContent || strlen($pdfContent) === 0) {
+        if (! $pdfContent || strlen($pdfContent) === 0) {
             session()->flash('error', 'Failed to decode compiled PDF binary payload.');
+
             return;
         }
 
-        $storedFilename = (string) Str::uuid() . '.pdf';
+        $storedFilename = (string) Str::uuid().'.pdf';
         $fileType = FileType::find($this->file_type_id);
         $typeFolder = $fileType ? Str::slug($fileType->name, '_') : '';
-        $relativePath = 'documents/' . ($typeFolder ? $typeFolder . '/' : '') . $storedFilename;
+        $relativePath = 'documents/'.($typeFolder ? $typeFolder.'/' : '').$storedFilename;
 
         DB::transaction(function () use ($filename, $storedFilename, $relativePath, &$pdfContent) {
             // Save binary PDF directly to storage disk
-            \Illuminate\Support\Facades\Storage::disk('local')->put($relativePath, $pdfContent);
+            Storage::disk('local')->put($relativePath, $pdfContent);
 
             $metadata = $this->metadata;
             $dateIssued = $metadata['date_issued'] ?? $this->document->date_issued;
@@ -114,23 +117,23 @@ class Edit extends Component
 
             // Update document metadata & date_issued
             $this->document->update([
-                'date_issued'  => $dateIssued,  
-                'metadata'     => $metadata,
-            ]);   
-                
+                'date_issued' => $dateIssued,
+                'metadata' => $metadata,
+            ]);
+
             // 2. Increment version number for history tracking
             $nextVersion = $this->document->versions()->count() + 1;
 
             // 3. Insert new DocumentVersion record with updated file_type_id & file_name
             $this->document->versions()->create([
-                'file_type_id'      => $this->file_type_id,
+                'file_type_id' => $this->file_type_id,
                 'original_filename' => $this->file_name ?: $filename,
-                'stored_filename'   => $storedFilename,
-                'file_path'         => $relativePath,
-                'mime_type'         => 'application/pdf',
-                'file_size_bytes'   => strlen($pdfContent),
-                'version_number'    => $nextVersion,
-                'uploaded_by'       => auth()->id(),
+                'stored_filename' => $storedFilename,
+                'file_path' => $relativePath,
+                'mime_type' => 'application/pdf',
+                'file_size_bytes' => strlen($pdfContent),
+                'version_number' => $nextVersion,
+                'uploaded_by' => auth()->id(),
             ]);
 
             $this->document->load('currentVersion.fileType');
@@ -139,6 +142,7 @@ class Edit extends Component
         unset($pdfContent);
 
         session()->flash('success', 'Document updated and saved successfully!');
+
         return redirect($this->return_url ?? route('scholars.show', $this->scholar->id));
     }
 
@@ -148,4 +152,3 @@ class Edit extends Component
         return view('livewire.scholars.files.edit')->layout('layouts.app');
     }
 }
-
