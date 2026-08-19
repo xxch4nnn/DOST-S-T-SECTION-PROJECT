@@ -42,6 +42,7 @@ Every bullet **must** start with:
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
 
 ### Added
+- **2026-08-19 13:54:00 +08:00** · **Palab** (`@palab`) — Added Alpine listener for `document-updated` event and session flash support in `notification-toast.blade.php` to handle Waken's DocumentObserver backend events (PR #92).
 - **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).
