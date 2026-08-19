@@ -9,8 +9,6 @@ use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
 use App\Models\Scholarship;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -90,7 +88,13 @@ class Edit extends Component
             $this->scholar = Scholar::findOrFail($scholar);
         }
 
-        $this->fill($this->scholar->toArray());
+        $array = $this->scholar->toArray();
+        foreach ($array as $key => $value) {
+            $array[$key] = $value ?? '';
+        }
+        // dd($array);
+
+        $this->fill($array);
 
         // Format dates
         if ($this->birthdate && $this->scholar->birthdate) {
@@ -135,16 +139,16 @@ class Edit extends Component
                     $isImage = str_starts_with($mimeType, 'image/') || in_array(strtolower(pathinfo($originalName, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'webp', 'gif']);
 
                     $files[] = [
-                        'id' => $doc->id,
+                        'id' => $doc->uuid,
                         'name' => $originalName,
                         'size' => ($doc->file_size_kb ?: 1) * 1024,
                         'mime_type' => $mimeType,
                         'is_pdf' => $isPdf,
                         'is_image' => $isImage,
                         'is_existing' => true,
-                        'download_url' => route('documents.download', $doc->id),
-                        'url' => route('documents.download', $doc->id),
-                        'thumbnail_url' => $isImage ? route('documents.download', $doc->id) : null,
+                        'download_url' => route('documents.download', ['document' => $doc->uuid]),
+                        'url' => route('documents.view', ['document' => $doc->uuid]),
+                        'thumbnail_url' => $isImage ? route('documents.download', ['document' => $doc->uuid]) : null,
                     ];
                 }
 
@@ -441,8 +445,8 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.scholars.edit', [
-            'scholarships' => ScholarshipProgram::all(),
-            'scholarshipTypes' => ScholarshipProgramType::all(),
+            'scholarships' => Scholarship::all(),
+            'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('name')->get(),

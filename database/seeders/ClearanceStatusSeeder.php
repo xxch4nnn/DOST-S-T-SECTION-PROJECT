@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\ClearanceStatus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ClearanceStatusSeeder extends Seeder
@@ -14,11 +13,11 @@ class ClearanceStatusSeeder extends Seeder
     public function run(): void
     {
         $groups = [
-            ['name'=> 'Not Cleared', 'is_available'=> true],
-            ['name'=> 'Cleared', 'is_available'=> true]
+            ['name' => 'Not Cleared', 'is_available' => true],
+            ['name' => 'Cleared', 'is_available' => true],
         ];
 
-        foreach($groups as $group){
+        foreach ($groups as $group) {
             ClearanceStatus::firstOrCreate($group);
         }
     }

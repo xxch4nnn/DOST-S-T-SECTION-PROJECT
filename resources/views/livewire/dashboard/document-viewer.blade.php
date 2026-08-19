@@ -273,7 +273,7 @@ new class extends Component
                     </div>
 
                 @elseif($fileType === 'pdf' && $fileUrl)
-                    <div class="doc-viewer-canvas h-100 w-100 overflow-auto text-center">
+                    <div class="doc-viewer-canvas h-100 w-100 text-center">
                         <div id="docViewerPaperContainer" wire:ignore oncontextmenu="return false;" class="doc-viewer-paper shadow-lg bg-white rounded p-4 mx-auto" style="user-select: none; -webkit-user-select: none;">
                             <div id="docViewerPaperContent" style="transform: scale({{ $zoom / 100 }}); transform-origin: top center; transition: transform 0.2s ease; width: 100%;">
                                 <div id="docViewerLoading" class="py-5 text-muted">
@@ -599,6 +599,15 @@ new class extends Component
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        });
+
+        // Listener for deleting files
+        Livewire.on('delete-requested', (event) => {
+            const payload = Array.isArray(event) ? event[0] : event;            
+            const url = payload?.url || $wire.fileUrl;
+            if (!url) return;
+
+            console.log(url)
         });
 
         // Listener for reactive zoom changes on rendered page images & image elements

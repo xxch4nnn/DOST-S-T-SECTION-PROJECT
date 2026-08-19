@@ -4,15 +4,14 @@ namespace App\Livewire\Scholars;
 
 use App\Models\AuditLog;
 use App\Models\Document;
-use App\Models\File;
 use App\Models\FileType;
 use App\Models\Scholar;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Auth;
 
 class Show extends Component
 {
@@ -178,7 +177,7 @@ class Show extends Component
 
     public function strikeOff($documentId)
     {
-        if (!Auth::user()->hasAnyRole(['Super Admin', 'Admin'])) {
+        if (! Auth::user()->hasAnyRole(['Super Admin', 'Admin'])) {
             abort(403, 'Unauthorized action.');
         }
 

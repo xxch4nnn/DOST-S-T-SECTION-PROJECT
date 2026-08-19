@@ -20,7 +20,9 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Fixed
-- **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
+- **2026-08-18 23:35:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Fix `morphMany` relationship in `Scholar.php` by passing `'documentable'` prefix instead of `'documentable_type'`, preventing invalid `documentable_type_type` SQL column errors when loading scholar documents.
+- **2026-08-18 16:30:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Remove redundant `overflow-auto` scrollbar on `.doc-viewer-canvas` in `document-viewer.blade.php` to eliminate the extra scroller in the document viewer overlay.
+- **2026-08-13 00:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Use `attributesToArray()` instead of `toArray()` in `DocumentVersionObserver` to prevent loaded Eloquent relations from being serialized and duplicated inside `current_version`. Move AuditLog creation to `DocumentVersionObserver`, restore `.doc-viewer-paper` scrollbars, and implement ETag / 304 HTTP caching in `DocumentController`.
 - **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
 
 ### Changed

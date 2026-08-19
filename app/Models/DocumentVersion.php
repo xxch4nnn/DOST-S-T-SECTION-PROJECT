@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\DocumentVersionObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy([DocumentVersionObserver::class])]
 class DocumentVersion extends Model
 {
-    public $timestamps = true; 
+    public $timestamps = true;
 
     protected $fillable = [
         'document_uuid',

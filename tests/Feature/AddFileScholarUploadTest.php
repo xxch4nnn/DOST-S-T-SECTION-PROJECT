@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Livewire\AddFile;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -33,8 +34,10 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'year' => '2023']);
-        FileType::firstOrCreate(['name' => 'Report of Grades', 'year' => '2023']);
+        $file_group = FileGroup::firstOrCreate(['name' => 'Scholarly Documents', 'slug' => 'scholarly_documents']);
+
+        $ft1 = FileType::firstOrCreate(['name' => 'Amendatory Agreement', 'metadata_template' => [], 'file_group_id' => $file_group->id]);
+        $ft2 = FileType::firstOrCreate(['name' => 'Report of Grades', 'metadata_template' => [], 'file_group_id' => $file_group->id]);
 
         $test = Livewire::actingAs($user)
             ->test(AddFile::class)
@@ -184,8 +187,8 @@ class AddFileScholarUploadTest extends TestCase
         $region = Region::firstOrCreate(['name' => 'Region XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Not Cleared', 'is_available' => true]);
 
-        FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'year' => '2024']);
-        FileType::firstOrCreate(['name' => 'Certificate of Registration', 'year' => '2024']);
+        $ft3 = FileType::firstOrCreate(['name' => 'Scholarship Agreement', 'metadata_template' => [], 'file_group_id' => 1]);
+        $ft4 = FileType::firstOrCreate(['name' => 'Certificate of Registration', 'metadata_template' => [], 'file_group_id' => 1]);
 
         $file1 = UploadedFile::fake()->create('agreement.pdf', 500, 'application/pdf');
         $file2 = UploadedFile::fake()->image('cor.jpg', 300, 300);

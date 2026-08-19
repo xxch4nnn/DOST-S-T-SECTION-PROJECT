@@ -163,7 +163,7 @@ new class extends Component
             WHERE d.documentable_type = :documentableType
                 AND d.documentable_id = :scholarId
                 AND d.deleted_at IS NULL
-            ORDER BY ft.name ASC;
+            ORDER BY ft.name ASC, rv.file_name ASC;
         ", [
             "documentableType" => "App\\Models\\Scholar", 
             "scholarId" => $this->scholarId

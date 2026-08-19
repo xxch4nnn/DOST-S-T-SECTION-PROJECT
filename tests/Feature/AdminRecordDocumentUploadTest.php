@@ -25,9 +25,10 @@ class AdminRecordDocumentUploadTest extends TestCase
         $this->seed(RolesAndPermissionsSeeder::class);
         $user = User::factory()->create();
         $user->assignRole('Admin');
+        $file_group = FileGroup::firstOrCreate(['name' => 'Scholarly Documents', 'slug' => 'scholarly_documents']);
         $fileType = FileType::firstOrCreate(
             ['name' => 'Memorandum Circular'],
-            ['metadata_template' => null, 'file_group_id' => null]
+            ['metadata_template' => null, 'file_group_id' => 1]
         );
 
         $record = AdministrativeRecord::create([

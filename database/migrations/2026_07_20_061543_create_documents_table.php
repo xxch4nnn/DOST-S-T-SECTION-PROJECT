@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\FileType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
-            
+
             // Polymorphic parent link:
             // - Scholarly Files: documentable_type = 'App\Models\Scholar', documentable_id = '45'
             // - Drive Files:     documentable_type = 'App\Models\Folder',  documentable_id = 'uuid-string'

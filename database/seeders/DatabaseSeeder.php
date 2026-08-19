@@ -3,18 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Database\Seeders\ClearanceStatusSeeder;
-use Database\Seeders\CourseSeeder;
-use Database\Seeders\DocumentSeeder;
-use Database\Seeders\FileGroupSeeder;
-use Database\Seeders\FileTypeSeeder;
-use Database\Seeders\RegionSeeder;
-use Database\Seeders\RolesAndPermissionsSeeder;
-use Database\Seeders\ScholarSeeder;
-use Database\Seeders\ScholarshipSeeder;
-use Database\Seeders\ScholarshipTypeSeeder;
-use Database\Seeders\SchoolSeeder;
-use Database\Seeders\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -47,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             FileGroupSeeder::class,
-            RegionSeeder::class,
+            PhilippineLocationSeeder::class,
             ScholarshipSeeder::class,
             ScholarshipTypeSeeder::class,
             SchoolSeeder::class,
@@ -56,7 +44,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ScholarSeeder::class,
             FileTypeSeeder::class,
-            DocumentSeeder::class
+            DocumentSeeder::class,
         ]);
     }
 }

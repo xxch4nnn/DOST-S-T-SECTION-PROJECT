@@ -4,18 +4,19 @@ namespace App\Observers;
 
 use App\Models\AuditLog;
 use App\Models\Scholar;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ScholarObserver
 {
-
     public bool $afterCommit = true;
+
     /**
      * Handle the Scholar "created" event.
      */
     public function created(Scholar $scholar): void
     {
-        $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
+        $userId = Auth::id() ?? User::query()->value('id') ?? 1;
         AuditLog::create([
             'user_id' => $userId,
             'action' => 'created',
@@ -33,7 +34,7 @@ class ScholarObserver
     public function updated(Scholar $scholar): void
     {
         if ($scholar->wasChanged()) {
-            $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
+            $userId = Auth::id() ?? User::query()->value('id') ?? 1;
             AuditLog::create([
                 'user_id' => $userId,
                 'action' => 'updated',
@@ -78,7 +79,7 @@ class ScholarObserver
      */
     public function deleted(Scholar $scholar): void
     {
-        $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
+        $userId = Auth::id() ?? User::query()->value('id') ?? 1;
         AuditLog::create([
             'user_id' => $userId,
             'action' => 'deleted',

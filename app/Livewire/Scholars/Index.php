@@ -6,7 +6,6 @@ use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Scholar;
 use App\Models\School;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Index extends Component
@@ -87,25 +86,25 @@ class Index extends Component
 
     public function render()
     {
-        $searchTerm = '%' . $this->search . '%';
+        $searchTerm = '%'.$this->search.'%';
 
         // 2. Create the array of 11 bindings for the WHERE clause
         $bindings = array_fill(0, 11, $searchTerm);
 
         // 3. Execute and hydrate the Scholar models
-        $scholars = Scholar::fromQuery("
+        $scholars = Scholar::fromQuery('
             SELECT 
                 s.*,
                 clearance_statuses.name as clearance_status,
                 schools.name as school,
                 courses.name as course,
-                scholarship_programs.name as scholarship_program,
-                scholarship_program_types.name as scholarship_program_type,
+                scholarships.name as scholarship_program,
+                scholarship_types.name as scholarship_program_type,
                 regions.name as region
             FROM scholars as s
             INNER JOIN schools ON s.school_id = schools.id
-            INNER JOIN scholarship_program_types ON s.scholarship_program_type_id = scholarship_program_types.id
-            INNER JOIN scholarship_programs ON s.scholarship_program_id = scholarship_programs.id
+            INNER JOIN scholarship_types ON s.scholarship_type_id = scholarship_types.id
+            INNER JOIN scholarships ON s.scholarship_id = scholarships.id
             INNER JOIN courses ON s.course_id = courses.id
             INNER JOIN regions ON s.region_id = regions.id
             INNER JOIN clearance_statuses ON s.clearance_status_id = clearance_statuses.id
@@ -114,9 +113,9 @@ class Index extends Component
                 OR s.first_name LIKE ? 
                 OR s.middle_name LIKE ? 
                 OR s.generational_suffix LIKE ? 
-                OR s.spas_number LIKE ? 
-                OR scholarship_program_types.name LIKE ? 
-                OR scholarship_programs.name LIKE ? 
+                OR s.spas_no LIKE ? 
+                OR scholarship_types.name LIKE ? 
+                OR scholarships.name LIKE ? 
                 OR s.contact_number LIKE ? 
                 OR s.email_address LIKE ? 
                 OR schools.name LIKE ? 
@@ -124,7 +123,7 @@ class Index extends Component
             )
             ORDER BY year_of_award DESC, last_name ASC
             LIMIT 10
-        ", $bindings);
+        ', $bindings);
 
         // Group scholars by year_of_award for the new Folder UI
         $groupedScholars = $scholars->groupBy(function ($scholar) {
@@ -138,8 +137,8 @@ class Index extends Component
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,
             'allYears' => $groupedScholars->keys()->toArray(),
-            'schools'=>School::orderBy('name', 'asc')->get(),
-            'courses'=>Course::orderBy('name', 'asc')->get()
+            'schools' => School::orderBy('name', 'asc')->get(),
+            'courses' => Course::orderBy('name', 'asc')->get(),
         ])->layout('layouts.app');
     }
 
