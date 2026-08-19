@@ -279,3 +279,25 @@ The frontend UI and Livewire wireframing for the "Recent Searches" dropdown in t
 - [ ] Wire up Livewire `$recentSearches` array to real data
 - [ ] Wire up delete/clear methods
 - [ ] Add backend tests for search history
+
+---
+
+## Issue 12: Resolve `master` branch CI and Migration Conflicts after PR #92 force-merge
+
+**Labels:** `backend`, `ci`  
+**Assignee:** Chan / Wakin  
+**Priority:** P0
+
+### Description
+PR #92 (`feat/be-56-document-scholar-observers`) was squash-merged into `master` via admin bypass to unblock UI integration, despite failing CI checks. The branch contains duplicated/renamed migrations (e.g. `2026_07_20_061543_create_documents_table.php` replacing earlier July versions) that collide with existing `master` migration history. It also fails linting checks (`pint` and `stylelint`).
+
+### Acceptance Criteria
+- `php artisan migrate:fresh --seed` runs successfully without column/table collision errors.
+- CI pipeline (lint and synthetic smoke) is green on `master`.
+- Migration history is clean and does not drop data unexpectedly in staging/prod.
+
+### Checklist
+- [ ] Fix database migration collisions in `database/migrations`
+- [ ] Run `./vendor/bin/pint` and fix backend formatting
+- [ ] Run `npm run lint:css` and fix SCSS formatting
+- [ ] Verify `php artisan test` and CI passes
