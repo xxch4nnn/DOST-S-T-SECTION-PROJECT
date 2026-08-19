@@ -10,7 +10,7 @@
 
 **How to re-pin after upgrades:** Update the “Locked” column from lockfiles, then fix doc URLs if the major line changed. Record the bump in `CHANGELOG.md` and `planning/AGENTIC_CHANGELOG.md`.
 
-**Last verified:** 2026-08-05 (post-#31 concurrently 10.0.4) against `origin/master` locks.
+**Last verified:** 2026-08-13 (issue #94 Path A: Livewire 4.3.5, Volt 1.11.2, Sail 1.65.0, Vite 8.2.1) against lockfiles.
 
 ---
 
@@ -32,13 +32,13 @@
 | Package | Locked version | Constraint (`composer.json`) | Official docs |
 |---------|----------------|------------------------------|---------------|
 | laravel/framework | **v13.23.0** | `^13.8` | [Laravel 13.x docs](https://laravel.com/docs/13.x) · [Blade](https://laravel.com/docs/13.x/blade) · [Eloquent](https://laravel.com/docs/13.x/eloquent) · [Migrations](https://laravel.com/docs/13.x/migrations) · [Validation](https://laravel.com/docs/13.x/validation) · [Authorization](https://laravel.com/docs/13.x/authorization) · [Middleware](https://laravel.com/docs/13.x/middleware) · [Vite](https://laravel.com/docs/13.x/vite) · [Testing](https://laravel.com/docs/13.x/testing) · [Agentic development](https://laravel.com/docs/13.x/ai) |
-| livewire/livewire | **v4.3.4** | `^4.3.3` | [Livewire 4.x docs](https://livewire.laravel.com/docs/4.x/quickstart) · [Components](https://livewire.laravel.com/docs/4.x/components) · [Properties](https://livewire.laravel.com/docs/4.x/properties) · [Actions](https://livewire.laravel.com/docs/4.x/actions) · [Forms](https://livewire.laravel.com/docs/4.x/forms) · [Validation](https://livewire.laravel.com/docs/4.x/validation) |
-| livewire/volt | **v1.11.1** | `^1.7.0` | [Volt docs](https://livewire.laravel.com/docs/volt) (Volt is Livewire’s class-based single-file API — confirm against installed `v1.11.x`) |
+| livewire/livewire | **v4.3.5** | `^4.3.3` | [Livewire 4.x docs](https://livewire.laravel.com/docs/4.x/quickstart) · [Components](https://livewire.laravel.com/docs/4.x/components) · [Properties](https://livewire.laravel.com/docs/4.x/properties) · [Actions](https://livewire.laravel.com/docs/4.x/actions) · [Forms](https://livewire.laravel.com/docs/4.x/forms) · [Validation](https://livewire.laravel.com/docs/4.x/validation) |
+| livewire/volt | **v1.11.2** | `^1.7.0` | [Volt docs](https://livewire.laravel.com/docs/volt) (Volt is Livewire’s class-based single-file API — confirm against installed `v1.11.x`) |
 | spatie/laravel-permission | **8.3.0** | `^8.3` | [Spatie Permission v8](https://spatie.be/docs/laravel-permission/v8/introduction) · [Middleware](https://spatie.be/docs/laravel-permission/v8/basic-usage/middleware) · [Policies](https://spatie.be/docs/laravel-permission/v8/best-practices/using-policies) · [Cache](https://spatie.be/docs/laravel-permission/v8/advanced-usage/cache) · [Seeding](https://spatie.be/docs/laravel-permission/v8/advanced-usage/seeding) |
 | phpunit/phpunit | **12.5.31** | `^12.5.12` | [PHPUnit 12.5 docs](https://docs.phpunit.de/en/12.5/) |
 | laravel/pint | **v1.30.2** | `^1.27` | [Laravel Pint](https://laravel.com/docs/13.x/pint) |
 | laravel/breeze | **v2.4.2** | `^2.4` | [Breeze / starter kits](https://laravel.com/docs/13.x/starter-kits) |
-| laravel/sail | **v1.64.0** | `^1.63` | [Laravel Sail](https://laravel.com/docs/13.x/sail) |
+| laravel/sail | **v1.65.0** | `^1.63` | [Laravel Sail](https://laravel.com/docs/13.x/sail) |
 
 Project Spatie baseline (roles matrix, not upstream): `planning/SPATIE_ROLES_BASELINE.md`.
 
@@ -49,7 +49,7 @@ Project Spatie baseline (roles matrix, not upstream): `planning/SPATIE_ROLES_BAS
 | Package | Locked version | Constraint (`package.json`) | Official docs |
 |---------|----------------|------------------------------|---------------|
 | bootstrap | **5.3.8** | `^5.3.3` | [Bootstrap 5.3 docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/) · [Forms](https://getbootstrap.com/docs/5.3/forms/overview/) · [Components](https://getbootstrap.com/docs/5.3/components/buttons/) |
-| vite | **8.2.0** | `^8.2.0` | [Vite guide](https://vite.dev/guide/) · [Vite 8 announcements / config](https://vite.dev/config/) |
+| vite | **8.2.1** | `^8.2.0` | [Vite guide](https://vite.dev/guide/) · [Vite 8 announcements / config](https://vite.dev/config/) |
 | laravel-vite-plugin | **3.1.3** | `^3.1` | [Laravel Vite (13.x)](https://laravel.com/docs/13.x/vite) · [plugin README](https://github.com/laravel/vite-plugin) |
 | sass | **1.102.0** | `^1.102.0` | [Sass documentation](https://sass-lang.com/documentation/) |
 | axios | **1.19.0** | `^1.19.0` | [Axios docs](https://axios-http.com/docs/intro) |
