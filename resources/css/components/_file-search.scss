@@ -1,16 +1,24 @@
 // --- File Search ---
 .file-search {
-    display: flex;
-    justify-content: center;
+    display: block;
     width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
     padding: 0 3rem;
-    margin-bottom: 2rem;
 }
 
 .file-search__wrapper {
     position: relative;
     width: 100%;
-    max-width: 1100px;
+    background: var(--color-white);
+    border: 2px solid var(--main-blue-300);
+    border-radius: 24px;
+    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    
+    &:focus-within {
+        border-color: var(--dost-main-blue);
+        box-shadow: 0 0 0 4px rgb(0, 153, 255, 0.15);
+    }
 }
 
 .file-search__input-group {
@@ -18,6 +26,8 @@
     width: 100%;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.2s ease;
 }
 
 .file-search__icon {
@@ -29,6 +39,11 @@
     color: var(--dost-main-blue);
     pointer-events: none;
     z-index: 5;
+    transition: color 0.2s ease;
+
+    &--focused {
+        color: var(--main-blue-300);
+    }
 }
 
 .file-search__input {
@@ -36,46 +51,44 @@
     padding: 0.875rem 1.5rem 0.875rem 3.25rem;
     font-size: 1.05rem;
     font-family: var(--font-family-sans);
-    border: 2px solid var(--main-blue-300);
-    border-radius: 24px;
-    background: var(--color-white);
+    border: none;
+    background: transparent;
     color: var(--color-black);
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &::placeholder {
         color: var(--gray-400);
         font-weight: 400;
     }
+}
 
-    &:focus {
-        border-color: var(--dost-main-blue);
-        box-shadow: 0 0 0 4px rgb(0, 153, 255, 0.15);
+.file-search__clear-btn {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--gray-500);
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    z-index: 5;
+    
+    &:hover {
+        color: var(--gray-700);
+        text-decoration: underline;
     }
 }
 
 // ===================================================================
 // Expanded Search Results List Card
 // ===================================================================
-.file-search__wrapper--expanded {
-    background: var(--color-white);
-    border: 2px solid var(--main-blue-300);
-    border-radius: 24px;
+.file-search__wrapper--has-dropdown {
     box-shadow: 0 10px 30px rgb(0, 153, 255, 0.08);
-    padding: 0.5rem;
-    transition: all 0.25s ease;
 
     .file-search__input-group {
-        position: relative;
-        width: 100%;
-    }
-
-    .file-search__input {
-        border: none !important;
-        box-shadow: none !important;
-        border-bottom: 1px solid var(--gray-200) !important;
-        border-radius: 0 !important;
-        padding-left: 3.25rem !important;
+        border-bottom-color: var(--gray-200);
     }
 }
 
@@ -130,4 +143,41 @@
 
 .search-result-item__status {
     flex-shrink: 0;
+}
+
+// ===================================================================
+// Recent Searches UI
+// ===================================================================
+.search-result-item--recent {
+    gap: 1.25rem;
+}
+
+.search-result-item__arrow--history {
+    font-size: 1.35rem;
+    color: var(--gray-600);
+}
+
+.badge-status-history {
+    background-color: var(--gray-500);
+    color: white;
+}
+
+.search-result-item__close {
+    background: transparent;
+    border: none;
+    color: var(--gray-500);
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: var(--gray-200);
+        color: var(--gray-700);
+    }
 }

@@ -80,9 +80,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/audit-logs', AuditLogsIndex::class)->name('audit-logs.index');
     });
 
-    // Download: auth + verified; DocumentPolicy::download enforces document-type access (403).
+    // Download / inline view: auth + verified; DocumentPolicy enforces document-type access (403).
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])
         ->name('documents.download');
+    Route::get('/documents/{document}/view', [DocumentController::class, 'viewFile'])
+        ->name('documents.view');
 });
 
 Route::middleware('auth')->group(function () {

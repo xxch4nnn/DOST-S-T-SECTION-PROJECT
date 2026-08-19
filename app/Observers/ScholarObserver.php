@@ -8,13 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ScholarObserver
 {
+
+    public bool $afterCommit = true;
     /**
      * Handle the Scholar "created" event.
      */
     public function created(Scholar $scholar): void
     {
+        $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
         AuditLog::create([
-            'user_id' => Auth::id() ?? 2,
+            'user_id' => $userId,
             'action' => 'created',
             'record_type' => Scholar::class,
             'record_id' => $scholar->id,
@@ -29,9 +32,10 @@ class ScholarObserver
      */
     public function updated(Scholar $scholar): void
     {
-        if($scholar->wasChanged()){
+        if ($scholar->wasChanged()) {
+            $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
             AuditLog::create([
-                'user_id' => Auth::id() ?? 2,
+                'user_id' => $userId,
                 'action' => 'updated',
                 'record_type' => Scholar::class,
                 'record_id' => $scholar->id,
@@ -42,7 +46,8 @@ class ScholarObserver
         }
     }
 
-    public function saving(Scholar $scholar){
+    public function saving(Scholar $scholar)
+    {
         // Prepares the full text search column
 
         $scholar->loadMissing(['school', 'course', 'scholarshipProgram', 'scholarshipProgramType', 'clearanceStatus']);
@@ -62,7 +67,7 @@ class ScholarObserver
             $scholar->contact_number,
             $scholar->email_address,
             $scholar->clearance_status?->name,      // e.g., "Cleared"
-            $scholar->clearance_date
+            $scholar->clearance_date,
         ]));
 
         $scholar->fts_search_data = $searchData;
@@ -73,8 +78,9 @@ class ScholarObserver
      */
     public function deleted(Scholar $scholar): void
     {
+        $userId = Auth::id() ?? \App\Models\User::query()->value('id') ?? 1;
         AuditLog::create([
-            'user_id' => Auth::id() ?? 2,
+            'user_id' => $userId,
             'action' => 'deleted',
             'record_type' => Scholar::class,
             'record_id' => $scholar->id,

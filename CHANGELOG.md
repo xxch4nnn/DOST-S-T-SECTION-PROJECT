@@ -24,6 +24,28 @@ Every bullet **must** start with:
 - **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
 
 ### Changed
+### Changed
+- **2026-08-13 23:50:00 +08:00** · **Chan** (`@xxch4nnn`) — PR #86 / #93: rebase onto post-#81 master; clear mock recent-search PII; fix Alpine `--has-dropdown` binding; wire recent rows to `selectScholar`; rename clear control to “clear history”.
+- **2026-08-12 11:15:00 +08:00** · **Chan** (`@xxch4nnn`) — Fixed layout feedback from PR #81: single scroll container (`.main-canvas` `overflow: hidden`, `<main>` scroll), reverted silent background shift (`#f4f6fa`), and extracted remaining layout inlines to utility classes.
+- **2026-08-10 15:05:00 +08:00** · **Rui** (`@Mushimuche`) — Dashboard search UI refactor: fixed visual jump on dropdown expansion by stabilizing wrapper padding/borders, added Alpine.js fade animations, and Recent Searches UI (see PR #86 / issue #93).
+- **2026-08-10 04:45:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — Dashboard search (#76 / Q09=A): match scholars via `document_versions` filename/type plus mother scholar fields; drop fake demo fallback.
+- **2026-08-10 04:35:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — ScholarObserver (#75 / Q08=C): audit create/update/delete onto `audit_logs.record_*` (no `loggable_*`, no FTS column, no DocumentObserver).
+- **2026-08-10 04:20:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — Document viewer (#74): port pdf.js viewer/print/download/zoom from `db-integration` onto `currentVersion` + `documents.view` stream route (no DomPDF; no folders).
+- **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
+
+### Added
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — UUID Documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`): additive migration plan for thin UUID `documents` shell + file data on `document_versions`, per CHAN_ACK Q05=B.
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — CHAN_ACK Q02=B, Q05=B, Q07=C on Wakin Q01–Q16 answers lock; all blockers resolved, automation unblocked for thin slice PRs.
+
+### Changed
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Folders RFC (`planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`) status: Open → **Decided: Park for post-V1** (Q07=C).
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
+
+### Fixed
+- **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
+- **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
+
+### Changed
 - **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
 
 ### Added
@@ -35,6 +57,8 @@ Every bullet **must** start with:
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
 
 ### Added
+- **2026-08-19 13:54:00 +08:00** · **Palab** (`@palab`) — Added Alpine listener for `document-updated` event and session flash support in `notification-toast.blade.php` to handle Waken's DocumentObserver backend events (PR #92).
+- **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).

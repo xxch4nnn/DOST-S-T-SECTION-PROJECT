@@ -33,6 +33,113 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Commit/PR:** N/A (local working tree)
 - **Summary:** Fixed PHP TypeError in `App\Livewire\Scholars\Files\Edit`: removed typed `$file_types` property expectation mismatch and called `->get()` to set `$fileTypes` collection.
 - **Linked:** `app/Livewire/Scholars/Files/Edit.php`, `CHANGELOG.md`
+## 2026-08-13
+
+- **Date:** 2026-08-13
+- **Time:** 23:52:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** PR merged (triage turn 2)
+- **Commit/PR:** #86 → `3372db8` (closes #93)
+- **Summary:** Squash-merged dashboard recent-searches UI after rebase onto post-#81 master; review blockers cleared; #92 not pulled. Next turn: #94 Dependabot Path A.
+- **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`, `resources/views/livewire/dashboard/file-search.blade.php`
+
+- **Date:** 2026-08-13
+- **Time:** 23:55:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/dashboard-search-recent-ui`
+- **Action:** issue resolve + PR update (#93 / #86)
+- **Commit/PR:** #86 (rebased onto post-#81 master; review blockers fixed)
+- **Summary:** Rebased #86 (skipped duplicate #81 commit); emptied mock recentSearches; Alpine `--has-dropdown` via `@js`; wired recent rows to selectScholar; clear history label; DashboardFileSearchTest coverage. Did not pull #92.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `tests/Feature/DashboardFileSearchTest.php`, `planning/HANDOFF_GITHUB_ISSUES.md`
+
+- **Date:** 2026-08-13
+- **Time:** 23:40:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** PR merged + docs update (triage turn 1)
+- **Commit/PR:** #81 → `534fd3d` (closes #22); docs for #93–#96 queue
+- **Summary:** Squash-merged layout PR #81. Flagged #92 file overlap with #93/#86 on `file-search.blade.php` plus pre-rename ScholarshipProgram* debt — do not merge #92/#87/#68. Next turn: #93 rebase/fix #86.
+- **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`, `planning/AGENTIC_CHANGELOG.md`
+
+- **Date:** 2026-08-13
+- **Time:** 16:11:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** audit + issue filing + PR reviews
+- **Commit/PR:** reviews on #81 (approve) / #92 (request changes); issues #93–#96
+- **Summary:** Triaged 9 open PRs; approved #81; requested changes on #92; filed Path A–D tracking issues #93 (UI #86), #94 (Dependabot + TECH_STACK), #95 (slim BE delta), #96 (PR hygiene); cross-linked #22/#56/#58/#85.
+- **Linked:** `planning/HANDOFF_GITHUB_ISSUES.md`
+
+---
+
+## 2026-08-12
+
+- **Date:** 2026-08-12
+- **Time:** 11:15:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `style/22-cleanup-inline-styles`
+- **Action:** code refactor + docs update
+- **Commit/PR:** #81
+- **Summary:** Fixed layout feedback: single scroll container (`.main-canvas` hidden, `<main>` scrolls), reverted background shift (`#f4f6fa`), extracted layout inlines to utility classes.
+- **Linked:** `resources/css/_utilities.scss`, `resources/css/components/_sidebar.scss`, `resources/views/layouts/app.blade.php`, `resources/views/layouts/guest.blade.php`, `CHANGELOG.md`
+
+---
+
+## 2026-08-10
+
+- **Date:** 2026-08-10
+- **Time:** 15:05:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `feat/dashboard-search-recent-ui`
+- **Action:** UI refactor + Handoff Issue
+- **Commit/PR:** pending
+- **Summary:** Refactored Dashboard search UI to eliminate flex-shrink jumping, added Recent Searches mocked UI, added Alpine.js animations, and filed backend handoff Issue 11.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `resources/css/components/_file-search.scss`, `planning/HANDOFF_GITHUB_ISSUES.md`, `CHANGELOG.md`
+
+- **Date:** 2026-08-10
+- **Time:** 03:01:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Chan / Antigravity
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update — CHAN_ACK decisions + UUID RFC
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Chan ACK'd Wakin Q02=B, Q05=B, Q07=C. Created UUID documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`). Folders RFC marked decided/parked. Answers lock fully unblocked for thin slice PRs.
+- **Linked:** `docs/db/DOCUMENTS_UUID_RFC.md`, `planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`, `planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`, `CHANGELOG.md`
+
+---
+
+## 2026-08-08
+
+- **Date:** 2026-08-08
+- **Time:** 16:56:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update + script
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Added EC2 single-box staging sandbox runbook and host deploy script; cross-linked from AGENTS and AWS production prompt (sandbox ≠ Decision Gate prod).
+- **Linked:** `planning/AWS_STAGING_EC2_RUNBOOK.md`, `scripts/deploy-staging.sh`, `AGENTS.md`, `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`, `CHANGELOG.md`
+
+---
+
+## 2026-08-10
+
+- **Date:** 2026-08-10
+- **Time:** 22:18:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Fixed PHP TypeError in `App\Livewire\Scholars\Files\Edit`: removed typed `$file_types` property expectation mismatch and called `->get()` to set `$fileTypes` collection.
+- **Linked:** `app/Livewire/Scholars/Files/Edit.php`, `CHANGELOG.md`
 
 - **Date:** 2026-08-10
 - **Time:** 03:01:00 +08:00
@@ -286,3 +393,16 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Commit:** N/A
 - **Summary:** Backend-to-Mother Stitch review pack sent to Wakin.
 - **Linked:** `planning/project_bible_v02_extracted.md`
+
+## 2026-08-19
+- **Date:** 2026-08-19
+- **Time:** 13:54:00 +08:00
+- **User:** Palab (@palab)
+- **Actor:** Antigravity / Palab
+- **Repo:** xxch4nnn/DOST-S-T-SECTION-PROJECT @ eat/be-56-document-scholar-observers
+- **Action:** Code edit
+- **Commit/PR:** #92
+- **Summary:** Added Alpine listener for document-updated event and session flash support in notification-toast to support Waken's backend DocumentObserver.
+- **Linked:** 
+esources/views/components/notification-toast.blade.php, CHANGELOG.md
+
