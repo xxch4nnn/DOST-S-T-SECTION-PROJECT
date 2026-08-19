@@ -127,6 +127,7 @@ new class extends Component
             'course',
             'region',
             'clearanceStatus',
+            'documents.currentVersion.fileType',
         ])->find($this->scholarId);
         
         // load all files

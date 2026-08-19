@@ -87,10 +87,10 @@ class DocumentController extends Controller
             ?? 'application/pdf';
 
         return response()->file($absolutePath, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="'.($fileName ?? basename($absolutePath)).'"',
-            'ETag' => $etag,
-            'Cache-Control' => 'private, no-cache, revalidate',
+            'Content-Type'        => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . ($fileName ?? basename($absolutePath)) . '"',
+            'ETag'                => $etag,
+            'Cache-Control'       => 'private, no-cache, revalidate',
         ]);
     }
 }
