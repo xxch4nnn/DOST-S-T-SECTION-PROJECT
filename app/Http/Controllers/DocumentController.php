@@ -93,4 +93,9 @@ class DocumentController extends Controller
             'Cache-Control'       => 'private, no-cache, revalidate',
         ]);
     }
+
+    public function delete(string|int $id)
+    {
+        return null;
+    }
 }

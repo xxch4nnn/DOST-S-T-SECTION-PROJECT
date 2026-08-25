@@ -126,8 +126,12 @@ class Edit extends Component
                 return $doc->fileType ? $doc->fileType->name : 'General Documents';
             });
 
+            // dd($grouped);
+
             $categories = [];
             $catNum = 1;
+
+            // Name of the file type (as a group) => list of documents in that group (as a collection of documents)
             foreach ($grouped as $catName => $docGroup) {
                 $catId = 'cat_'.$catNum++;
                 $files = [];
@@ -149,6 +153,8 @@ class Edit extends Component
                         'download_url' => route('documents.download', ['document' => $doc->uuid]),
                         'url' => route('documents.view', ['document' => $doc->uuid]),
                         'thumbnail_url' => $isImage ? route('documents.download', ['document' => $doc->uuid]) : null,
+                        'view_url' => route('documents.view', ['document' => $doc->uuid]),
+                        'delete_url' => route('documents.delete', ['document' => $doc->uuid]),
                     ];
                 }
 
@@ -449,7 +455,7 @@ class Edit extends Component
             'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::orderBy('abbreviation')->get(),
             'clearanceStatuses' => ClearanceStatus::all(),
             'availableFileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');

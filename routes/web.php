@@ -83,6 +83,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Download / inline view: auth + verified; DocumentPolicy enforces document-type access (403).
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])
         ->name('documents.download');
+
+    Route::delete('/documents/{document}/delete', [DocumentController::class, 'delete'])
+        ->name('documents.delete');
 });
 
 Route::middleware('auth')->group(function () {

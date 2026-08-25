@@ -14,7 +14,7 @@
     </div>
 
     {{-- Hidden data element for preloading existing categories & documents into JS --}}
-    <div id="existing-categories-data" data-categories='@json($scannedCategories)' style="display: none;"></div>
+    <div id="existing-categories-data" style="display: none;"></div>
 
     <form wire:submit="save" class="add-file-form-stack" id="scholarEditForm">
         {{-- Section 1: Basic Information --}}
@@ -157,7 +157,7 @@
                     <select wire:model="region_id" id="region_id" class="form-select-custom" required>
                         <option value="">Select Region</option>
                         @foreach($regions as $reg)
-                            <option value="{{ $reg->id }}">{{ $reg->name }}</option>
+                            <option value="{{ $reg->id }}">{{ $reg->abbreviation }} ({{ $reg->name }})</option>
                         @endforeach
                     </select>
                     @error('region_id') <span class="text-danger small">{{ $message }}</span> @enderror
@@ -203,6 +203,7 @@
             </div>
 
             <div class="upload-scanned-stack d-flex flex-column gap-4">
+                {{-- Iterating through the list of file type (as a group) => list of documents in that group (as a collection of documents) --}}
                 @foreach($scannedCategories as $catIndex => $cat)
                     <div class="scanned-file-box" wire:key="scanned-category-{{ $cat['id'] }}">
                         {{-- Category Header with Category Dropdown & Custom Rename Field --}}
@@ -346,8 +347,11 @@
     function populateInitialFiles() {
         const dataEl = document.getElementById('existing-categories-data');
         if (!dataEl) return;
+        
         try {
-            const categories = JSON.parse(dataEl.dataset.categories || '[]');
+            const categories = @json($scannedCategories) || [];
+            console.log(categories)
+
             categories.forEach(cat => {
                 if (!window.__stagedCategoryFiles[cat.id]) {
                     window.__stagedCategoryFiles[cat.id] = (cat.files || []).map(f => ({
@@ -361,7 +365,8 @@
                         isImage: f.is_image,
                         isExisting: true,
                         downloadUrl: f.download_url || f.url,
-                        previewUrl: f.thumbnail_url || (f.is_image ? f.url : null)
+                        previewUrl: f.thumbnail_url || (f.is_image ? f.url : null),
+                        viewUrl: f.view_url
                     }));
                 }
             });
@@ -418,14 +423,21 @@
             infoDiv.appendChild(nameSpan);
             infoDiv.appendChild(sizeSpan);
 
-            if (item.isExisting && item.downloadUrl) {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = item.downloadUrl;
-                downloadLink.target = '_blank';
-                downloadLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
-                downloadLink.title = 'View file';
-                downloadLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
-                infoDiv.appendChild(downloadLink);
+            if (item.isExisting && item.viewUrl) {
+                const viewLink = document.createElement('a');
+                viewLink.href = item.viewUrl;
+                viewLink.setAttribute("target", "_blank");
+                viewLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
+                viewLink.title = 'View file';
+                viewLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
+                infoDiv.appendChild(viewLink);
+
+                // downloadLink.href = item.download_url;
+                // downloadLink.setAttribute("target", "_blank");
+                // downloadLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
+                // downloadLink.title = 'View file';
+                // downloadLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
+                // infoDiv.appendChild(downloadLink);
             }
 
             const removeBtn = document.createElement('button');
