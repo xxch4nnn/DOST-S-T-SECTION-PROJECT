@@ -14,14 +14,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('documents', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('file_type_id');
-            $table->dropConstrainedForeignId('uploaded_by');
-            $table->dropColumn([
-                'original_filename',
-                'stored_filename',
-                'mime_type',
-                'file_size_kb',
-            ]);
+            if (Schema::hasColumn('documents', 'file_type_id')) {
+                $table->dropConstrainedForeignId('file_type_id');
+            }
+            if (Schema::hasColumn('documents', 'uploaded_by')) {
+                $table->dropConstrainedForeignId('uploaded_by');
+            }
+            $columnsToDrop = array_filter(
+                ['original_filename', 'stored_filename', 'mime_type', 'file_size_kb'],
+                fn ($col) => Schema::hasColumn('documents', $col)
+            );
+            if (! empty($columnsToDrop)) {
+                $table->dropColumn($columnsToDrop);
+            }
         });
     }
 

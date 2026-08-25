@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -33,7 +34,8 @@ class DashboardFileSearchTest extends TestCase
         $course = Course::create(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::create(['name' => 'XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::create(['name' => 'Active', 'is_available' => true]);
-        $fileType = FileType::create(['name' => 'Notice of Award']);
+        $fileGroup = FileGroup::create(['name' => 'Scholarly Documents', 'slug' => 'scholarly_documents']);
+        $fileType = FileType::create(['name' => 'Notice of Award', 'file_group_id' => $fileGroup->id]);
 
         $scholar = Scholar::create([
             'first_name' => 'Luna',

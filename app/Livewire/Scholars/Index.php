@@ -5,6 +5,8 @@ namespace App\Livewire\Scholars;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Scholar;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use App\Models\School;
 use Livewire\Component;
 

@@ -16,9 +16,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->uuid('uuid')->nullable()->unique()->after('id');
-        });
+        if (! Schema::hasColumn('documents', 'uuid')) {
+            Schema::table('documents', function (Blueprint $table) {
+                $table->uuid('uuid')->nullable()->unique()->after('id');
+            });
+        }
 
         DB::table('documents')->orderBy('id')->each(function (object $doc): void {
             DB::table('documents')->where('id', $doc->id)->update([
@@ -26,16 +28,28 @@ return new class extends Migration
             ]);
         });
 
-        Schema::table('document_versions', function (Blueprint $table) {
-            $table->uuid('document_uuid')->nullable()->after('document_id');
-            $table->foreignId('file_type_id')->nullable()->after('document_uuid')
-                ->constrained('file_types')->nullOnDelete();
-            $table->string('file_path', 500)->nullable()->after('original_filename');
-            $table->string('mime_type', 100)->nullable()->after('file_path');
-            $table->unsignedBigInteger('file_size_bytes')->nullable()->after('mime_type');
-            $table->foreignId('uploaded_by')->nullable()->after('file_size_bytes')
-                ->constrained('users')->nullOnDelete();
-        });
+        if (! Schema::hasColumn('document_versions', 'document_uuid')) {
+            Schema::table('document_versions', function (Blueprint $table) {
+                $table->uuid('document_uuid')->nullable()->after('document_id');
+                if (! Schema::hasColumn('document_versions', 'file_type_id')) {
+                    $table->foreignId('file_type_id')->nullable()->after('document_uuid')
+                        ->constrained('file_types')->nullOnDelete();
+                }
+                if (! Schema::hasColumn('document_versions', 'file_path')) {
+                    $table->string('file_path', 500)->nullable()->after('original_filename');
+                }
+                if (! Schema::hasColumn('document_versions', 'mime_type')) {
+                    $table->string('mime_type', 100)->nullable()->after('file_path');
+                }
+                if (! Schema::hasColumn('document_versions', 'file_size_bytes')) {
+                    $table->unsignedBigInteger('file_size_bytes')->nullable()->after('mime_type');
+                }
+                if (! Schema::hasColumn('document_versions', 'uploaded_by')) {
+                    $table->foreignId('uploaded_by')->nullable()->after('file_size_bytes')
+                        ->constrained('users')->nullOnDelete();
+                }
+            });
+        }
 
         // Ensure every document has at least one version row before column moves.
         DB::table('documents')->orderBy('id')->each(function (object $doc): void {

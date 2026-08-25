@@ -20,6 +20,8 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Fixed
+- **2026-08-25 22:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Switch `@js($hasQuery)` in `file-search.blade.php` Alpine `x-show` and `:class` directives to reactive `$wire.query.trim() !== ''` so the dropdown menu dynamically appears when typing search queries.
+- **2026-08-25 22:05:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Include `middle_name` key in `searchResults` array mapping in `file-search.blade.php` to prevent `Undefined array key "middle_name"` PHP error during search rendering.
 - **2026-08-18 23:35:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Fix `morphMany` relationship in `Scholar.php` by passing `'documentable'` prefix instead of `'documentable_type'`, preventing invalid `documentable_type_type` SQL column errors when loading scholar documents.
 - **2026-08-18 16:30:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Remove redundant `overflow-auto` scrollbar on `.doc-viewer-canvas` in `document-viewer.blade.php` to eliminate the extra scroller in the document viewer overlay.
 - **2026-08-13 00:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Use `attributesToArray()` instead of `toArray()` in `DocumentVersionObserver` to prevent loaded Eloquent relations from being serialized and duplicated inside `current_version`. Move AuditLog creation to `DocumentVersionObserver`, restore `.doc-viewer-paper` scrollbars, and implement ETag / 304 HTTP caching in `DocumentController`.

@@ -22,6 +22,28 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-25
+
+- **Date:** 2026-08-25
+- **Time:** 22:16:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Updated `file-search.blade.php` Alpine `x-show` and `:class` directives to use `$wire.query.trim() !== ''` so dropdown menu reacts dynamically on client-side state updates.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `CHANGELOG.md`
+
+- **Date:** 2026-08-25
+- **Time:** 22:05:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Added `middle_name` key to `searchResults` array mapping in `file-search.blade.php` to prevent `Undefined array key "middle_name"` error during Livewire search rendering.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `CHANGELOG.md`
+
 ## 2026-08-10
 
 - **Date:** 2026-08-10

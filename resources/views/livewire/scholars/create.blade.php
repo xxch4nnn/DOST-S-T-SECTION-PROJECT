@@ -107,7 +107,7 @@
                             @error('school_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Program & Course</label>
+                            <label class="form-label">Program & Course <span class="text-danger">*</span></label>
                             <select wire:model="course_id" class="form-select">
                                 <option value="">Select...</option>
                                 @foreach($courses as $c)

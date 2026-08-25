@@ -20,16 +20,15 @@ return new class extends Migration
         }
 
         Schema::table('document_versions', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('document_id');
-            $table->dropConstrainedForeignId('replaced_by_user_id');
-            $table->dropColumn('file_size_kb');
-        });
-
-        Schema::table('document_versions', function (Blueprint $table) {
-            $table->foreign('document_uuid')
-                ->references('uuid')
-                ->on('documents')
-                ->cascadeOnDelete();
+            if (Schema::hasColumn('document_versions', 'document_id')) {
+                $table->dropConstrainedForeignId('document_id');
+            }
+            if (Schema::hasColumn('document_versions', 'replaced_by_user_id')) {
+                $table->dropConstrainedForeignId('replaced_by_user_id');
+            }
+            if (Schema::hasColumn('document_versions', 'file_size_kb')) {
+                $table->dropColumn('file_size_kb');
+            }
         });
     }
 
