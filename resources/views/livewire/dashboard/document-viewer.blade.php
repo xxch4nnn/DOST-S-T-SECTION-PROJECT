@@ -307,22 +307,42 @@ new class extends Component
         let pdfDocInstance = null;
         let currentRenderTaskId = 0;
 
-        // A listener that waits for the paper container element to render before placing images within it.
-        function waitForElement(selector, maxTries = 30) {
+        // A listener that waits for the element to render in the DOM using MutationObserver & fallback polling.
+        function waitForElement(selector, maxTries = 200, interval = 50) {
             return new Promise((resolve) => {
+                const existing = document.querySelector(selector);
+                if (existing) {
+                    return resolve(existing);
+                }
+
                 let count = 0;
-                const check = () => {
+                let timer = null;
+
+                const cleanup = () => {
+                    if (observer) observer.disconnect();
+                    if (timer) clearInterval(timer);
+                };
+
+                const observer = new MutationObserver(() => {
                     const el = document.querySelector(selector);
                     if (el) {
+                        cleanup();
                         resolve(el);
-                    } else if (count < maxTries) {
-                        count++;
-                        setTimeout(check, 50);
-                    } else {
+                    }
+                });
+
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                timer = setInterval(() => {
+                    const el = document.querySelector(selector);
+                    if (el) {
+                        cleanup();
+                        resolve(el);
+                    } else if (++count >= maxTries) {
+                        cleanup();
                         resolve(null);
                     }
-                };
-                check();
+                }, interval);
             });
         }
 
@@ -352,10 +372,12 @@ new class extends Component
             }
 
             if (taskId !== currentRenderTaskId) return;
-            const paperContainer = await waitForElement('#docViewerPaperContainer');
+            const paperContainer = await waitForElement('#docViewerPaperContainer', 200);
             const thumbContainer = document.getElementById('docViewerThumbContainer');
             if (!paperContainer || taskId !== currentRenderTaskId) {
-                console.error('Paper container doesn\'t exist in DOM.');
+                if (taskId === currentRenderTaskId) {
+                    console.error('Paper container doesn\'t exist in DOM.');
+                }
                 return;
             }
 

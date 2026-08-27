@@ -19,4 +19,9 @@ class Municipality extends Model
     {
         return $this->hasMany(Barangay::class, 'barangay_id');
     }
+
+    public function scholar()
+    {
+        return $this->hasMany(Scholar::class, 'province_id');
+    }
 }

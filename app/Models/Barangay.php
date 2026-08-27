@@ -14,4 +14,9 @@ class Barangay extends Model
     {
         return $this->belongsTo(Municipality::class, 'municipality_id');
     }
+
+    public function scholar()
+    {
+        return $this->hasMany(Scholar::class, 'province_id');
+    }
 }

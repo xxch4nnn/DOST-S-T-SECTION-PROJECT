@@ -66,8 +66,13 @@ class Edit extends Component
     public string $district = '';
 
     public string $province = '';
+    
+    public string $home = '';
 
     public $region_id = '';
+    public $province_id = '';
+    public $municipality_id = '';
+    public $barangay_id = '';
 
     public $clearance_status_id = '';
 
@@ -92,16 +97,29 @@ class Edit extends Component
         foreach ($array as $key => $value) {
             $array[$key] = $value ?? '';
         }
+        
         // dd($array);
 
         $this->fill($array);
 
-        // Format dates
-        if ($this->birthdate && $this->scholar->birthdate) {
-            $this->birthdate = is_string($this->scholar->birthdate) ? substr($this->scholar->birthdate, 0, 10) : $this->scholar->birthdate->format('Y-m-d');
-        }
-        if ($this->clearance_date && $this->scholar->clearance_date) {
-            $this->clearance_date = is_string($this->scholar->clearance_date) ? substr($this->scholar->clearance_date, 0, 10) : $this->scholar->clearance_date->format('Y-m-d');
+        // Auto-resolve dropdown IDs if string names exist
+        if ($this->region_id && $this->province) {
+            $p = \App\Models\Province::where('region_id', $this->region_id)->where('name', $this->province)->first();
+            if ($p) {
+                $this->province_id = $p->id;
+                if ($this->municipality) {
+                    $m = \App\Models\Municipality::where('province_id', $p->id)->where('name', $this->municipality)->first();
+                    if ($m) {
+                        $this->municipality_id = $m->id;
+                        if ($this->barangay) {
+                            $b = \App\Models\Barangay::where('municipality_id', $m->id)->where('name', $this->barangay)->first();
+                            if ($b) {
+                                $this->barangay_id = $b->id;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Load existing documents grouped by category if model exists
@@ -168,6 +186,109 @@ class Edit extends Component
             }
 
             $this->scannedCategories = $categories;
+        }
+    }
+
+    public function updatedRegionId($value): void
+    {
+        $this->updateProvince();
+    }
+
+    public function updatedProvinceId($value): void
+    {
+        $this->updateMunicipality();
+    }
+
+    public function updatedMunicipalityId($value): void
+    {
+        $this->updateBarangay();
+    }
+
+    public function updatedBarangayId($value): void
+    {
+        if ($this->barangay_id) {
+            $b = \App\Models\Barangay::find($this->barangay_id);
+            if ($b) {
+                $this->barangay = $b->name;
+            }
+        }
+    }
+
+    public function updateProvince(): void
+    {
+        if (!$this->region_id) {
+            $this->province_id = '';
+            $this->province = '';
+            $this->municipality_id = '';
+            $this->municipality = '';
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $availableProvinces = \App\Models\Province::where('region_id', $this->region_id)->get();
+        if ($this->province_id && !$availableProvinces->contains('id', (int) $this->province_id)) {
+            $this->province_id = '';
+            $this->province = '';
+        } elseif ($this->province_id) {
+            $p = $availableProvinces->firstWhere('id', (int) $this->province_id);
+            if ($p) {
+                $this->province = $p->name;
+            }
+        }
+        $this->updateMunicipality();
+    }
+
+    public function updateMunicipality(): void
+    {
+        if (!$this->province_id) {
+            $this->municipality_id = '';
+            $this->municipality = '';
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $p = \App\Models\Province::find($this->province_id);
+        if ($p) {
+            $this->province = $p->name;
+        }
+
+        $availableMunicipalities = \App\Models\Municipality::where('province_id', $this->province_id)->get();
+        if ($this->municipality_id && !$availableMunicipalities->contains('id', (int) $this->municipality_id)) {
+            $this->municipality_id = '';
+            $this->municipality = '';
+        } elseif ($this->municipality_id) {
+            $m = $availableMunicipalities->firstWhere('id', (int) $this->municipality_id);
+            if ($m) {
+                $this->municipality = $m->name;
+            }
+        }
+        $this->updateBarangay();
+    }
+
+    public function updateBarangay(): void
+    {
+        if (!$this->municipality_id) {
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $m = \App\Models\Municipality::find($this->municipality_id);
+        if ($m) {
+            $this->municipality = $m->name;
+        }
+
+        $availableBarangays = \App\Models\Barangay::where('municipality_id', $this->municipality_id)->get();
+        if ($this->barangay_id && !$availableBarangays->contains('id', (int) $this->barangay_id)) {
+            $this->barangay_id = '';
+            $this->barangay = '';
+        } elseif ($this->barangay_id) {
+            $b = $availableBarangays->firstWhere('id', (int) $this->barangay_id);
+            if ($b) {
+                $this->barangay = $b->name;
+            }
         }
     }
 
@@ -450,12 +571,27 @@ class Edit extends Component
 
     public function render()
     {
+        $provinces = $this->region_id
+            ? \App\Models\Province::where('region_id', $this->region_id)->orderBy('name')->get()
+            : collect();
+
+        $municipalities = $this->province_id
+            ? \App\Models\Municipality::where('province_id', $this->province_id)->orderBy('name')->get()
+            : collect();
+
+        $barangays = $this->municipality_id
+            ? \App\Models\Barangay::where('municipality_id', $this->municipality_id)->orderBy('name')->get()
+            : collect();
+
         return view('livewire.scholars.edit', [
             'scholarships' => Scholarship::all(),
             'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
             'regions' => Region::orderBy('abbreviation')->get(),
+            'provinces' => $provinces,
+            'municipalities' => $municipalities,
+            'barangays' => $barangays,
             'clearanceStatuses' => ClearanceStatus::all(),
             'availableFileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');

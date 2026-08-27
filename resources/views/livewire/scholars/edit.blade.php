@@ -136,26 +136,11 @@
             <h3 class="add-file-form-card__title">Demographic & Contact Information</h3>
 
             <div class="row g-3">
-                {{-- Row 1: 4 equal columns --}}
-                <div class="col-md-3 form-field-group">
-                    <label for="barangay">Address / Barangay</label>
-                    <input wire:model="barangay" type="text" id="barangay" class="form-control-custom" placeholder="e.g. Brgy. 34-D">
-                </div>
-
-                <div class="col-md-3 form-field-group">
-                    <label for="municipality">Municipality / City</label>
-                    <input wire:model="municipality" type="text" id="municipality" class="form-control-custom" placeholder="e.g. Davao City">
-                </div>
-
-                <div class="col-md-3 form-field-group">
-                    <label for="province">Province</label>
-                    <input wire:model="province" type="text" id="province" class="form-control-custom" placeholder="e.g. Davao del Sur">
-                </div>
-
+                {{-- Row 1: 4 columns (Hierarchical Location Dropdowns) --}}
                 <div class="col-md-3 form-field-group">
                     <label for="region_id">Region <span class="text-danger">*</span></label>
-                    <select wire:model="region_id" id="region_id" class="form-select-custom" required>
-                        <option value="">Select Region</option>
+                    <select wire:model.live.debounce.300ms="region_id" id="region_id" class="form-select-custom" required>
+                        <option value="" disabled {{ !empty($region_id) ? 'hidden' : '' }}>Select Region</option>
                         @foreach($regions as $reg)
                             <option value="{{ $reg->id }}">{{ $reg->abbreviation }} ({{ $reg->name }})</option>
                         @endforeach
@@ -163,7 +148,47 @@
                     @error('region_id') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
-                {{-- Row 2: 4 columns --}}
+                <div class="col-md-3 form-field-group">
+                    <label for="province">Province</label>
+                    <select wire:model.live.debounce.300ms="province_id" id="province" class="form-select-custom" {{ empty($region_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($province_id) ? 'hidden' : '' }}>{{ empty($region_id) ? 'Select Region First' : 'Select Province' }}</option>
+                        @foreach($provinces as $prov)
+                            <option value="{{ $prov->id }}">{{ $prov->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('province_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="municipality">Municipality / City</label>
+                    <select wire:model.live.debounce.300ms="municipality_id" id="municipality" class="form-select-custom" {{ empty($province_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($municipality_id) ? 'hidden' : '' }}>{{ empty($province_id) ? 'Select Province First' : 'Select Municipality / City' }}</option>
+                        @foreach($municipalities as $muni)
+                            <option value="{{ $muni->id }}">{{ $muni->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('municipality_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="barangay">Address / Barangay</label>
+                    <select wire:model.live.debounce.300ms="barangay_id" id="barangay" class="form-select-custom" {{ empty($municipality_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($barangay_id) ? 'hidden' : '' }}>{{ empty($municipality_id) ? 'Select Municipality/City First' : 'Select Barangay' }}</option>
+                        @foreach($barangays as $b)
+                            <option value="{{ $b->id }}">{{ $b->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('barangay_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 2: 1 full-width column --}}
+                <div class="col-12 form-field-group">
+                    <label for="home">Block & Lot / Street</label>
+                    <input wire:model="home" type="text" id="home" class="form-control-custom" placeholder="e.g. Block 1, Lot 2, Sobrecarey St.">
+                    @error('home') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 3: 4 columns --}}
                 <div class="col-md-3 form-field-group">
                     <label for="birthdate">Birthdate</label>
                     <input wire:model="birthdate" type="date" id="birthdate" class="form-control-custom">
@@ -179,12 +204,12 @@
 
                 <div class="col-md-3 form-field-group">
                     <label for="contact_number">Contact Number</label>
-                    <input wire:model="contact_number" type="text" id="contact_number" class="form-control-custom" placeholder="e.g. 09123456789">
+                    <input wire:model="contact_number" type="text" id="contact_number" class="form-control-custom" placeholder="e.g., 09123456789">
                 </div>
 
                 <div class="col-md-3 form-field-group">
                     <label for="email_address">Email Address</label>
-                    <input wire:model="email_address" type="email" id="email_address" class="form-control-custom" placeholder="e.g. scholar@example.com">
+                    <input wire:model="email_address" type="email" id="email_address" class="form-control-custom" placeholder="e.g., scholar@gmail.com">
                     @error('email_address') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
             </div>
@@ -431,13 +456,6 @@
                 viewLink.title = 'View file';
                 viewLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
                 infoDiv.appendChild(viewLink);
-
-                // downloadLink.href = item.download_url;
-                // downloadLink.setAttribute("target", "_blank");
-                // downloadLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
-                // downloadLink.title = 'View file';
-                // downloadLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
-                // infoDiv.appendChild(downloadLink);
             }
 
             const removeBtn = document.createElement('button');

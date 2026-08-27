@@ -104,6 +104,9 @@ class DocumentSeeder extends Seeder
             $fileType = FileType::where('name', $typeName)->first();
             $fileTypeId = $fileType ? $fileType->id : 1;
 
+            $user = \App\Models\User::where('email', 'a@a')->first() ?? \App\Models\User::first();
+            $uploaderId = $user ? $user->id : 1;
+
             Document::createWithInitialVersion(
                 [
                     'uuid' => $uuid,
@@ -121,7 +124,7 @@ class DocumentSeeder extends Seeder
                     'mime_type' => $mimeType,
                     'file_size_bytes' => $fileSize,
                     'version_number' => 1,
-                    'uploaded_by' => 3,
+                    'uploaded_by' => $uploaderId,
                 ]
             );
         }
