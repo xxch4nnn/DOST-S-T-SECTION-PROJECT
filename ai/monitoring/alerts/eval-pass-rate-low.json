@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "rule_id": "eval-pass-rate-low",
+  "severity": "critical",
+  "condition": "pass_rate < 0.95",
+  "window": 600,
+  "action": "notify-ops-channel",
+  "metadata": {
+    "service": "aiops",
+    "metric": "pass_rate",
+    "threshold": 0.95
+  }
+}

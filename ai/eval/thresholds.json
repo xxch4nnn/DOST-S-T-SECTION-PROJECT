@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "global": {
+    "pass_rate": 0.95,
+    "max_latency_ms": 1200,
+    "max_tokens": 512
+  },
+  "cases": {
+    "case-001": {"min_confidence": 0.8},
+    "case-002": {"min_confidence": 0.85},
+    "case-003": {"min_confidence": 0.9}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "model_id": "example-text-classifier",
+  "version": "0.1.0",
+  "framework": "transformers",
+  "format": "safetensors",
+  "path": "ai/models/example-text-classifier/0.1.0/model.safetensors",
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "metadata": {
+    "base_model": "distilbert-base-uncased",
+    "task": "text-classification",
+    "labels": ["low", "medium", "high"],
+    "owner": "aiops"
+  }
+}

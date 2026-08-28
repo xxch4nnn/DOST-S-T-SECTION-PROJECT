@@ -1,0 +1,57 @@
+{
+  "schema_version": "1",
+  "prompt_id": "validate-edit-pr",
+  "version": "0.1.0",
+  "template_ref": "ai/prompts/validate-edit-pr/0.1.0/template.txt",
+  "input_schema": {
+    "type": "object",
+    "required": ["diff", "allowed_paths", "forbidden_paths"],
+    "properties": {
+      "diff": {
+        "type": "string",
+        "description": "Git diff or patch text for the PR"
+      },
+      "allowed_paths": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "forbidden_paths": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "max_files": {
+        "type": "integer",
+        "minimum": 1
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["valid", "violations"],
+    "properties": {
+      "valid": {
+        "type": "boolean"
+      },
+      "violations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["path", "reason"],
+          "properties": {
+            "path": {"type": "string"},
+            "reason": {"type": "string"}
+          }
+        }
+      },
+      "summary": {
+        "type": "string"
+      }
+    }
+  },
+  "safety_rules": [
+    "Do not suggest code changes outside the provided diff.",
+    "Do not expose secrets or credentials.",
+    "Keep output strictly within the defined JSON schema."
+  ],
+  "tags": ["validation", "pr", "diff", "policy"]
+}
