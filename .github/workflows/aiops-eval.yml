@@ -1,0 +1,38 @@
+name: AIOps Eval
+
+on:
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'ai/**'
+      - 'scripts/**'
+      - '.github/workflows/aiops-eval.yml'
+  push:
+    branches: [master, main]
+    paths:
+      - 'ai/**'
+      - 'scripts/**'
+      - '.github/workflows/aiops-eval.yml'
+  workflow_dispatch:
+
+jobs:
+  eval:
+    name: Golden Eval Gate
+    runs-on: ubuntu-latest
+    outputs:
+      pass: ${{ steps.eval.outputs.pass }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run golden eval
+        id: eval
+        run: |
+          set -euo pipefail
+          python scripts/run_eval.py --cases ai/eval/golden.jsonl --thresholds ai/eval/thresholds.json --output ai/eval/report.json
+          echo "pass=true" >> "$GITHUB_OUTPUT"

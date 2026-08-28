@@ -1,8 +1,5 @@
 name: Staging / Production deploy (gated)
 
-# Path 3: CI smoke first; AWS/prod deploy only after Decision Gate in
-# planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md. This workflow never auto-deploys.
-
 on:
   workflow_dispatch:
     inputs:
@@ -36,34 +33,64 @@ jobs:
           TARGET="${{ github.event.inputs.target }}"
           CONFIRM="${{ github.event.inputs.confirm_aws_gates }}"
           if [ "$CONFIRM" != "APPROVED" ]; then
-            echo "::error::Decision Gate not cleared. Set confirm_aws_gates=APPROVED only after DOST PM approval (see planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md)."
+            echo "::error::Decision Gate not cleared. Set confirm_aws_gates=APPROVED only after DOST PM approval."
             echo "allowed=false" >> "$GITHUB_OUTPUT"
             exit 1
           fi
           if [ "$TARGET" = "production" ] && [ "${{ secrets.ALLOW_PRODUCTION_DEPLOY }}" != "true" ]; then
-            echo "::error::Production deploy blocked: repository secret ALLOW_PRODUCTION_DEPLOY must be 'true'."
+            echo "::error::Production deploy blocked: ALLOW_PRODUCTION_DEPLOY secret must be 'true'."
             echo "allowed=false" >> "$GITHUB_OUTPUT"
             exit 1
           fi
           echo "allowed=true" >> "$GITHUB_OUTPUT"
           echo "Gate passed for target=$TARGET"
 
+  ci-smoke:
+    name: CI gate
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, exif, pcntl, bcmath, gd, zip, pdo_mysql
+          coverage: none
+          ini-values: post_max_size=20M, upload_max_filesize=20M
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run migrations and tests
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+          php artisan migrate --force --no-interaction
+          php artisan db:seed --class=Database\\Seeders\\RolesAndPermissionsSeeder --force
+          vendor/bin/phpunit --colors=always --testdox
+        env:
+          APP_ENV: testing
+          APP_DEBUG: true
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+
   staging-smoke:
     needs: gate
-    if: github.event.inputs.target == 'staging'
+    if: github.event.inputs.target == 'staging' && needs.gate.outputs.allowed == 'true'
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v7
-      - name: Remote staging health (optional)
+      - name: Remote staging health
         env:
           STAGING_URL: ${{ secrets.STAGING_URL }}
         run: |
           set -euo pipefail
           if [ -z "${STAGING_URL:-}" ]; then
             echo "STAGING_URL secret not set — skipping remote curl."
-            echo "Provision staging (or set STAGING_URL) after AWS Decision Gate, then re-run."
-            echo "Local/CI synthetic coverage remains in test.yml job synthetic-smoke."
             exit 0
           fi
           curl -fsS --retry 5 --retry-delay 2 "${STAGING_URL%/}/health" | tee /tmp/health.json
@@ -72,13 +99,13 @@ jobs:
 
   production-placeholder:
     needs: gate
-    if: github.event.inputs.target == 'production'
+    if: github.event.inputs.target == 'production' && needs.gate.outputs.allowed == 'true'
     runs-on: ubuntu-latest
     environment: production
     steps:
       - name: Block until IaC exists
         run: |
           set -euo pipefail
-          echo "::error::Production deploy path is not wired yet (no infrastructure/aws IaC)."
+          echo "::error::Production deploy path is not wired yet."
           echo "Complete AWS Decision Gate + Terraform outputs before enabling this job."
           exit 1
