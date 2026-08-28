@@ -19,6 +19,9 @@ Every bullet **must** start with:
 
 ## [Unreleased]
 
+### Added
+- **2026-08-28 16:22:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — AIOps PR diff validation and inference service integration: added `validate-edit-pr` prompt contract and template, `scripts/validate_pr_diff.py` policy checking CLI, 8-case golden evaluation dataset with quality thresholds (`ai/eval/golden.jsonl`), evaluation runner (`scripts/run_eval.py`), inference endpoints (`/health`, `/metrics`, `/predict`, `/v1/validate-pr`), and comprehensive reviewer summary (`planning/REVIEWER_SUMMARY.md`).
+
 ### Fixed
 - **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
 - **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.

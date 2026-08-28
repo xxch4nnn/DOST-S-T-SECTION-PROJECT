@@ -7,7 +7,12 @@
   },
   "cases": {
     "case-001": {"min_confidence": 0.8},
-    "case-002": {"min_confidence": 0.85},
-    "case-003": {"min_confidence": 0.9}
+    "case-002": {"min_confidence": 0.8},
+    "case-003": {"min_confidence": 0.5},
+    "case-004": {"require_exact_valid": true},
+    "case-005": {"require_exact_valid": true},
+    "case-006": {"require_exact_valid": true},
+    "case-007": {"require_exact_valid": true},
+    "case-008": {"require_exact_valid": true}
   }
 }

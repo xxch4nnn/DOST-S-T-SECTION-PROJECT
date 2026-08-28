@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -48,3 +49,6 @@ class MetricsStore:
             "p95_latency_ms": p95,
             "max_latency_ms": max(latencies) if latencies else 0.0,
         }
+
+
+metrics = MetricsStore()

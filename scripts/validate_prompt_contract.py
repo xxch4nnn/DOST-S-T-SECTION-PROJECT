@@ -13,6 +13,27 @@ REQUIRED_PROMPT_FIELDS = {
     "safety_rules": list,
 }
 
+
+def find_template_file(template_ref: str, contract_path: Path, root: Path) -> Path | None:
+    direct = Path(template_ref).resolve()
+    if direct.exists() and direct.is_file():
+        return direct
+
+    from_root = (root / template_ref).resolve()
+    if from_root.exists() and from_root.is_file():
+        return from_root
+
+    ws_path = (Path.cwd() / template_ref).resolve()
+    if ws_path.exists() and ws_path.is_file():
+        return ws_path
+
+    same_dir = (contract_path.parent / Path(template_ref).name).resolve()
+    if same_dir.exists() and same_dir.is_file():
+        return same_dir
+
+    return None
+
+
 def validate_prompt(contract_path: Path, root: Path) -> list:
     errors = []
     try:
@@ -30,20 +51,19 @@ def validate_prompt(contract_path: Path, root: Path) -> list:
             errors.append(f"Field {field} must be {expected.__name__}")
 
     template_ref = data.get("template_ref", "")
-    template = (root / template_ref).resolve()
-    if not template.exists():
-        template = Path(template_ref).resolve()
-    if not template.exists():
-        errors.append(f"Template not found: {template}")
+    template = find_template_file(template_ref, contract_path, root)
+    if not template or not template.exists():
+        errors.append(f"Template not found: {template_ref}")
     elif template.stat().st_size == 0:
-        errors.append("Template file is empty")
+        errors.append(f"Template file is empty: {template}")
 
     return errors
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--contract", required=True)
-    parser.add_argument("--root", default="ai/prompts")
+    parser.add_argument("--root", default=".")
     args = parser.parse_args()
 
     contract = Path(args.contract).resolve()
@@ -62,6 +82,7 @@ def main() -> int:
 
     print(f"Prompt contract OK: {contract}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

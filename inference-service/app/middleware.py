@@ -47,33 +47,3 @@ class ObservabilityMiddleware(BaseHTTPMiddleware):
         response.headers["x-trace-id"] = trace_id
         response.headers["x-span-id"] = span_id
         return response
-
-
-class PredictLoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):  # type: ignore[override]
-        if request.url.path != "/predict":
-            return await call_next(request)
-
-        body = await request.json()
-        start = time.perf_counter()
-        response = await call_next(request)
-        latency_ms = (time.perf_counter() - start) * 1000
-
-        try:
-            payload = await response.json()
-        except Exception:
-            payload = {}
-
-        log_event(
-            "predict",
-            trace_id=request.headers.get("x-trace-id", ""),
-            span_id=request.headers.get("x-span-id", ""),
-            prompt_id=body.get("prompt_id"),
-            prompt_version=body.get("version"),
-            status="success" if response.status_code < 400 else "error",
-            latency_ms=latency_ms,
-            output=payload.get("output"),
-            error=payload.get("error"),
-        )
-
-        return response
