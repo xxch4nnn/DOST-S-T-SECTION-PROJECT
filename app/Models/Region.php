@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Scholar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 
+#[Fillable(['name', 'abbreviation', 'is_available'])]
 class Region extends Model
 {
-    use HasFactory;
-
-    protected $fillable = ['name', 'abbreviation', 'is_available'];
-
-    public function scholars()
-    {
-        return $this->hasMany(Scholar::class);
+    public $timestamps=false;
+    public function scholars(){
+        return $this->hasMany(Scholar::class, "region_id");
     }
 }

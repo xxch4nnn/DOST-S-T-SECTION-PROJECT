@@ -2,21 +2,24 @@
 
 namespace Database\Seeders;
 
+use App\Models\ClearanceStatus;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ClearanceStatusSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $data = [
-            ['name' => 'Cleared', 'is_available' => true],
-            ['name' => 'Pending', 'is_available' => true],
-            ['name' => 'With Accountability', 'is_available' => true],
+        $groups = [
+            ['name'=> 'Not Cleared', 'is_available'=> true],
+            ['name'=> 'Cleared', 'is_available'=> true]
         ];
 
-        foreach ($data as $item) {
-            DB::table('clearance_statuses')->updateOrInsert(['name' => $item['name']], $item);
+        foreach($groups as $group){
+            ClearanceStatus::firstOrCreate($group);
         }
     }
 }

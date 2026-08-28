@@ -22,6 +22,17 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
 ---
 
+## 2026-08-10
+
+- **Date:** 2026-08-10
+- **Time:** 22:18:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Fixed PHP TypeError in `App\Livewire\Scholars\Files\Edit`: removed typed `$file_types` property expectation mismatch and called `->get()` to set `$fileTypes` collection.
+- **Linked:** `app/Livewire/Scholars/Files/Edit.php`, `CHANGELOG.md`
 ## 2026-08-13
 
 - **Date:** 2026-08-13
@@ -143,6 +154,68 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 ---
 
 ## 2026-08-05
+
+- **Date:** 2026-08-05
+- **Time:** 13:38:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** schema update
+- **Commit/PR:** N/A
+- **Summary:** Updated `create_documents_table.php` schema to use `documents` table, polymorphic `documentable_type`/`documentable_id` columns with compound index, timestamps, and soft deletes.
+- **Linked:** `database/migrations/2026_07_20_061543_create_documents_table.php`
+
+- **Date:** 2026-08-05
+- **Time:** 12:24:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A
+- **Summary:** Set `overflow: hidden` on `.doc-viewer-canvas` and removed fixed min-height constraints so the outer modal container scrollbar is hidden and only the rendered document viewer scrollbar is visible.
+- **Linked:** `resources/css/components/_document-viewer.scss`, `resources/views/livewire/dashboard/document-viewer.blade.php`
+
+- **Date:** 2026-08-05
+- **Time:** 12:10:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A
+- **Summary:** Added missing closing `</div>` tag for `.doc-thumbnail-card` inside `@foreach` loop in `resources/views/livewire/dashboard/scholar-drawer.blade.php` to restore horizontal flex card layout.
+- **Linked:** `resources/views/livewire/dashboard/scholar-drawer.blade.php`
+
+- **Date:** 2026-08-05
+- **Time:** 12:00:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A
+- **Summary:** Replaced inline JS string interpolation in dropzone elements with data-cat-id dataset lookups (`this.dataset.catId`) to fix Blade / JS linter `',' expected` syntax errors.
+- **Linked:** `resources/views/livewire/add-file.blade.php`
+
+- **Date:** 2026-08-05
+- **Time:** 11:57:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A
+- **Summary:** Updated UserSeeder, DatabaseSeeder, and RolesAndPermissionsSeeder to assign Super Admin / Admin roles and executed seeders for local DB.
+- **Linked:** `database/seeders/UserSeeder.php`, `database/seeders/DatabaseSeeder.php`, `database/seeders/RolesAndPermissionsSeeder.php`
+
+
+- **Date:** 2026-08-05
+- **Time:** 11:42:25 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A
+- **Summary:** Replaced `@this` with `$wire` in JavaScript blocks inside Blade views to resolve IDE "Decorators are not valid here" parser errors.
+- **Linked:** `resources/views/livewire/add-file.blade.php`, `resources/views/livewire/scholars/edit.blade.php`, `resources/views/livewire/scholars/files/edit.blade.php`
+
 
 - **Date:** 2026-08-05
 - **Time:** 00:40:00 +08:00
@@ -282,3 +355,15 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Commit:** N/A
 - **Summary:** Backend-to-Mother Stitch review pack sent to Wakin.
 - **Linked:** `planning/project_bible_v02_extracted.md`
+
+## 2026-08-19
+- **Date:** 2026-08-19
+- **Time:** 13:54:00 +08:00
+- **User:** Palab (@palab)
+- **Actor:** Antigravity / Palab
+- **Repo:** xxch4nnn/DOST-S-T-SECTION-PROJECT @ eat/be-56-document-scholar-observers
+- **Action:** Code edit
+- **Commit/PR:** #92
+- **Summary:** Added Alpine listener for document-updated event and session flash support in notification-toast to support Waken's backend DocumentObserver.
+- **Linked:** esources/views/components/notification-toast.blade.php, CHANGELOG.md
+

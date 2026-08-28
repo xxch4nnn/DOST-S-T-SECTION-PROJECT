@@ -9,6 +9,8 @@ class AuditLog extends Model
 {
     use HasFactory;
 
+    // public $timestamps = false;
+
     protected $fillable = [
         'user_id', 'action', 'record_type', 'record_id',
         'before_payload', 'after_payload', 'ip_address',
@@ -18,6 +20,11 @@ class AuditLog extends Model
         'before_payload' => 'array',
         'after_payload' => 'array',
     ];
+
+    public function loggable()
+    {
+        return $this->morphTo();
+    }
 
     public function user()
     {

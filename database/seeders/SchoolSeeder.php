@@ -3,15 +3,33 @@
 namespace Database\Seeders;
 
 use App\Models\School;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SchoolSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        School::firstOrCreate(['name' => 'University of the Philippines Diliman', 'campus' => 'Diliman', 'is_available' => true]);
-        School::firstOrCreate(['name' => 'Ateneo de Manila University', 'campus' => 'Loyola Heights', 'is_available' => true]);
-        School::firstOrCreate(['name' => 'De La Salle University', 'campus' => 'Taft', 'is_available' => true]);
-        School::firstOrCreate(['name' => 'University of Santo Tomas', 'campus' => 'Sampaloc', 'is_available' => true]);
+        $groups = [
+            ['name'=>'Davao Doctos College, Inc.'],
+            ['name'=>'Davao de Oro State College'],
+            ['name'=>'Davao del Sur State College'],
+            ['name'=>'Davao del Norte State College'],
+            ['name'=>'Davao Oriental State University'],
+            ['name'=>'Mapúa Malayan Colleges Mindanao'],
+            ['name'=>'University of the Immaculate Conception'],
+            ['name'=>'University of Mindanao', 'campus'=>'Matina'],
+            ['name'=>'University of Mindanao', 'campus'=>'Tagum'],
+            ['name'=>'University of the Philippines Mindanao', 'campus'=>'Mintal'],
+            ['name'=>'University of Southeastern Philippines', 'campus'=>'Obrero'],
+            ['name'=>'University of Southeastern Philippines', 'campus'=>'Tagum'],
+        ];
+
+        foreach($groups as $group){
+            School::firstOrCreate($group);
+        }
     }
 }

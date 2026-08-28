@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\File;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -15,58 +16,81 @@ class DocumentController extends Controller
     /**
      * Download the specified document (current version).
      */
-    public function download(Document $document): BinaryFileResponse
+    public function download(string|int $id)
     {
-        $this->authorize('download', $document);
+        session_write_close();
 
-        [$absolutePath, $fileName] = $this->resolveCurrentVersionFile($document);
+        $relativePath = null;
+        $fileName = null;
 
-        return response()->download($absolutePath, $fileName);
+        $doc = Document::where('uuid', $id)->first();
+        if ($doc) {
+            $version = $doc->currentVersion;
+            $relativePath = $version?->file_path;
+            $fileName = $version?->original_filename ?? $version?->stored_filename;
+        } else {
+            $relativePath = (string) $id;
+        }
+
+        if ($relativePath && Storage::disk('local')->exists($relativePath)) {
+            $absolutePath = Storage::disk('local')->path($relativePath);
+        } elseif ($relativePath && file_exists($relativePath)) {
+            $absolutePath = $relativePath;
+        } else {
+            abort(404, 'File not found on server.');
+        }
+
+        return response()->download($absolutePath, $fileName ?? basename($absolutePath));
     }
 
     /**
-     * Stream the current version inline for the document viewer.
+     * View/Stream the specified file inline.
      */
-    public function viewFile(Document $document): BinaryFileResponse|StreamedResponse
+    public function viewFile(string|int $id)
     {
-        $this->authorize('view', $document);
+        session_write_close();
 
-        [$absolutePath, $fileName, $mimeType] = $this->resolveCurrentVersionFile($document, withMime: true);
+        $relativePath = null;
+        $fileName = null;
+
+        $doc = Document::where('uuid', $id)->first();
+        if ($doc) {
+            $version = $doc->currentVersion;
+            $relativePath = $version?->file_path;
+            $fileName = $version?->original_filename ?? $version?->stored_filename;
+        } else {
+            $relativePath = (string) $id;
+        }
+
+        if ($relativePath && Storage::disk('local')->exists($relativePath)) {
+            $absolutePath = Storage::disk('local')->path($relativePath);
+        } elseif ($relativePath && file_exists($relativePath)) {
+            $absolutePath = $relativePath;
+        } else {
+            abort(404, 'File not found on server.');
+        }
+
+        $lastModified = file_exists($absolutePath) ? filemtime($absolutePath) : time();
+        $versionKey = $version ? ($version->id . '-' . $version->version_number) : $id;
+        $etag = '"' . md5($versionKey . '-' . $lastModified) . '"';
+
+        // Check if client sent If-None-Match header matching current ETag
+        $ifNoneMatch = request()->header('If-None-Match');
+        if ($ifNoneMatch && (trim($ifNoneMatch) === $etag || trim($ifNoneMatch) === '*')) {
+            return response()->noContent(304, [
+                'ETag'          => $etag,
+                'Cache-Control' => 'private, no-cache, revalidate',
+            ]);
+        }
+
+        $mimeType = (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null) 
+            ?? 'application/pdf';
 
         return response()->file($absolutePath, [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => 'inline; filename="'.$fileName.'"',
-            'Cache-Control' => 'private, max-age=3600',
+            'Content-Type'        => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . ($fileName ?? basename($absolutePath)) . '"',
+            'ETag'                => $etag,
+            'Cache-Control'       => 'private, no-cache, revalidate',
         ]);
-    }
-
-    /**
-     * @return array{0: string, 1: string, 2?: string}
-     */
-    protected function resolveCurrentVersionFile(Document $document, bool $withMime = false): array
-    {
-        $version = $document->currentVersion;
-        if (! $version) {
-            abort(404, 'File not found on server.');
-        }
-
-        $path = $version->file_path ?: ('documents/'.$version->stored_filename);
-
-        if (! Storage::disk('local')->exists($path)) {
-            abort(404, 'File not found on server.');
-        }
-
-        $absolutePath = Storage::disk('local')->path($path);
-        $fileName = $version->original_filename ?: basename($absolutePath);
-
-        if (! $withMime) {
-            return [$absolutePath, $fileName];
-        }
-
-        $mimeType = $version->mime_type
-            ?: (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null)
-            ?: 'application/octet-stream';
-
-        return [$absolutePath, $fileName, $mimeType];
     }
 }

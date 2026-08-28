@@ -4,6 +4,7 @@ namespace App\Livewire\Scholars;
 
 use App\Models\AuditLog;
 use App\Models\Document;
+use App\Models\File;
 use App\Models\FileType;
 use App\Models\Scholar;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
 
 class Show extends Component
 {
@@ -30,7 +32,7 @@ class Show extends Component
 
     public function mount(Scholar $scholar)
     {
-        $this->scholar = $scholar->load(['scholarship', 'school', 'course', 'clearanceStatus']);
+        $this->scholar = $scholar->load(['scholarshipProgram', 'scholarshipProgramType', 'region', 'school', 'course', 'clearanceStatus']);
         $this->loadDocuments();
     }
 
@@ -176,7 +178,7 @@ class Show extends Component
 
     public function strikeOff($documentId)
     {
-        if (! auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
+        if (!Auth::user()->hasAnyRole(['Super Admin', 'Admin'])) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -194,7 +196,7 @@ class Show extends Component
 
     public function undoStrikeOff($documentId)
     {
-        if (! auth()->user()->hasAnyRole(['Super Admin', 'Admin'])) {
+        if (! Auth::user()->hasAnyRole(['Super Admin', 'Admin'])) {
             abort(403, 'Unauthorized action.');
         }
 

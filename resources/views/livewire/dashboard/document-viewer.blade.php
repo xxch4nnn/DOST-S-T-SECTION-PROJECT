@@ -66,8 +66,11 @@ new class extends Component
             return 1;
         }
 
-        $doc = \App\Models\Document::with('currentVersion')->find($this->documentId);
-        $filePath = $doc?->currentVersion?->file_path;
+        $doc = \App\Models\Document::with('currentVersion')
+            ->where('uuid', $this->documentId)
+            ->first();
+    
+        $filePath = $doc?->file_path;
 
         if ($filePath && \Illuminate\Support\Facades\Storage::disk('local')->exists($filePath)) {
             $path = \Illuminate\Support\Facades\Storage::disk('local')->path($filePath);
@@ -97,15 +100,17 @@ new class extends Component
 
     public function zoomIn(): void
     {
-        if ($this->zoom < 200) {
+        if ($this->zoom < 300) {
             $this->zoom += 25;
+            $this->dispatch('zoom-changed', zoom: $this->zoom, rotation: $this->rotation);
         }
     }
 
     public function zoomOut(): void
     {
-        if ($this->zoom > 50) {
+        if ($this->zoom > 25) {
             $this->zoom -= 25;
+            $this->dispatch('zoom-changed', zoom: $this->zoom, rotation: $this->rotation);
         }
     }
 
@@ -156,13 +161,13 @@ new class extends Component
 
     public function editFile(): void
     {
-        if ($this->scholarId > 0) {
-            $this->redirect(route('scholars.edit', $this->scholarId), navigate: true);
-
-            return;
-        }
-
-        $this->closeViewer();
+        $currentUrl = request()->header('referer') ?? '/scholars';
+        $returnUrl = parse_url($currentUrl, PHP_URL_PATH) ?? '/scholars';
+        $this->redirect(route('scholars.files.edit', [
+            'scholar'    => $this->scholarId,
+            'document'       => $this->documentId,
+            'return_url' => $returnUrl,
+        ]));
     }
 
     public function deleteDocument(): void
@@ -253,9 +258,9 @@ new class extends Component
             <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-canvas-wrapper--full' : '' }}">
                 @if($fileType === 'image')
                     <div class="doc-viewer-image-container">
-                        <div class="doc-viewer-image-paper shadow-lg">
+                        <div class="doc-viewer-image-paper shadow-lg" style="overflow: auto;">
                             @if($fileUrl)
-                                <img src="{{ $fileUrl }}" alt="{{ $title }}" class="img-fluid" style="transform: scale({{ $zoom / 100 }}) rotate({{ $rotation }}deg); transition: transform 0.2s ease;">
+                                <img id="docViewerImage" src="{{ $fileUrl }}" alt="{{ $title }}" class="img-fluid" style="transform: scale({{ $zoom / 100 }}) rotate({{ $rotation }}deg); transform-origin: center center; transition: transform 0.2s ease;">
                             @else
                                 <div class="my-auto py-5 text-secondary text-center">
                                     <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 4.5rem; height: 4.5rem;">
@@ -596,20 +601,38 @@ new class extends Component
             document.body.removeChild(link);
         });
 
-        // Listener for reactive zoom changes on rendered page images
+        // Listener for reactive zoom changes on rendered page images & image elements
         Livewire.on('zoom-changed', (event) => {
             const payload = Array.isArray(event) ? event[0] : event;
             const zoomLevel = payload?.zoom || $wire.zoom;
+            const rotation = payload?.rotation ?? ($wire.rotation || 0);
 
+            // 1. PDF Page Images
             const paperContainer = document.getElementById('docViewerPaperContainer');
-            if (!paperContainer) return;
+            if (paperContainer) {
+                const pageImgs = paperContainer.querySelectorAll('img[id^="pdf-page-"]');
+                pageImgs.forEach(img => {
+                    img.style.width = `${zoomLevel}%`;
+                    img.style.maxWidth = zoomLevel > 100 ? 'none' : '100%';
+                    img.style.transition = 'width 0.2s ease';
+                });
+            }
 
-            const pageImgs = paperContainer.querySelectorAll('img[id^="pdf-page-"]');
-            pageImgs.forEach(img => {
-                img.style.width = `${zoomLevel}%`;
-                img.style.maxWidth = zoomLevel > 100 ? 'none' : '100%';
-                img.style.transition = 'width 0.2s ease';
-            });
+            // 2. PDF Paper Content Scale
+            const paperContent = document.getElementById('docViewerPaperContent');
+            if (paperContent) {
+                paperContent.style.transform = `scale(${zoomLevel / 100})`;
+                paperContent.style.transformOrigin = 'top center';
+                paperContent.style.transition = 'transform 0.2s ease';
+            }
+
+            // 3. Image Mode Viewer
+            const viewerImg = document.getElementById('docViewerImage') || document.querySelector('.doc-viewer-image-container img');
+            if (viewerImg) {
+                viewerImg.style.transform = `scale(${zoomLevel / 100}) rotate(${rotation}deg)`;
+                viewerImg.style.transformOrigin = 'center center';
+                viewerImg.style.transition = 'transform 0.2s ease';
+            }
         });
     </script>
 @endscript
