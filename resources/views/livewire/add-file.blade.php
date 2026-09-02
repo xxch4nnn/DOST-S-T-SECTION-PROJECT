@@ -258,14 +258,13 @@
                                    accept=".pdf, .jpg, .jpeg, .png, .webp" 
                                    style="display: none;">
 
-                            {{-- Dropzone Area Matching Edit Scholar File Reference --}}
+                            
                             <div class="file-upload-dropzone position-relative" 
-                                 id="dropzone_{{ $cat['id'] }}"
-                                 data-cat-id="{{ $cat['id'] }}"
-                                 onclick="document.getElementById('file_input_' + this.dataset.catId).click()"
-                                 ondragover="event.preventDefault(); this.style.borderColor='var(--dost-main-blue)';"
-                                 ondragleave="this.style.borderColor='';"
-                                 ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_' + this.dataset.catId); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); }">
+                                id="dropzone_{{ $cat['id'] }}"
+                                onclick="document.getElementById('file_input_{{ $cat['id'] }}').click()"
+                                ondragover="event.preventDefault(); this.style.borderColor='var(--dost-main-blue)';"
+                                ondragleave="this.style.borderColor='';"
+                                ondrop="event.preventDefault(); this.style.borderColor=''; const fInput = document.getElementById('file_input_{{ $cat['id'] }}'); if (fInput) { fInput.files = event.dataTransfer.files; fInput.dispatchEvent(new Event('change', { bubbles: true })); } handleDrop(event, '{{ $cat['id'] }}')">
                                 <i class="ph ph-cloud-arrow-up upload-icon"></i>
                                 <div class="upload-text">Click or drag files to add more</div>
                                 <div class="upload-hint">Supports PDF, JPG, PNG</div>
@@ -579,6 +578,33 @@
         updateCategoryUI(catId);
     }
 
+    function handleDrop(event, catId) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const dropzone = document.getElementById(`dropzone_${catId}`);
+        if (dropzone) {
+            dropzone.style.borderColor = '';
+        }
+
+        const dt = event.dataTransfer;
+        if (!dt || !dt.files || dt.files.length === 0) return;
+
+        const validFiles = Array.from(dt.files).filter(file => {
+            const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+            const isImg = file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+            return isPdf || isImg;
+        });
+
+        if (validFiles.length === 0) {
+            alert('Please drop valid PDF or image files (PDF, JPG, PNG, WEBP).');
+            return;
+        }
+
+        handleFileSelection(catId, validFiles);
+    }
+    window.handleDrop = handleDrop;
+
     async function handleFileSelection(catId, fileList) {
         if (!fileList || fileList.length === 0) return;
 
@@ -638,18 +664,29 @@
         }
     }
 
+    // Prevent browser default behavior of opening dropped files in a new tab
+    window.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    }, false);
+
+    window.addEventListener('drop', function(e) {
+        e.preventDefault();
+    }, false);
+
+    // Delegated file input listener for immediate drag-and-drop / file selection
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.matches('input[type="file"][data-cat-id]')) {
+            const catId = e.target.dataset.catId;
+            if (catId && e.target.files && e.target.files.length > 0) {
+                handleFileSelection(catId, e.target.files);
+                e.target.value = '';
+            }
+        }
+    });
+
     function initCategoryUploaders() {
         document.querySelectorAll('input[type="file"][data-cat-id]').forEach(input => {
             const catId = input.dataset.catId;
-
-            if (!input._hasUploadListener) {
-                input._hasUploadListener = true;
-                input.addEventListener('change', function () {
-                    handleFileSelection(catId, this.files);
-                    this.value = '';
-                });
-            }
-
             updateCategoryUI(catId);
         });
 

@@ -85,6 +85,10 @@
         background-color: rgb(31, 88, 190, 0.02);
     }
 
+    * {
+        pointer-events: none;
+    }
+
     .upload-icon {
         font-size: 2.5rem;
         color: #adb5bd;

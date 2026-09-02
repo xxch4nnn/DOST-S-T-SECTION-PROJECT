@@ -385,8 +385,20 @@ new class extends Component
 
                 {{-- Bottom Section: Scanned Files Accordion --}}
                 <div class="scholar-drawer__scanned-section">
-                    <div class="d-flex justify-content-end mb-2">
-                        <span class="small text-muted fw-medium">Scanned Files</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="small text-muted fw-semibold text-uppercase" style="letter-spacing: 0.5px;">Scanned Files</span>
+                        <div class="folder-tab-actions">
+                            <a 
+                                href="{{ route('scholars.files.add', ['scholar' => $scholarId]) }}" 
+                                wire:navigate 
+                                class="btn-folder-action btn-folder-action--primary shadow-sm"
+                            >
+                                Add New Document
+                            </a>
+                            <button type="button" class="btn-folder-action btn-folder-action--secondary shadow-sm">
+                                Sort
+                            </button>
+                        </div>
                     </div>
 
                     @foreach ($file_groups as $folderName => $items)
