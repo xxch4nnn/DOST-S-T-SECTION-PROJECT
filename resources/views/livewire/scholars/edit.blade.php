@@ -434,12 +434,12 @@
             icon.className = item.isPdf ? 'ph ph-file-pdf text-danger fs-5' : 'ph ph-image text-primary fs-5';
 
             const nameSpan = document.createElement('span');
-            nameSpan.className = 'file-name text-truncate';
+            nameSpan.className = 'file-name';
             nameSpan.title = item.name;
             nameSpan.textContent = item.name;
 
             const sizeSpan = document.createElement('span');
-            sizeSpan.className = 'text-muted small ms-2';
+            sizeSpan.className = 'file-size ms-2';
             sizeSpan.textContent = `(${item.sizeFormatted})`;
 
             infoDiv.appendChild(icon);
@@ -498,13 +498,13 @@
                 mediaContainer.appendChild(img);
             } else if (item.isPdf) {
                 const pdfPlaceholder = document.createElement('div');
-                pdfPlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
-                pdfPlaceholder.innerHTML = `<i class="ph ph-file-pdf text-danger fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                pdfPlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center w-100';
+                pdfPlaceholder.innerHTML = `<i class="ph ph-file-pdf text-danger fs-1"></i><span class="preview-filename" title="${item.name}">${item.name}</span>`;
                 mediaContainer.appendChild(pdfPlaceholder);
             } else {
                 const filePlaceholder = document.createElement('div');
-                filePlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
-                filePlaceholder.innerHTML = `<i class="ph ph-file text-primary fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                filePlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center w-100';
+                filePlaceholder.innerHTML = `<i class="ph ph-file text-primary fs-1"></i><span class="preview-filename" title="${item.name}">${item.name}</span>`;
                 mediaContainer.appendChild(filePlaceholder);
             }
 

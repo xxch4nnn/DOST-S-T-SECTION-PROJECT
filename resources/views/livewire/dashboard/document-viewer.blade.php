@@ -206,7 +206,7 @@ new class extends Component
         {{-- ========================================================= --}}
         {{-- TOP CONTROL TOOLBAR                                       --}}
         {{-- ========================================================= --}}
-            <div class="doc-viewer-toolbar {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-toolbar--collapsed-sidebar' : '' }}">
+            <div class="doc-viewer-toolbar {{ $fileType === 'image' ? 'doc-viewer-toolbar--collapsed-sidebar' : '' }}">
                 @if($fileType === 'pdf')
                     <span id="docViewerPageDisplay" class="small fw-semibold text-secondary me-2">Page {{ $currentPage }} / {{ $totalPages }}</span>
                     <div class="doc-viewer-toolbar__divider me-1"></div>
@@ -239,27 +239,27 @@ new class extends Component
                     <i class="ph ph-trash fs-5"></i>
                 </button>
 
-                @if($fileType === 'pdf' && $totalPages > 1)
+                @if($fileType === 'pdf')
                     <div class="doc-viewer-toolbar__divider mx-1"></div>
-                    <button wire:click="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
+                    <button onclick="goToPrevPage()" id="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
                         <i class="ph ph-caret-left fs-5"></i>
                     </button>
-                    <button wire:click="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
+                    <button onclick="goToNextPage()" id="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
                         <i class="ph ph-caret-right fs-5"></i>
                     </button>
                 @endif
             </div>
 
             {{-- FLOATING OVERLAY CHEVRONS --}}
-            <button wire:click="{{ $fileType === 'image' ? 'prevImage' : 'prevPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--left" title="Previous">
+            {{-- <button wire:click="{{ $fileType === 'image' ? 'prevImage' : 'prevPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--left" title="Previous">
                 <i class="ph ph-caret-left fs-2 text-white"></i>
             </button>
             <button wire:click="{{ $fileType === 'image' ? 'nextImage' : 'nextPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--right" title="Next">
                 <i class="ph ph-caret-right fs-2 text-white"></i>
-            </button>
+            </button> --}}
 
             {{-- MAIN CANVAS DISPLAY AREA --}}
-            <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-canvas-wrapper--full' : '' }}">
+            <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image') ? 'doc-viewer-canvas-wrapper--full' : '' }}">
                 @if($fileType === 'image')
                     <div class="doc-viewer-image-container">
                         <div class="doc-viewer-image-paper shadow-lg" style="overflow: auto;">
@@ -349,6 +349,25 @@ new class extends Component
                 }, interval);
             });
         }
+
+        window.goToPrevPage = function() {
+            const current = Number($wire.currentPage) || 1;
+            if (current > 1) {
+                const prev = current - 1;
+                updateCurrentPageDisplay(prev);
+                scrollToPdfPage(prev);
+            }
+        };
+
+        window.goToNextPage = function() {
+            const current = Number($wire.currentPage) || 1;
+            const total = Number($wire.totalPages) || 1;
+            if (current < total) {
+                const next = current + 1;
+                updateCurrentPageDisplay(next);
+                scrollToPdfPage(next);
+            }
+        };
 
         /**
          * A method that handles loading the PDF and rendering each of its pages to the paper container.
@@ -534,12 +553,13 @@ new class extends Component
             if (!pdfDocInstance || !container) return;
 
             // Displays the thumbnails if the total number of pages is greater than 1.
-            if (pdfDocInstance.numPages > 1) {
-                container.style.display = 'flex';
-            } else {
-                container.style.display = 'none';
-                return;
-            }
+            // if (pdfDocInstance.numPages > 1) {
+            //     container.style.display = 'flex';
+            // } else {
+            //     container.style.display = 'none';
+            //     return;
+            // }
+            container.style.display = 'flex';
 
             container.innerHTML = '';
             for (let i = 1; i <= pdfDocInstance.numPages; i++) {
@@ -579,6 +599,23 @@ new class extends Component
             const pageImg = document.getElementById(`pdf-page-${pageNum}`);
             if (pageImg) {
                 pageImg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            const prevPageButton = document.getElementById('prevPage');
+            const nextPageButton = document.getElementById('nextPage');
+
+            if (prevPageButton && nextPageButton) {
+                if (pageNum <= 1) {
+                    prevPageButton.classList.add('disabled', 'opacity-25');
+                } else {
+                    prevPageButton.classList.remove('disabled', 'opacity-25');
+                }
+                
+                if (pageNum >= $wire.totalPages) {
+                    nextPageButton.classList.add('disabled', 'opacity-25');
+                } else {
+                    nextPageButton.classList.remove('disabled', 'opacity-25');
+                }
             }
         }
 
