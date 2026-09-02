@@ -19,6 +19,9 @@ Every bullet **must** start with:
 
 ## [Unreleased]
 
+### Added
+- **2026-08-28 16:22:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — AIOps PR diff validation and inference service integration: added `validate-edit-pr` prompt contract and template, `scripts/validate_pr_diff.py` policy checking CLI, 8-case golden evaluation dataset with quality thresholds (`ai/eval/golden.jsonl`), evaluation runner (`scripts/run_eval.py`), inference endpoints (`/health`, `/metrics`, `/predict`, `/v1/validate-pr`), and comprehensive reviewer summary (`planning/REVIEWER_SUMMARY.md`).
+
 ### Fixed
 - **2026-08-25 22:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Switch `@js($hasQuery)` in `file-search.blade.php` Alpine `x-show` and `:class` directives to reactive `$wire.query.trim() !== ''` so the dropdown menu dynamically appears when typing search queries.
 - **2026-08-25 22:05:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Include `middle_name` key in `searchResults` array mapping in `file-search.blade.php` to prevent `Undefined array key "middle_name"` PHP error during search rendering.

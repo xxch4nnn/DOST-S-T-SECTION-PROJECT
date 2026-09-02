@@ -1,0 +1,36 @@
+{
+  "schema_version": "1",
+  "prompt_id": "scholar-record-classifier",
+  "version": "0.1.0",
+  "template_ref": "ai/prompts/scholar-record-classifier/0.1.0/template.txt",
+  "input_schema": {
+    "type": "object",
+    "required": ["text"],
+    "properties": {
+      "text": {
+        "type": "string",
+        "maxLength": 4000
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "required": ["label", "confidence"],
+    "properties": {
+      "label": {
+        "type": "string",
+        "enum": ["low", "medium", "high"]
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    }
+  },
+  "safety_rules": [
+    "Do not emit PII beyond provided input.",
+    "Reject requests for deterministic legal/financial decisions."
+  ],
+  "tags": ["records", "classification"]
+}

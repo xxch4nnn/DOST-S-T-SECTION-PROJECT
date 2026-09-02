@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "rule_id": "high-error-rate",
+  "severity": "critical",
+  "condition": "error_rate > 0.05",
+  "window": 300,
+  "action": "notify-ops-channel",
+  "metadata": {
+    "service": "inference",
+    "metric": "error_rate",
+    "threshold": 0.05
+  }
+}

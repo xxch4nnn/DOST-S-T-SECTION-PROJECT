@@ -1,0 +1,6 @@
+Classify the scholar record excerpt into low, medium, or high sensitivity.
+
+Input excerpt:
+{{text}}
+
+Return JSON with label and confidence.

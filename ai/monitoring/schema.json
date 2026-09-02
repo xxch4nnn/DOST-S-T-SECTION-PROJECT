@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "level": "info",
+  "service": "inference",
+  "event": "predict",
+  "timestamp": "2026-08-28T00:00:00+08:00",
+  "trace_id": "00000000-0000-0000-0000-000000000000",
+  "span_id": "00000000-0000-0000-0000-000000000000",
+  "model_id": "example-text-classifier",
+  "model_version": "0.1.0",
+  "prompt_id": "scholar-record-classifier",
+  "prompt_version": "0.1.0",
+  "input": {"text": "sample"},
+  "output": {"label": "low", "confidence": 0.5},
+  "latency_ms": 0.0,
+  "status": "success",
+  "error": null,
+  "metadata": {}
+}
