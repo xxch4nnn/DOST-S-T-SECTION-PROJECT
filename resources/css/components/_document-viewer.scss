@@ -221,7 +221,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow: hidden auto;
+    overflow: auto;
     scroll-behavior: smooth;
     user-select: none;
 
@@ -255,7 +255,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
 
     img {
         max-width: 100%;

@@ -65,6 +65,16 @@ class DocumentSeeder extends Seeder
                     'description' => 'MEMORANDUM No. 02, s. 2026',
                 ],
             ],
+
+            [
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\TestToDelete.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-07-28',
+                'metadata' => [
+                    'semester' => '2nd Semester',
+                    'year' => 2026,
+                ],
+            ]
         ];
 
         foreach ($groups as $group) {

@@ -375,8 +375,6 @@
         
         try {
             const categories = @json($scannedCategories) || [];
-            console.log(categories)
-
             categories.forEach(cat => {
                 if (!window.__stagedCategoryFiles[cat.id]) {
                     window.__stagedCategoryFiles[cat.id] = (cat.files || []).map(f => ({

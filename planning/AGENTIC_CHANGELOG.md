@@ -20,7 +20,17 @@ Required fields on every entry (newest first under the day heading):
 
 Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
----
+## 2026-08-28
+
+- **Date:** 2026-08-28
+- **Time:** 00:08:30 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Removed leftover `dd($this)` in `Edit.php` and sanitized empty string form inputs to `null` before model update, resolving `SQLSTATE[22007]` date format error on `clearance_date`. Added Eloquent date cast for `clearance_date` in `Scholar.php`.
+- **Linked:** `app/Livewire/Scholars/Edit.php`, `app/Models/Scholar.php`, `CHANGELOG.md`
 
 ## 2026-08-25
 

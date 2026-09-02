@@ -37,7 +37,7 @@ return new class extends Migration
             $table->foreignId('barangay_id')->nullable()->constrained('barangays')->restrictOnDelete();
 
             $table->foreignId('clearance_status_id')->nullable(false)->constrained('clearance_statuses')->restrictOnDelete()->default(0);
-            $table->dateTime('clearance_date')->nullable();
+            $table->date('clearance_date')->nullable();
             $table->boolean('for_disposal')->nullable(false)->default(false);
 
             // Flattened Column for Full-Text Search

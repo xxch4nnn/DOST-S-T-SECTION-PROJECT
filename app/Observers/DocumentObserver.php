@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Models\AuditLog;
 use App\Models\Document;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentObserver
 {
@@ -40,8 +42,24 @@ class DocumentObserver
 
     /**
      * Handle the Document "deleted" event.
+     * 
+     * @param Document $document
+     * @return void
      */
-    public function deleted(Document $file): void {}
+    public function deleted(Document $document){
+        // Ensures the action made was a soft delete
+        if (! $document->isForceDeleting()) { 
+            AuditLog::create([
+                'user_id'        => Auth::id(), // The user who clicked delete
+                'action'         => 'deleted',
+                'record_type'    => Document::class,
+                'record_id'      => $document->uuid,
+                'before_payload' => $document->toArray(),
+                'after_payload'  => null,
+                'ip_address'     => request()->ip() ?? '127.0.0.1',
+            ]);
+        }
+    }
 
     /**
      * Handle the Document "restored" event.

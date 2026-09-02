@@ -42,6 +42,12 @@ new class extends Component
         ]);
     }
 
+    #[On("document-deleted")]
+    public function onDocumentDeleted(): void
+    {
+        $this->cachedScholarData = null;
+    }
+
     #[On('open-scholar-drawer')]
     public function openDrawer(int|string $scholarId, ?array $scholarData = null): void
     {
@@ -243,6 +249,7 @@ new class extends Component
             'file_groups' => $file_groups,
         ];
     }
+
 }; ?>
 
 <div>

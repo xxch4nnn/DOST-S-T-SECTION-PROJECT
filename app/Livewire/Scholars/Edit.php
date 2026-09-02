@@ -31,11 +31,11 @@ class Edit extends Component
     // Scholar form fields
     public string $first_name = '';
 
-    public string $middle_name = '';
+    public ?string $middle_name = '';
 
     public string $last_name = '';
 
-    public string $generational_suffix = '';
+    public ?string $generational_suffix = '';
 
     public string $year_of_award = '2023';
 
@@ -47,7 +47,7 @@ class Edit extends Component
 
     public string $sex = 'Male';
 
-    public string $birthdate = '';
+    public ?string $birthdate = '';
 
     public string $contact_number = '';
 
@@ -76,7 +76,7 @@ class Edit extends Component
 
     public $clearance_status_id = '';
 
-    public string $clearance_date = '';
+    public ?string $clearance_date = '';
 
     public bool $for_disposal = false;
 
@@ -97,8 +97,6 @@ class Edit extends Component
         foreach ($array as $key => $value) {
             $array[$key] = $value ?? '';
         }
-        
-        // dd($array);
 
         $this->fill($array);
 
@@ -399,31 +397,70 @@ class Edit extends Component
 
     public function saveScholarWithStagedFiles(array $manifest = [])
     {
-        $validated = $this->validate([
-            'first_name' => 'required|string|max:50',
-            'middle_name' => 'nullable|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'generational_suffix' => 'nullable|string|max:5',
-            'year_of_award' => 'required|integer',
-            'scholarship_id' => 'required|exists:scholarships,id',
-            'scholarship_type_id' => 'required|exists:scholarship_types,id',
-            'spas_no' => 'required|string|max:50',
-            'sex' => 'nullable|string|in:Male,Female',
-            'birthdate' => 'nullable|date',
-            'contact_number' => 'nullable|string|max:11',
-            'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
-            'school_id' => 'required|exists:schools,id',
-            'course_id' => 'nullable|exists:courses,id',
-            'program' => 'nullable|string|max:150',
-            'barangay' => 'nullable|string|max:150',
-            'municipality' => 'nullable|string|max:150',
-            'district' => 'nullable|string|max:150',
-            'province' => 'nullable|string|max:150',
-            'region_id' => 'required|exists:regions,id',
-            'clearance_status_id' => 'required|exists:clearance_statuses,id',
-            'clearance_date' => 'nullable|date',
-            'for_disposal' => 'boolean',
-        ]);
+        if ($this->birthdate === '' || (is_string($this->birthdate) && trim($this->birthdate) === '')) {
+            $this->birthdate = null;
+        }
+        if ($this->clearance_date === '' || (is_string($this->clearance_date) && trim($this->clearance_date) === '')) {
+            $this->clearance_date = null;
+        }
+
+        if ($this->clearance_status_id == 2){
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'required|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'clearance_date' => 'sometimes|nullable|date',
+                'for_disposal' => 'boolean',
+            ]);
+        } else {
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'required|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'for_disposal' => 'boolean',
+            ]);
+        }
+
+        // Clean up empty optional fields (convert "" or empty strings to null for MySQL)
+        foreach ($validated as $key => $value) {
+            if ($value === '' || (is_string($value) && trim($value) === '')) {
+                $validated[$key] = null;
+            }
+        }
 
         if ($this->scholar->exists) {
             $this->scholar->update($validated);

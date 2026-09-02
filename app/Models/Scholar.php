@@ -13,6 +13,8 @@ class Scholar extends Model
 {
     protected $casts = [
         'birthdate' => 'date:Y-m-d',
+        'clearance_date' => 'date:Y-m-d',
+        'for_disposal' => 'boolean',
     ];
 
     public $timestamps = false;

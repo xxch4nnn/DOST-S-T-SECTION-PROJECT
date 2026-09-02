@@ -2,6 +2,7 @@
 
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
+use App\Models\Document;
 
 new class extends Component
 {
@@ -172,7 +173,10 @@ new class extends Component
 
     public function deleteDocument(): void
     {
-        $this->dispatch('delete-requested', fileUrl: $this->fileUrl);
+        $document = Document::findOrFail($this->documentId);
+        $document->delete();
+        $this->closeViewer();
+        $this->dispatch('document-deleted', documentId: $this->documentId);
     }
 }; ?>
 
@@ -231,7 +235,7 @@ new class extends Component
                 <button wire:click="editFile" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Edit File">
                     <i class="ph ph-pencil-simple fs-5"></i>
                 </button>
-                <button wire:click="deleteDocument" type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
+                <button wire:click="deleteDocument" wire:confirm="Are you sure you want to delete this document? This cannot be undone." type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
                     <i class="ph ph-trash fs-5"></i>
                 </button>
 
@@ -621,15 +625,6 @@ new class extends Component
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        });
-
-        // Listener for deleting files
-        Livewire.on('delete-requested', (event) => {
-            const payload = Array.isArray(event) ? event[0] : event;            
-            const url = payload?.url || $wire.fileUrl;
-            if (!url) return;
-
-            console.log(url)
         });
 
         // Listener for reactive zoom changes on rendered page images & image elements

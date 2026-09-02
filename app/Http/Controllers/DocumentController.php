@@ -94,8 +94,10 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function delete(string|int $id)
+    public function deleteDocument(string|int $documentId)
     {
-        return null;
+        $document = Document::findOrFail($documentId);
+        $document->delete();
+        return to_route('scholars.show', $document->scholar_id);
     }
 }
