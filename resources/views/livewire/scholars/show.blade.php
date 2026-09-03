@@ -157,7 +157,7 @@
                                 </td>
                                 <td class="text-end">
                                     @if(!$doc->trashed())
-                                    <a href="{{ route('documents.download', $doc->id) }}" class="btn btn-link btn-sm" target="_blank">Download</a>
+                                    <a href="{{ route('documents.download', ['document' => $doc->id]) }}" class="btn btn-link btn-sm" target="_blank">Download</a>
                                     @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
                                     <button wire:click="strikeOff({{ $doc->id }})" wire:confirm="Are you sure you want to strike off this document? This soft-delete can be undone." class="btn btn-link btn-sm text-danger">Strike Off</button>
                                     @endif

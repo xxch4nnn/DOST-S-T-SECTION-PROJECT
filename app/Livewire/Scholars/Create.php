@@ -6,8 +6,8 @@ use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Region;
 use App\Models\Scholar;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
+use App\Models\Scholarship;
+use App\Models\ScholarshipType;
 use App\Models\School;
 use Livewire\Component;
 
@@ -67,16 +67,16 @@ class Create extends Component
             'last_name' => 'required|string|max:50',
             'generational_suffix' => 'nullable|string|max:5',
             'year_of_award' => 'required|integer',
-            'scholarship_program_id' => 'required|exists:scholarship_programs,id',
-            'scholarship_program_type_id' => 'required|exists:scholarship_program_types,id',
-            'spas_number' => 'nullable|string|max:50',
+            'scholarship_id' => 'required|exists:scholarships,id',
+            'scholarship_type_id' => 'required|exists:scholarship_types,id',
+            'spas_no' => 'nullable|string|max:50',
             'sex' => 'nullable|string|in:Male,Female',
             'birthdate' => 'nullable|date',
-            'contact_number' => 'nullable|string|max:11',
+            'contact_number' => 'required|string|max:11',
             'email_address' => 'nullable|email|max:70|unique:scholars,email_address',
             'school_id' => 'required|exists:schools,id',
-            'course_id' => 'nullable|exists:courses,id',
-            'program' => 'nullable|string|max:150',
+            'course_id' => 'required|exists:courses,id',
+            // 'program' => 'nullable|string|max:150',
             'barangay' => 'nullable|string|max:150',
             'municipality' => 'nullable|string|max:150',
             'district' => 'nullable|string|max:150',
@@ -102,11 +102,11 @@ class Create extends Component
     public function render()
     {
         return view('livewire.scholars.create', [
-            'scholarships' => ScholarshipProgram::orderBy('name', 'asc')->get(),
-            'scholarshipTypes' => ScholarshipProgramType::orderBy('name', 'asc')->get(),
+            'scholarships' => Scholarship::orderBy('name', 'asc')->get(),
+            'scholarshipTypes' => ScholarshipType::orderBy('name', 'asc')->get(),
             'schools' => School::orderBy('name', 'asc')->get(),
             'courses' => Course::orderBy('name', 'asc')->get(),
-            'regions' => Region::orderBy('name', 'asc')->get(),
+            'regions' => Region::get(),
             'clearanceStatuses' => ClearanceStatus::orderBy('name', 'asc')->get(),
         ])->layout('layouts.app');
     }

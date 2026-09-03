@@ -9,8 +9,6 @@ use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
 use App\Models\Scholarship;
-use App\Models\ScholarshipProgram;
-use App\Models\ScholarshipProgramType;
 use App\Models\ScholarshipType;
 use App\Models\School;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -33,11 +31,11 @@ class Edit extends Component
     // Scholar form fields
     public string $first_name = '';
 
-    public string $middle_name = '';
+    public ?string $middle_name = '';
 
     public string $last_name = '';
 
-    public string $generational_suffix = '';
+    public ?string $generational_suffix = '';
 
     public string $year_of_award = '2023';
 
@@ -49,7 +47,7 @@ class Edit extends Component
 
     public string $sex = 'Male';
 
-    public string $birthdate = '';
+    public ?string $birthdate = '';
 
     public string $contact_number = '';
 
@@ -68,12 +66,17 @@ class Edit extends Component
     public string $district = '';
 
     public string $province = '';
+    
+    public string $home = '';
 
     public $region_id = '';
+    public $province_id = '';
+    public $municipality_id = '';
+    public $barangay_id = '';
 
     public $clearance_status_id = '';
 
-    public string $clearance_date = '';
+    public ?string $clearance_date = '';
 
     public bool $for_disposal = false;
 
@@ -90,14 +93,31 @@ class Edit extends Component
             $this->scholar = Scholar::findOrFail($scholar);
         }
 
-        $this->fill($this->scholar->toArray());
-
-        // Format dates
-        if ($this->birthdate && $this->scholar->birthdate) {
-            $this->birthdate = is_string($this->scholar->birthdate) ? substr($this->scholar->birthdate, 0, 10) : $this->scholar->birthdate->format('Y-m-d');
+        $array = $this->scholar->toArray();
+        foreach ($array as $key => $value) {
+            $array[$key] = $value ?? '';
         }
-        if ($this->clearance_date && $this->scholar->clearance_date) {
-            $this->clearance_date = is_string($this->scholar->clearance_date) ? substr($this->scholar->clearance_date, 0, 10) : $this->scholar->clearance_date->format('Y-m-d');
+
+        $this->fill($array);
+
+        // Auto-resolve dropdown IDs if string names exist
+        if ($this->region_id && $this->province) {
+            $p = \App\Models\Province::where('region_id', $this->region_id)->where('name', $this->province)->first();
+            if ($p) {
+                $this->province_id = $p->id;
+                if ($this->municipality) {
+                    $m = \App\Models\Municipality::where('province_id', $p->id)->where('name', $this->municipality)->first();
+                    if ($m) {
+                        $this->municipality_id = $m->id;
+                        if ($this->barangay) {
+                            $b = \App\Models\Barangay::where('municipality_id', $m->id)->where('name', $this->barangay)->first();
+                            if ($b) {
+                                $this->barangay_id = $b->id;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // Load existing documents grouped by category if model exists
@@ -122,8 +142,12 @@ class Edit extends Component
                 return $doc->fileType ? $doc->fileType->name : 'General Documents';
             });
 
+            // dd($grouped);
+
             $categories = [];
             $catNum = 1;
+
+            // Name of the file type (as a group) => list of documents in that group (as a collection of documents)
             foreach ($grouped as $catName => $docGroup) {
                 $catId = 'cat_'.$catNum++;
                 $files = [];
@@ -135,16 +159,18 @@ class Edit extends Component
                     $isImage = str_starts_with($mimeType, 'image/') || in_array(strtolower(pathinfo($originalName, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'webp', 'gif']);
 
                     $files[] = [
-                        'id' => $doc->id,
+                        'id' => $doc->uuid,
                         'name' => $originalName,
                         'size' => ($doc->file_size_kb ?: 1) * 1024,
                         'mime_type' => $mimeType,
                         'is_pdf' => $isPdf,
                         'is_image' => $isImage,
                         'is_existing' => true,
-                        'download_url' => route('documents.download', $doc->id),
-                        'url' => route('documents.download', $doc->id),
-                        'thumbnail_url' => $isImage ? route('documents.download', $doc->id) : null,
+                        'download_url' => route('documents.download', ['document' => $doc->uuid]),
+                        'url' => route('documents.view', ['document' => $doc->uuid]),
+                        'thumbnail_url' => $isImage ? route('documents.download', ['document' => $doc->uuid]) : null,
+                        'view_url' => route('documents.view', ['document' => $doc->uuid]),
+                        'delete_url' => route('documents.delete', ['document' => $doc->uuid]),
                     ];
                 }
 
@@ -158,6 +184,109 @@ class Edit extends Component
             }
 
             $this->scannedCategories = $categories;
+        }
+    }
+
+    public function updatedRegionId($value): void
+    {
+        $this->updateProvince();
+    }
+
+    public function updatedProvinceId($value): void
+    {
+        $this->updateMunicipality();
+    }
+
+    public function updatedMunicipalityId($value): void
+    {
+        $this->updateBarangay();
+    }
+
+    public function updatedBarangayId($value): void
+    {
+        if ($this->barangay_id) {
+            $b = \App\Models\Barangay::find($this->barangay_id);
+            if ($b) {
+                $this->barangay = $b->name;
+            }
+        }
+    }
+
+    public function updateProvince(): void
+    {
+        if (!$this->region_id) {
+            $this->province_id = '';
+            $this->province = '';
+            $this->municipality_id = '';
+            $this->municipality = '';
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $availableProvinces = \App\Models\Province::where('region_id', $this->region_id)->get();
+        if ($this->province_id && !$availableProvinces->contains('id', (int) $this->province_id)) {
+            $this->province_id = '';
+            $this->province = '';
+        } elseif ($this->province_id) {
+            $p = $availableProvinces->firstWhere('id', (int) $this->province_id);
+            if ($p) {
+                $this->province = $p->name;
+            }
+        }
+        $this->updateMunicipality();
+    }
+
+    public function updateMunicipality(): void
+    {
+        if (!$this->province_id) {
+            $this->municipality_id = '';
+            $this->municipality = '';
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $p = \App\Models\Province::find($this->province_id);
+        if ($p) {
+            $this->province = $p->name;
+        }
+
+        $availableMunicipalities = \App\Models\Municipality::where('province_id', $this->province_id)->get();
+        if ($this->municipality_id && !$availableMunicipalities->contains('id', (int) $this->municipality_id)) {
+            $this->municipality_id = '';
+            $this->municipality = '';
+        } elseif ($this->municipality_id) {
+            $m = $availableMunicipalities->firstWhere('id', (int) $this->municipality_id);
+            if ($m) {
+                $this->municipality = $m->name;
+            }
+        }
+        $this->updateBarangay();
+    }
+
+    public function updateBarangay(): void
+    {
+        if (!$this->municipality_id) {
+            $this->barangay_id = '';
+            $this->barangay = '';
+            return;
+        }
+
+        $m = \App\Models\Municipality::find($this->municipality_id);
+        if ($m) {
+            $this->municipality = $m->name;
+        }
+
+        $availableBarangays = \App\Models\Barangay::where('municipality_id', $this->municipality_id)->get();
+        if ($this->barangay_id && !$availableBarangays->contains('id', (int) $this->barangay_id)) {
+            $this->barangay_id = '';
+            $this->barangay = '';
+        } elseif ($this->barangay_id) {
+            $b = $availableBarangays->firstWhere('id', (int) $this->barangay_id);
+            if ($b) {
+                $this->barangay = $b->name;
+            }
         }
     }
 
@@ -268,31 +397,70 @@ class Edit extends Component
 
     public function saveScholarWithStagedFiles(array $manifest = [])
     {
-        $validated = $this->validate([
-            'first_name' => 'required|string|max:50',
-            'middle_name' => 'nullable|string|max:50',
-            'last_name' => 'required|string|max:50',
-            'generational_suffix' => 'nullable|string|max:5',
-            'year_of_award' => 'required|integer',
-            'scholarship_id' => 'required|exists:scholarships,id',
-            'scholarship_type_id' => 'required|exists:scholarship_types,id',
-            'spas_no' => 'required|string|max:50',
-            'sex' => 'nullable|string|in:Male,Female',
-            'birthdate' => 'nullable|date',
-            'contact_number' => 'nullable|string|max:11',
-            'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
-            'school_id' => 'required|exists:schools,id',
-            'course_id' => 'nullable|exists:courses,id',
-            'program' => 'nullable|string|max:150',
-            'barangay' => 'nullable|string|max:150',
-            'municipality' => 'nullable|string|max:150',
-            'district' => 'nullable|string|max:150',
-            'province' => 'nullable|string|max:150',
-            'region_id' => 'required|exists:regions,id',
-            'clearance_status_id' => 'required|exists:clearance_statuses,id',
-            'clearance_date' => 'nullable|date',
-            'for_disposal' => 'boolean',
-        ]);
+        if ($this->birthdate === '' || (is_string($this->birthdate) && trim($this->birthdate) === '')) {
+            $this->birthdate = null;
+        }
+        if ($this->clearance_date === '' || (is_string($this->clearance_date) && trim($this->clearance_date) === '')) {
+            $this->clearance_date = null;
+        }
+
+        if ($this->clearance_status_id == 2){
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'required|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'clearance_date' => 'sometimes|nullable|date',
+                'for_disposal' => 'boolean',
+            ]);
+        } else {
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'required|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'for_disposal' => 'boolean',
+            ]);
+        }
+
+        // Clean up empty optional fields (convert "" or empty strings to null for MySQL)
+        foreach ($validated as $key => $value) {
+            if ($value === '' || (is_string($value) && trim($value) === '')) {
+                $validated[$key] = null;
+            }
+        }
 
         if ($this->scholar->exists) {
             $this->scholar->update($validated);
@@ -440,12 +608,27 @@ class Edit extends Component
 
     public function render()
     {
+        $provinces = $this->region_id
+            ? \App\Models\Province::where('region_id', $this->region_id)->orderBy('name')->get()
+            : collect();
+
+        $municipalities = $this->province_id
+            ? \App\Models\Municipality::where('province_id', $this->province_id)->orderBy('name')->get()
+            : collect();
+
+        $barangays = $this->municipality_id
+            ? \App\Models\Barangay::where('municipality_id', $this->municipality_id)->orderBy('name')->get()
+            : collect();
+
         return view('livewire.scholars.edit', [
-            'scholarships' => ScholarshipProgram::all(),
-            'scholarshipTypes' => ScholarshipProgramType::all(),
+            'scholarships' => Scholarship::all(),
+            'scholarshipTypes' => ScholarshipType::all(),
             'schools' => School::orderBy('name')->get(),
             'courses' => Course::orderBy('name')->get(),
-            'regions' => Region::orderBy('name')->get(),
+            'regions' => Region::orderBy('abbreviation')->get(),
+            'provinces' => $provinces,
+            'municipalities' => $municipalities,
+            'barangays' => $barangays,
             'clearanceStatuses' => ClearanceStatus::all(),
             'availableFileTypes' => FileType::orderBy('name')->get(),
         ])->layout('layouts.app');

@@ -30,14 +30,14 @@ return new class extends Migration
             $table->foreignId('school_id')->nullable(false)->constrained('schools')->restrictOnDelete();
             $table->foreignId('course_id')->nullable(false)->constrained('courses')->restrictOnDelete();
 
-            $table->string('barangay', 100)->nullable();
-            $table->string('municipality', 100)->nullable();
-            $table->string('district', 100)->nullable();
-            $table->string('province', 100)->nullable();
+           
             $table->foreignId('region_id')->nullable(false)->constrained('regions')->restrictOnDelete();
+            $table->foreignId('province_id')->nullable()->constrained('provinces')->restrictOnDelete();
+            $table->foreignId('municipality_id')->nullable()->constrained('municipalities')->restrictOnDelete();
+            $table->foreignId('barangay_id')->nullable()->constrained('barangays')->restrictOnDelete();
 
             $table->foreignId('clearance_status_id')->nullable(false)->constrained('clearance_statuses')->restrictOnDelete()->default(0);
-            $table->dateTime('clearance_date')->nullable();
+            $table->date('clearance_date')->nullable();
             $table->boolean('for_disposal')->nullable(false)->default(false);
 
             // Flattened Column for Full-Text Search

@@ -20,7 +20,39 @@ Required fields on every entry (newest first under the day heading):
 
 Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
----
+## 2026-08-28
+
+- **Date:** 2026-08-28
+- **Time:** 00:08:30 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Removed leftover `dd($this)` in `Edit.php` and sanitized empty string form inputs to `null` before model update, resolving `SQLSTATE[22007]` date format error on `clearance_date`. Added Eloquent date cast for `clearance_date` in `Scholar.php`.
+- **Linked:** `app/Livewire/Scholars/Edit.php`, `app/Models/Scholar.php`, `CHANGELOG.md`
+
+## 2026-08-25
+
+- **Date:** 2026-08-25
+- **Time:** 22:16:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Updated `file-search.blade.php` Alpine `x-show` and `:class` directives to use `$wire.query.trim() !== ''` so dropdown menu reacts dynamically on client-side state updates.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `CHANGELOG.md`
+
+- **Date:** 2026-08-25
+- **Time:** 22:05:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Added `middle_name` key to `searchResults` array mapping in `file-search.blade.php` to prevent `Undefined array key "middle_name"` error during Livewire search rendering.
+- **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `CHANGELOG.md`
 
 ## 2026-08-28
 
@@ -114,6 +146,44 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Commit/PR:** pending
 - **Summary:** Refactored Dashboard search UI to eliminate flex-shrink jumping, added Recent Searches mocked UI, added Alpine.js animations, and filed backend handoff Issue 11.
 - **Linked:** `resources/views/livewire/dashboard/file-search.blade.php`, `resources/css/components/_file-search.scss`, `planning/HANDOFF_GITHUB_ISSUES.md`, `CHANGELOG.md`
+
+- **Date:** 2026-08-10
+- **Time:** 03:01:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Chan / Antigravity
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update — CHAN_ACK decisions + UUID RFC
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Chan ACK'd Wakin Q02=B, Q05=B, Q07=C. Created UUID documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`). Folders RFC marked decided/parked. Answers lock fully unblocked for thin slice PRs.
+- **Linked:** `docs/db/DOCUMENTS_UUID_RFC.md`, `planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`, `planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`, `CHANGELOG.md`
+
+---
+
+## 2026-08-08
+
+- **Date:** 2026-08-08
+- **Time:** 16:56:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Composer / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** docs update + script
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Added EC2 single-box staging sandbox runbook and host deploy script; cross-linked from AGENTS and AWS production prompt (sandbox ≠ Decision Gate prod).
+- **Linked:** `planning/AWS_STAGING_EC2_RUNBOOK.md`, `scripts/deploy-staging.sh`, `AGENTS.md`, `planning/AWS_PRODUCTION_DEPLOYMENT_PROMPT.md`, `CHANGELOG.md`
+
+---
+
+## 2026-08-10
+
+- **Date:** 2026-08-10
+- **Time:** 22:18:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** fix
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Fixed PHP TypeError in `App\Livewire\Scholars\Files\Edit`: removed typed `$file_types` property expectation mismatch and called `->get()` to set `$fileTypes` collection.
+- **Linked:** `app/Livewire/Scholars/Files/Edit.php`, `CHANGELOG.md`
 
 - **Date:** 2026-08-10
 - **Time:** 03:01:00 +08:00
@@ -377,5 +447,6 @@ Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 - **Action:** Code edit
 - **Commit/PR:** #92
 - **Summary:** Added Alpine listener for document-updated event and session flash support in notification-toast to support Waken's backend DocumentObserver.
-- **Linked:** esources/views/components/notification-toast.blade.php, CHANGELOG.md
+- **Linked:** 
+esources/views/components/notification-toast.blade.php, CHANGELOG.md
 

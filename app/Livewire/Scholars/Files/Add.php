@@ -14,7 +14,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class Edit extends Component
+class Add extends Component
 {
     use WithFileUploads;
 
@@ -30,31 +30,26 @@ class Edit extends Component
 
     public $file_size = '';
 
-    public array $metadata = [];
+    public array|null $metadata = [];
 
     public $metadataObj;
 
-    public Scholar $scholar;
+    public Scholar|null $scholar;
 
-    public Document $document;
+    public Document|null $document;
 
     public $compiledFile;
 
-    public function mount(Scholar $scholar, Document $document): void
+    public function mount(Scholar $scholar): void
     {
-        // Eager load the latest version and file type
-        $this->document = $document;
-        $this->document->load('currentVersion.fileType');
-        $this->metadata = $this->document->metadata ?? [];
-        $this->metadata['date_issued'] = $this->document->date_issued;
-
-        $version = $this->document->currentVersion;
-        $this->file_type_id = $version?->file_type_id;
-        $this->file_name = $version?->original_filename ?? $version?->stored_filename;
-        $this->mime_type = $version?->mime_type;
-        $this->file_size = $version?->file_size_bytes;
-
-        // dd($version, $this->metadata);
+        // We need to find a way to populate the areas here
+        $this->document = null;
+        $this->metadata = null;
+        $version = -1;
+        $this->file_type_id = -1;
+        $this->file_name = '';
+        $this->mime_type = null;
+        $this->file_size = -1;
     }
 
     #[Computed]
@@ -78,8 +73,7 @@ class Edit extends Component
                 function ($attribute, $value, $fail) {
                     $exists = DocumentVersion::whereHas('document', function ($query) {
                         $query->where('documentable_type', Scholar::class)
-                            ->where('documentable_id', $this->scholar->id)
-                            ->where('uuid', '!=', $this->document->uuid);
+                            ->where('documentable_id', $this->scholar->id);
                     })->where('original_filename', $value)->exists();
 
                     if ($exists) {
@@ -106,44 +100,31 @@ class Edit extends Component
         $fileType = FileType::find($this->file_type_id);
         $typeFolder = $fileType ? Str::slug($fileType->name, '_') : '';
         $relativePath = 'documents/'.($typeFolder ? $typeFolder.'/' : '').$storedFilename;
+        
+        Storage::disk('local')->put($relativePath, $pdfContent);
+        $metadata = $this->metadata;
+        $dateIssued = $metadata['date_issued'] ?? $this->date_issued;
 
-        // 1-3. Merge document attributes & current version attributes into beforePayload (zero extra queries)
-        $beforeVersion = $this->document->currentVersion ? $this->document->toArray() : [];
-        $beforePayload = array_merge($beforeVersion, [
-            'current_version' => $this->document->currentVersion->toArray(),
-        ]);
-
-        DB::transaction(function () use ($filename, $storedFilename, $relativePath, &$pdfContent) {
-            // Save binary PDF directly to storage disk
-            Storage::disk('local')->put($relativePath, $pdfContent);
-
-            $metadata = $this->metadata;
-            $dateIssued = $metadata['date_issued'] ?? $this->document->date_issued;
-            unset($metadata['date_issued']);
-
-            // Update document metadata & date_issued
-            $this->document->update([
-                'date_issued' => $dateIssued,
-                'metadata' => $metadata,
-            ]);
-
-            // 2. Increment version number for history tracking
-            $nextVersion = $this->document->versions()->count() + 1;
-
-            // 3. Insert new DocumentVersion record
-            $this->document->versions()->create([
+        Document::createWithInitialVersion(
+            [
+                'uuid' => (string) Str::uuid(),
+                'documentable_type' => Scholar::class,
+                'documentable_id' => $this->scholar->id,
+                'date_issued' => $metadata['date_issued'],
+                'status' => 'active',
+                'metadata' => $this->metadata,
+            ],
+            [
                 'file_type_id' => $this->file_type_id,
-                'original_filename' => $this->file_name ?: $filename,
+                'original_filename' => $this->file_name,
                 'stored_filename' => $storedFilename,
                 'file_path' => $relativePath,
                 'mime_type' => 'application/pdf',
                 'file_size_bytes' => strlen($pdfContent),
-                'version_number' => $nextVersion,
+                'version_number' => 1,
                 'uploaded_by' => auth()->id(),
-            ]);
-
-            $this->document->load('currentVersion.fileType');
-        });
+            ]
+        );
 
         unset($pdfContent);
 
@@ -155,6 +136,6 @@ class Edit extends Component
     // Runs every time a component is updated
     public function render()
     {
-        return view('livewire.scholars.files.edit')->layout('layouts.app');
+        return view('livewire.scholars.files.add')->layout('layouts.app');
     }
 }

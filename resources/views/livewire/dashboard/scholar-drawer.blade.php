@@ -10,16 +10,18 @@ new class extends Component
 {
     public bool $isOpen = false;
     public ?int $scholarId = null;
-    public ?array $scholarData = null;
-    public array $fileGroups = [];
 
     public string $activeFolderTab = 'Amendatory Agreement';
-    public array $expandedFolders = ['Amendatory Agreement', 'Report of Grades'];
+    public array $expandedFolders = [];
 
     public bool $showActionMenu = false;
     public bool $showStatusModal = false;
-    public array $file_groups = [];
-    public array $file_types = [];
+
+    /**
+     * Protected memory cache for the current request lifecycle.
+     * Prevents duplicate DB queries without serializing sensitive data into wire:snapshot.
+     */
+    protected ?array $cachedScholarData = null;
 
     public function mount(): void
     {
@@ -30,16 +32,30 @@ new class extends Component
         }
     }
 
+    public function render(): \Illuminate\View\View
+    {
+        $data = $this->loadScholar();
+
+        return view('livewire.dashboard.scholar-drawer', [
+            'scholarData' => $data['scholarData'],
+            'file_groups' => $data['file_groups'],
+        ]);
+    }
+
+    #[On("document-deleted")]
+    public function onDocumentDeleted(): void
+    {
+        $this->cachedScholarData = null;
+    }
+
     #[On('open-scholar-drawer')]
     public function openDrawer(int|string $scholarId, ?array $scholarData = null): void
     {
         $this->scholarId = (int) $scholarId;
         $this->isOpen = true;
-        if ($scholarData) {
-            $scholarData['id'] = $this->scholarId;
-            $this->scholarData = $scholarData;
-        }
-        $this->loadScholar();
+        $this->cachedScholarData = null;
+        $data = $this->loadScholar();
+        $this->expandedFolders = array_keys($data['file_groups']);
     }
 
     public function closeDrawer(): void
@@ -68,17 +84,15 @@ new class extends Component
 
     public function updateStatus(string $newStatus): void
     {
-        if ($this->scholarData) {
+        if ($this->scholarId) {
             $statusValue = in_array($newStatus, ['Clear', 'Cleared'], true) ? 'Cleared' : 'Not Cleared';
-            $this->scholarData['status'] = $statusValue;
-            if ($this->scholarId) {
-                $dbScholar = Scholar::find($this->scholarId);
-                if ($dbScholar) {
-                    $statusModel = \App\Models\ClearanceStatus::where('name', $statusValue)->first();
-                    if ($statusModel) {
-                        $dbScholar->clearance_status_id = $statusModel->id;
-                        $dbScholar->save();
-                    }
+            $dbScholar = Scholar::find($this->scholarId);
+            if ($dbScholar) {
+                $statusModel = \App\Models\ClearanceStatus::where('name', $statusValue)->first();
+                if ($statusModel) {
+                    $dbScholar->clearance_status_id = $statusModel->id;
+                    $dbScholar->save();
+                    $this->cachedScholarData = null;
                 }
             }
         }
@@ -96,7 +110,8 @@ new class extends Component
 
     public function openDocument(string $folderName, int $index): void
     {
-        $folderFiles = $this->file_groups[$folderName] ?? [];
+        $data = $this->loadScholar();
+        $folderFiles = $data['file_groups'][$folderName] ?? [];
         $document = $folderFiles[$index] ?? null;
 
         if (!$document) {
@@ -109,7 +124,7 @@ new class extends Component
         $this->dispatch('open-document-viewer',
             title: (string) ($document['file_type_name'] ?? $document['file_name'] ?? 'Document'),
             fileUrl: (string) $secureStreamUrl,
-            scholarName: (string) ($this->scholarData['name'] ?? 'Scholar'),
+            scholarName: (string) ($data['scholarData']['name'] ?? 'Scholar'),
             fileType: str_contains($document['mime_type'] ?? '', 'image') ? 'image' : 'pdf',
             documentIndex: (int) $index,
             scholarId: (int) ($this->scholarId ?? -1),
@@ -117,21 +132,33 @@ new class extends Component
         );
     }
 
-
-    public function loadScholar(): void
+    public function loadScholar(): array
     {
+        if ($this->cachedScholarData !== null) {
+            return $this->cachedScholarData;
+        }
+
+        if (!$this->scholarId) {
+            return $this->cachedScholarData = [
+                'scholarData' => null,
+                'file_groups' => [],
+            ];
+        }
+
         $dbScholar = Scholar::with([
             'scholarship',
             'scholarshipType',
             'school',
             'course',
             'region',
+            'province',
+            'municipality',
+            'barangay',
             'clearanceStatus',
-            'documents.currentVersion.fileType',
         ])->find($this->scholarId);
-        
-        // load all files
-        
+
+        // dd($dbScholar);
+
         $files = DB::select("
             WITH RankedVersions AS (
                 SELECT 
@@ -164,72 +191,38 @@ new class extends Component
             WHERE d.documentable_type = :documentableType
                 AND d.documentable_id = :scholarId
                 AND d.deleted_at IS NULL
-            ORDER BY ft.name ASC;
+            ORDER BY ft.name ASC, rv.file_name ASC;
         ", [
             "documentableType" => "App\\Models\\Scholar", 
             "scholarId" => $this->scholarId
         ]);
 
         $filesArray = json_decode(json_encode($files), true);
-        $this->file_groups = collect($filesArray)->groupBy('file_type_name')->toArray();
-        $this->expandedFolders = array_keys($this->file_groups);
-
-        // Uncomment to see if the query works as intended.
-        // dd($this->file_groups);
+        $file_groups = collect($filesArray)->groupBy('file_type_name')->toArray();
 
         if ($dbScholar) {
-            $this->scholarData = [
+            $scholarData = [
+                'id' => $dbScholar->id,
                 'name' => "{$dbScholar->last_name}, {$dbScholar->first_name} {$dbScholar->middle_name}",
-                'spas_id' => $dbScholar->spas_no ?? 'null',
-                'program' => $dbScholar->scholarship->name ??  'null',
-                'program_type' => $dbScholar->scholarshipType->name ?? 'null',
-                'year_of_award' => $dbScholar->year_of_award ?? 'null',
+                'spas_id' => $dbScholar->spas_no ?? '—',
+                'program' => $dbScholar->scholarship->name ?? ($dbScholar->scholarshipType->code ?? '—'),
+                'program_type' => $dbScholar->scholarshipType->name ?? '—',
+                'year_of_award' => $dbScholar->year_of_award ?? '—',
                 'clearance_date' => $dbScholar->clearance_date ? \Carbon\Carbon::parse($dbScholar->clearance_date, 'Asia/Manila')->format('m / d / Y') : 'None (Not Cleared)',
-                'course' => $dbScholar->course->name ?? 'null',
-                'university' => $dbScholar->school->name ? ($dbScholar->school->abbreviation ? ($dbScholar->school->name . ' (' . $dbScholar->school->abbreviation . ')') : $dbScholar->school->name) : 'null',
-                'address' => $dbScholar->barangay ? "{$dbScholar->barangay}, {$dbScholar->district}" : 'null',
-                'municipality' => $dbScholar->municipality ?? 'null',
-                'province' => $dbScholar->province ?? 'null',
-                'region' => $dbScholar->region->name ?? 'null',
-                'email' => $dbScholar->email_address ?? 'null',
-                'contact' => $dbScholar->contact_number ?? 'null',
-                'birthdate' => $dbScholar->birthdate ? \Carbon\Carbon::parse($dbScholar->birthdate)->format('m / d / Y') : 'null',
-                'sex' => $dbScholar->sex ?? 'null',
-                'status' => $dbScholar->clearanceStatus->name ?? 'null',
+                'course' => $dbScholar->course->name ?? '—',
+                'university' => $dbScholar->school->name ? ($dbScholar->school->abbreviation ? ($dbScholar->school->name . ' (' . $dbScholar->school->abbreviation . ')') : $dbScholar->school->name) : '—',
+                'address' => $dbScholar->barangay ? trim("{$dbScholar->barangay->name}") : '—',
+                'municipality' => $dbScholar->municipality->name ?? '—',
+                'province' => $dbScholar->province->name ?? '—',
+                'region' => $dbScholar->region->name ?? '—',
+                'email' => $dbScholar->email_address ?? '—',
+                'contact' => $dbScholar->contact_number ?? '—',
+                'birthdate' => $dbScholar->birthdate ? \Carbon\Carbon::parse($dbScholar->birthdate)->format('m / d / Y') : '—',
+                'sex' => $dbScholar->sex ?? '—',
+                'status' => $dbScholar->clearanceStatus->name ?? '—',
             ];
-
-            // Dynamically load and group active documents (file payload via currentVersion)
-            $documents = $dbScholar->documents->where('status', 'active');
-            if ($documents->isNotEmpty()) {
-                $grouped = [];
-                foreach ($documents as $doc) {
-                    $typeName = $doc->fileType->name ?? 'General Documents';
-                    if (! isset($grouped[$typeName])) {
-                        $isImage = str_contains($doc->mime_type ?? '', 'image');
-                        $grouped[$typeName] = [
-                            'name' => $typeName,
-                            'type' => $isImage ? 'image' : 'pdf',
-                            'items' => [],
-                        ];
-                    }
-                    $index = count($grouped[$typeName]['items']) + 1;
-                    $grouped[$typeName]['items'][] = [
-                        'id' => $doc->id,
-                        'title' => $typeName,
-                        'sub' => $doc->original_filename ?: "Document {$index}",
-                        'index' => $index,
-                        'totalPages' => 1,
-                        'url' => route('documents.view', $doc->id),
-                    ];
-                }
-                $this->fileGroups = array_values($grouped);
-                $this->expandedFolders = array_keys($grouped);
-            } else {
-                $this->fileGroups = [];
-            }
-        } elseif (!$this->scholarData) {
-            // Demonstration mock data matching Screenshots
-            $this->scholarData = [
+        } else {
+            $scholarData = [
                 'id' => $this->scholarId ?? 1,
                 'name' => 'Maclang, Wakin Cean C.',
                 'spas_id' => 'U-2023-00855-2235',
@@ -249,9 +242,14 @@ new class extends Component
                 'sex' => 'Male',
                 'status' => 'Not Cleared',
             ];
-            $this->fileGroups = [];
         }
+
+        return $this->cachedScholarData = [
+            'scholarData' => $scholarData,
+            'file_groups' => $file_groups,
+        ];
     }
+
 }; ?>
 
 <div>
@@ -387,8 +385,20 @@ new class extends Component
 
                 {{-- Bottom Section: Scanned Files Accordion --}}
                 <div class="scholar-drawer__scanned-section">
-                    <div class="d-flex justify-content-end mb-2">
-                        <span class="small text-muted fw-medium">Scanned Files</span>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="small text-muted fw-semibold text-uppercase" style="letter-spacing: 0.5px;">Scanned Files</span>
+                        <div class="folder-tab-actions">
+                            <a 
+                                href="{{ route('scholars.files.add', ['scholar' => $scholarId]) }}" 
+                                wire:navigate 
+                                class="btn-folder-action btn-folder-action--primary shadow-sm"
+                            >
+                                Add New Document
+                            </a>
+                            <button type="button" class="btn-folder-action btn-folder-action--secondary shadow-sm">
+                                Sort
+                            </button>
+                        </div>
                     </div>
 
                     @foreach ($file_groups as $folderName => $items)

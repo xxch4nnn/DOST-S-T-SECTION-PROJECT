@@ -51,8 +51,8 @@
                             @error('birthdate') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Contact Number</label>
-                            <input wire:model="contact_number" type="text" placeholder="09171234567" class="form-control">
+                            <label class="form-label">Contact Number <span class="text-danger">*</span></label>
+                            <input wire:model="contact_number" type="text" placeholder="09171234567" class="form-control" required>
                             @error('contact_number') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-3">
@@ -101,13 +101,13 @@
                             <select wire:model="school_id" class="form-select" required>
                                 <option value="">Select...</option>
                                 @foreach($schools as $s)
-                                    <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->campus }})</option>
+                                    <option value="{{ $s->id }}">{{ $s->name }} ({{ $s->campus ?? 'Main' }})</option>
                                 @endforeach
                             </select>
                             @error('school_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Course</label>
+                            <label class="form-label">Program & Course <span class="text-danger">*</span></label>
                             <select wire:model="course_id" class="form-select">
                                 <option value="">Select...</option>
                                 @foreach($courses as $c)
@@ -117,7 +117,7 @@
                             @error('course_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Program / Major / Specialization Details</label>
+                            <label class="form-label">Major / Specialization Details</label>
                             <input wire:model="program" type="text" class="form-control">
                             @error('program') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>

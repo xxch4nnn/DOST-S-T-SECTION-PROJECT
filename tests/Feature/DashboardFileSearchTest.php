@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -26,6 +27,7 @@ class DashboardFileSearchTest extends TestCase
         $this->seed(RolesAndPermissionsSeeder::class);
         $user = User::factory()->create(['email_verified_at' => now()]);
         $user->assignRole('Encoder');
+        $this->actingAs($user);
 
         $scholarship = Scholarship::create(['name' => 'RA 7687', 'is_available' => true]);
         $scholarshipType = ScholarshipType::create(['name' => 'Undergrad', 'is_available' => true]);
@@ -33,7 +35,12 @@ class DashboardFileSearchTest extends TestCase
         $course = Course::create(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::create(['name' => 'XI', 'abbreviation' => 'R11', 'is_available' => true]);
         $status = ClearanceStatus::create(['name' => 'Active', 'is_available' => true]);
-        $fileType = FileType::create(['name' => 'Notice of Award']);
+        $fileGroup = FileGroup::create(['name' => 'Scholarly Documents', 'slug' => 'scholarly_documents']);
+        $fileType = FileType::create([
+            'name' => 'Notice of Award',
+            'file_group_id' => $fileGroup->id,
+            'metadata_template' => json_encode([]),
+        ]);
 
         $scholar = Scholar::create([
             'first_name' => 'Luna',
@@ -46,6 +53,7 @@ class DashboardFileSearchTest extends TestCase
             'region_id' => $region->id,
             'clearance_status_id' => $status->id,
             'spas_no' => '2024-SEARCH-1',
+            'contact_number' => '09123456789',
         ]);
 
         Document::createWithInitialVersion(

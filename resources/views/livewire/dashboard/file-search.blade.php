@@ -8,6 +8,8 @@ new class extends Component
 {
     public string $query = '';
 
+    public $item;
+
     /** Empty until backend persistence (#85); no production-visible mock identity. */
     public array $recentSearches = [];
 
@@ -59,7 +61,7 @@ new class extends Component
                                 });
                         });
                 })
-                ->limit(15)
+                ->limit(5)
                 ->get();
 
             foreach ($dbResults as $scholar) {
@@ -67,6 +69,7 @@ new class extends Component
                     'id' => $scholar->id,
                     'last_name' => $scholar->last_name,
                     'first_name' => $scholar->first_name,
+                    'middle_name' => $scholar->middle_name,
                     'spas_no' => $scholar->spas_no ?? '—',
                     'program_type' => $scholar->scholarship->name ?? '—',
                     'program_level' => $scholar->scholarshipType->name ?? ($scholar->program ?? '—'),
@@ -75,7 +78,7 @@ new class extends Component
                 ];
             }
         }
-
+    
         return [
             'searchResults' => $results,
         ];
@@ -89,12 +92,12 @@ new class extends Component
 
 <div class="file-search" x-data="{ focused: false }" @click.away="focused = false">
     <div class="file-search__wrapper"
-         :class="{ 'file-search__wrapper--has-dropdown': @js($hasQuery) || (focused && @js($hasRecent)) }">
+         :class="{ 'file-search__wrapper--has-dropdown': $wire.query.trim() !== '' || (focused && @js($hasRecent)) }">
 
         {{-- Search Input Bar --}}
         <div class="file-search__input-group">
             <i class="ph ph-magnifying-glass file-search__icon"
-               :class="{ 'file-search__icon--focused': focused && !@js($hasQuery) }"></i>
+               :class="{ 'file-search__icon--focused': focused && $wire.query.trim() === '' }"></i>
             <input wire:model.live.debounce.250ms="query"
                    @focus="focused = true"
                    type="text"
@@ -103,7 +106,7 @@ new class extends Component
                    id="dashboard-search"
                    autocomplete="off" />
 
-            @if(! $hasQuery && $hasRecent)
+            @if(!$hasQuery && $hasRecent)
                 <button x-show="focused"
                         wire:click="clearAllRecentSearches"
                         class="file-search__clear-btn"
@@ -118,7 +121,7 @@ new class extends Component
 
         {{-- Expanded Search Results List --}}
         <div class="file-search__dropdown"
-             x-show="@js($hasQuery) || (focused && @js($hasRecent))"
+             x-show="$wire.query.trim() !== '' || (focused && @js($hasRecent))"
              x-transition.opacity.duration.200ms
              style="display: none;">
 
@@ -135,7 +138,7 @@ new class extends Component
 
                             <div class="search-result-item__name">
                                 <span class="fw-bold">{{ $item['last_name'] }},</span>
-                                <span class="text-secondary ms-1">{{ $item['first_name'] $item['middle_name']  }}</span>
+                                <span class="text-secondary ms-1">{{ $item['first_name'] }} {{ $item['middle_name']  }}</span>
                             </div>
 
                             <div class="search-result-item__spas">

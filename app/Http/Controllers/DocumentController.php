@@ -71,19 +71,19 @@ class DocumentController extends Controller
         }
 
         $lastModified = file_exists($absolutePath) ? filemtime($absolutePath) : time();
-        $versionKey = $version ? ($version->id . '-' . $version->version_number) : $id;
-        $etag = '"' . md5($versionKey . '-' . $lastModified) . '"';
+        $versionKey = $version ? ($version->id.'-'.$version->version_number) : $id;
+        $etag = '"'.md5($versionKey.'-'.$lastModified).'"';
 
         // Check if client sent If-None-Match header matching current ETag
         $ifNoneMatch = request()->header('If-None-Match');
         if ($ifNoneMatch && (trim($ifNoneMatch) === $etag || trim($ifNoneMatch) === '*')) {
             return response()->noContent(304, [
-                'ETag'          => $etag,
+                'ETag' => $etag,
                 'Cache-Control' => 'private, no-cache, revalidate',
             ]);
         }
 
-        $mimeType = (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null) 
+        $mimeType = (function_exists('mime_content_type') ? @mime_content_type($absolutePath) : null)
             ?? 'application/pdf';
 
         return response()->file($absolutePath, [
@@ -92,5 +92,12 @@ class DocumentController extends Controller
             'ETag'                => $etag,
             'Cache-Control'       => 'private, no-cache, revalidate',
         ]);
+    }
+
+    public function deleteDocument(string|int $documentId)
+    {
+        $document = Document::findOrFail($documentId);
+        $document->delete();
+        return to_route('scholars.show', $document->scholar_id);
     }
 }

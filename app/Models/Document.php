@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Observers\DocumentObserver;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -21,10 +20,13 @@ class Document extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $primaryKey = 'uuid';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     public $timestamps = true;
+
     protected $fillable = [
         'uuid',
         'documentable_type',
@@ -60,7 +62,7 @@ class Document extends Model
                 'uuid' => $shell['uuid'] ?? (string) Str::uuid(),
                 'documentable_type' => $shell['documentable_type'],
                 'documentable_id' => $shell['documentable_id'],
-                'date_issued' => $shell['date_issued'],
+                'date_issued' => $shell['date_issued'] ?? now()->toDateString(),
                 'status' => $shell['status'] ?? 'active',
                 'metadata' => $shell['metadata'] ?? null,
             ]);

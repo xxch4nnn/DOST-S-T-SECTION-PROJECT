@@ -2,6 +2,7 @@
 
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
+use App\Models\Document;
 
 new class extends Component
 {
@@ -172,7 +173,10 @@ new class extends Component
 
     public function deleteDocument(): void
     {
-        $this->dispatch('delete-requested', fileUrl: $this->fileUrl);
+        $document = Document::findOrFail($this->documentId);
+        $document->delete();
+        $this->closeViewer();
+        $this->dispatch('document-deleted', documentId: $this->documentId);
     }
 }; ?>
 
@@ -202,7 +206,7 @@ new class extends Component
         {{-- ========================================================= --}}
         {{-- TOP CONTROL TOOLBAR                                       --}}
         {{-- ========================================================= --}}
-            <div class="doc-viewer-toolbar {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-toolbar--collapsed-sidebar' : '' }}">
+            <div class="doc-viewer-toolbar {{ $fileType === 'image' ? 'doc-viewer-toolbar--collapsed-sidebar' : '' }}">
                 @if($fileType === 'pdf')
                     <span id="docViewerPageDisplay" class="small fw-semibold text-secondary me-2">Page {{ $currentPage }} / {{ $totalPages }}</span>
                     <div class="doc-viewer-toolbar__divider me-1"></div>
@@ -231,31 +235,31 @@ new class extends Component
                 <button wire:click="editFile" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none" title="Edit File">
                     <i class="ph ph-pencil-simple fs-5"></i>
                 </button>
-                <button wire:click="deleteDocument" type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
+                <button wire:click="deleteDocument" wire:confirm="Are you sure you want to delete this document? This cannot be undone." type="button" class="btn btn-link text-danger p-1 border-0 shadow-none" title="Delete">
                     <i class="ph ph-trash fs-5"></i>
                 </button>
 
-                @if($fileType === 'pdf' && $totalPages > 1)
+                @if($fileType === 'pdf')
                     <div class="doc-viewer-toolbar__divider mx-1"></div>
-                    <button wire:click="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
+                    <button onclick="goToPrevPage()" id="prevPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage <= 1 ? 'disabled opacity-25' : '' }}" title="Previous Page">
                         <i class="ph ph-caret-left fs-5"></i>
                     </button>
-                    <button wire:click="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
+                    <button onclick="goToNextPage()" id="nextPage" type="button" class="btn btn-link text-dark p-1 border-0 shadow-none {{ $currentPage >= $totalPages ? 'disabled opacity-25' : '' }}" title="Next Page">
                         <i class="ph ph-caret-right fs-5"></i>
                     </button>
                 @endif
             </div>
 
             {{-- FLOATING OVERLAY CHEVRONS --}}
-            <button wire:click="{{ $fileType === 'image' ? 'prevImage' : 'prevPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--left" title="Previous">
+            {{-- <button wire:click="{{ $fileType === 'image' ? 'prevImage' : 'prevPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--left" title="Previous">
                 <i class="ph ph-caret-left fs-2 text-white"></i>
             </button>
             <button wire:click="{{ $fileType === 'image' ? 'nextImage' : 'nextPage' }}" type="button" class="doc-viewer-overlay-arrow doc-viewer-overlay-arrow--right" title="Next">
                 <i class="ph ph-caret-right fs-2 text-white"></i>
-            </button>
+            </button> --}}
 
             {{-- MAIN CANVAS DISPLAY AREA --}}
-            <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image' || $totalPages <= 1) ? 'doc-viewer-canvas-wrapper--full' : '' }}">
+            <div class="doc-viewer-canvas-wrapper {{ ($fileType === 'image') ? 'doc-viewer-canvas-wrapper--full' : '' }}">
                 @if($fileType === 'image')
                     <div class="doc-viewer-image-container">
                         <div class="doc-viewer-image-paper shadow-lg" style="overflow: auto;">
@@ -273,7 +277,7 @@ new class extends Component
                     </div>
 
                 @elseif($fileType === 'pdf' && $fileUrl)
-                    <div class="doc-viewer-canvas h-100 w-100 overflow-auto text-center">
+                    <div class="doc-viewer-canvas h-100 w-100 text-center">
                         <div id="docViewerPaperContainer" wire:ignore oncontextmenu="return false;" class="doc-viewer-paper shadow-lg bg-white rounded p-4 mx-auto" style="user-select: none; -webkit-user-select: none;">
                             <div id="docViewerPaperContent" style="transform: scale({{ $zoom / 100 }}); transform-origin: top center; transition: transform 0.2s ease; width: 100%;">
                                 <div id="docViewerLoading" class="py-5 text-muted">
@@ -307,24 +311,63 @@ new class extends Component
         let pdfDocInstance = null;
         let currentRenderTaskId = 0;
 
-        // A listener that waits for the paper container element to render before placing images within it.
-        function waitForElement(selector, maxTries = 30) {
+        // A listener that waits for the element to render in the DOM using MutationObserver & fallback polling.
+        function waitForElement(selector, maxTries = 200, interval = 50) {
             return new Promise((resolve) => {
+                const existing = document.querySelector(selector);
+                if (existing) {
+                    return resolve(existing);
+                }
+
                 let count = 0;
-                const check = () => {
+                let timer = null;
+
+                const cleanup = () => {
+                    if (observer) observer.disconnect();
+                    if (timer) clearInterval(timer);
+                };
+
+                const observer = new MutationObserver(() => {
                     const el = document.querySelector(selector);
                     if (el) {
+                        cleanup();
                         resolve(el);
-                    } else if (count < maxTries) {
-                        count++;
-                        setTimeout(check, 50);
-                    } else {
+                    }
+                });
+
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                timer = setInterval(() => {
+                    const el = document.querySelector(selector);
+                    if (el) {
+                        cleanup();
+                        resolve(el);
+                    } else if (++count >= maxTries) {
+                        cleanup();
                         resolve(null);
                     }
-                };
-                check();
+                }, interval);
             });
         }
+
+        window.goToPrevPage = function() {
+            const current = Number($wire.currentPage) || 1;
+            if (current > 1) {
+                const prev = current - 1;
+                updateCurrentPageDisplay(prev);
+                scrollToPdfPage(prev);
+            }
+        };
+
+        window.goToNextPage = function() {
+            const current = Number($wire.currentPage) || 1;
+            const total = Number($wire.totalPages) || 1;
+            if (current < total) {
+                const next = current + 1;
+                updateCurrentPageDisplay(next);
+                scrollToPdfPage(next);
+            }
+        };
 
         /**
          * A method that handles loading the PDF and rendering each of its pages to the paper container.
@@ -352,10 +395,12 @@ new class extends Component
             }
 
             if (taskId !== currentRenderTaskId) return;
-            const paperContainer = await waitForElement('#docViewerPaperContainer');
+            const paperContainer = await waitForElement('#docViewerPaperContainer', 200);
             const thumbContainer = document.getElementById('docViewerThumbContainer');
             if (!paperContainer || taskId !== currentRenderTaskId) {
-                console.error('Paper container doesn\'t exist in DOM.');
+                if (taskId === currentRenderTaskId) {
+                    console.error('Paper container doesn\'t exist in DOM.');
+                }
                 return;
             }
 
@@ -508,12 +553,13 @@ new class extends Component
             if (!pdfDocInstance || !container) return;
 
             // Displays the thumbnails if the total number of pages is greater than 1.
-            if (pdfDocInstance.numPages > 1) {
-                container.style.display = 'flex';
-            } else {
-                container.style.display = 'none';
-                return;
-            }
+            // if (pdfDocInstance.numPages > 1) {
+            //     container.style.display = 'flex';
+            // } else {
+            //     container.style.display = 'none';
+            //     return;
+            // }
+            container.style.display = 'flex';
 
             container.innerHTML = '';
             for (let i = 1; i <= pdfDocInstance.numPages; i++) {
@@ -553,6 +599,23 @@ new class extends Component
             const pageImg = document.getElementById(`pdf-page-${pageNum}`);
             if (pageImg) {
                 pageImg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            const prevPageButton = document.getElementById('prevPage');
+            const nextPageButton = document.getElementById('nextPage');
+
+            if (prevPageButton && nextPageButton) {
+                if (pageNum <= 1) {
+                    prevPageButton.classList.add('disabled', 'opacity-25');
+                } else {
+                    prevPageButton.classList.remove('disabled', 'opacity-25');
+                }
+                
+                if (pageNum >= $wire.totalPages) {
+                    nextPageButton.classList.add('disabled', 'opacity-25');
+                } else {
+                    nextPageButton.classList.remove('disabled', 'opacity-25');
+                }
             }
         }
 

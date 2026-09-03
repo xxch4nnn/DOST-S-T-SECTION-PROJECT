@@ -23,7 +23,12 @@ Every bullet **must** start with:
 - **2026-08-28 16:22:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — AIOps PR diff validation and inference service integration: added `validate-edit-pr` prompt contract and template, `scripts/validate_pr_diff.py` policy checking CLI, 8-case golden evaluation dataset with quality thresholds (`ai/eval/golden.jsonl`), evaluation runner (`scripts/run_eval.py`), inference endpoints (`/health`, `/metrics`, `/predict`, `/v1/validate-pr`), and comprehensive reviewer summary (`planning/REVIEWER_SUMMARY.md`).
 
 ### Fixed
-- **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
+- **2026-08-28 00:08:30 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Remove leftover `dd($this)` debug call in `App\Livewire\Scholars\Edit` and sanitize empty string form inputs to `null` before model updates, preventing `SQLSTATE[22007]` date format errors on `clearance_date`. Add `clearance_date` and `for_disposal` casts to `Scholar.php`.
+- **2026-08-25 22:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Switch `@js($hasQuery)` in `file-search.blade.php` Alpine `x-show` and `:class` directives to reactive `$wire.query.trim() !== ''` so the dropdown menu dynamically appears when typing search queries.
+- **2026-08-25 22:05:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Include `middle_name` key in `searchResults` array mapping in `file-search.blade.php` to prevent `Undefined array key "middle_name"` PHP error during search rendering.
+- **2026-08-18 23:35:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Fix `morphMany` relationship in `Scholar.php` by passing `'documentable'` prefix instead of `'documentable_type'`, preventing invalid `documentable_type_type` SQL column errors when loading scholar documents.
+- **2026-08-18 16:30:00 +08:00** · **Waken** (`@WakenMac` / Antigravity) — Remove redundant `overflow-auto` scrollbar on `.doc-viewer-canvas` in `document-viewer.blade.php` to eliminate the extra scroller in the document viewer overlay.
+- **2026-08-13 00:16:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Use `attributesToArray()` instead of `toArray()` in `DocumentVersionObserver` to prevent loaded Eloquent relations from being serialized and duplicated inside `current_version`. Move AuditLog creation to `DocumentVersionObserver`, restore `.doc-viewer-paper` scrollbars, and implement ETag / 304 HTTP caching in `DocumentController`.
 - **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
 
 ### Changed
@@ -44,8 +49,25 @@ Every bullet **must** start with:
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Folders RFC (`planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`) status: Open → **Decided: Park for post-V1** (Q07=C).
 - **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
 
+### Fixed
+- **2026-08-12 16:10:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Implement ETag / 304 Not Modified HTTP caching in `DocumentController::viewFile`: generate version-based ETag headers, validate `If-None-Match` for instant zero-bandwidth browser re-use when file is unchanged, and automatically invalidate cache whenever a new version is created. Raise memory limit to 512M for PDF binary processing, unify `$relativePath`, and simplify `currentVersion()` to `latestOfMany('id')`.
+- **2026-08-10 22:18:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Fix type error in `App\Livewire\Scholars\Files\Edit`: remove redundant typed `$file_types` property and fetch `FileType` collection using `->get()` assigned to `$fileTypes`.
+
+### Changed
+- **2026-08-10 03:55:00 +08:00** · **Chan** (`@xxch4nnn` / Composer) — UUID documents schema (#73): additive migrations reshape `documents` to thin shell (`uuid` dual-key kept with bigint `id`) and move file payload to `document_versions` (`file_path` relative, `file_size_bytes` bigint); upload/download callers + tests updated.
+
+### Added
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — UUID Documents RFC (`docs/db/DOCUMENTS_UUID_RFC.md`): additive migration plan for thin UUID `documents` shell + file data on `document_versions`, per CHAN_ACK Q05=B.
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — CHAN_ACK Q02=B, Q05=B, Q07=C on Wakin Q01–Q16 answers lock; all blockers resolved, automation unblocked for thin slice PRs.
+
+### Changed
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Folders RFC (`planning/RFC_Q05_FOLDERS_AS_DOCUMENTABLE.md`) status: Open → **Decided: Park for post-V1** (Q07=C).
+- **2026-08-10 03:01:00 +08:00** · **Chan** (`@xxch4nnn`) — Wakin answers lock (`planning/WAKIN_Q01_Q16_ANSWERS_LOCK_2026-08-10.md`): Q02/Q05/Q09 status updated from BLOCKED to ACK'd; execution order updated.
+
 ### Added
 - **2026-08-19 13:54:00 +08:00** · **Palab** (`@palab`) — Added Alpine listener for `document-updated` event and session flash support in `notification-toast.blade.php` to handle Waken's DocumentObserver backend events (PR #92).
+- **2026-08-19 13:54:00 +08:00** · **Palab** (`@palab`) — Added Alpine listener for `document-updated` event and session flash support in `notification-toast.blade.php` to handle Waken's DocumentObserver backend events (PR #92).
+- **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 16:56:00 +08:00** · **Chan** (`@xxch4nnn`) — EC2 staging sandbox runbook + `scripts/deploy-staging.sh` (single-box Nginx/PHP/MySQL path; not production Decision Gate) (`planning/AWS_STAGING_EC2_RUNBOOK.md`).
 - **2026-08-08 13:50:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar upload/edit persist `documents.metadata.category` alongside `document_versions` on staged saves (#65).
 - **2026-08-06 15:20:00 +08:00** · **Chan** (`@xxch4nnn`) — Scholar file upload wizard, edit-scholar document management, notifications center + corner toasts (#65 / `@Mushimuche`).

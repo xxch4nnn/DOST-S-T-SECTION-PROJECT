@@ -51,11 +51,15 @@
     gap: 1.75rem;
     z-index: 1070;
     pointer-events: auto;
-    overflow-y: auto;
+    overflow: hidden auto;
     scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE/Edge
 
     &::-webkit-scrollbar {
-        display: none; // Chrome/Safari
+        display: none !important; // Chrome/Safari/Brave
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
     }
 
     .doc-viewer-thumb {
@@ -182,7 +186,7 @@
     width: calc(50vw - 114px);
     max-width: none;
     height: calc(100vh - 5.75rem);
-    overflow: hidden;
+    overflow: hidden !important;
     z-index: 1060;
     transition: left 0.25s ease, width 0.25s ease;
 
@@ -196,7 +200,7 @@
 .doc-viewer-canvas {
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: hidden !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -217,18 +221,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: auto;
+    overflow: auto;
     scroll-behavior: smooth;
-
     user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
 
     img {
         user-select: none;
-        -webkit-user-select: none;
         -webkit-user-drag: none;
         -webkit-touch-callout: none;
         pointer-events: auto;
@@ -257,7 +255,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
 
     img {
         max-width: 100%;

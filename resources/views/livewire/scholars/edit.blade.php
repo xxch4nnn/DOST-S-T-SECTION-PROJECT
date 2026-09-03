@@ -14,7 +14,7 @@
     </div>
 
     {{-- Hidden data element for preloading existing categories & documents into JS --}}
-    <div id="existing-categories-data" data-categories='@json($scannedCategories)' style="display: none;"></div>
+    <div id="existing-categories-data" style="display: none;"></div>
 
     <form wire:submit="save" class="add-file-form-stack" id="scholarEditForm">
         {{-- Section 1: Basic Information --}}
@@ -136,34 +136,59 @@
             <h3 class="add-file-form-card__title">Demographic & Contact Information</h3>
 
             <div class="row g-3">
-                {{-- Row 1: 4 equal columns --}}
-                <div class="col-md-3 form-field-group">
-                    <label for="barangay">Address / Barangay</label>
-                    <input wire:model="barangay" type="text" id="barangay" class="form-control-custom" placeholder="e.g. Brgy. 34-D">
-                </div>
-
-                <div class="col-md-3 form-field-group">
-                    <label for="municipality">Municipality / City</label>
-                    <input wire:model="municipality" type="text" id="municipality" class="form-control-custom" placeholder="e.g. Davao City">
-                </div>
-
-                <div class="col-md-3 form-field-group">
-                    <label for="province">Province</label>
-                    <input wire:model="province" type="text" id="province" class="form-control-custom" placeholder="e.g. Davao del Sur">
-                </div>
-
+                {{-- Row 1: 4 columns (Hierarchical Location Dropdowns) --}}
                 <div class="col-md-3 form-field-group">
                     <label for="region_id">Region <span class="text-danger">*</span></label>
-                    <select wire:model="region_id" id="region_id" class="form-select-custom" required>
-                        <option value="">Select Region</option>
+                    <select wire:model.live.debounce.300ms="region_id" id="region_id" class="form-select-custom" required>
+                        <option value="" disabled {{ !empty($region_id) ? 'hidden' : '' }}>Select Region</option>
                         @foreach($regions as $reg)
-                            <option value="{{ $reg->id }}">{{ $reg->name }}</option>
+                            <option value="{{ $reg->id }}">{{ $reg->abbreviation }} ({{ $reg->name }})</option>
                         @endforeach
                     </select>
                     @error('region_id') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
-                {{-- Row 2: 4 columns --}}
+                <div class="col-md-3 form-field-group">
+                    <label for="province">Province</label>
+                    <select wire:model.live.debounce.300ms="province_id" id="province" class="form-select-custom" {{ empty($region_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($province_id) ? 'hidden' : '' }}>{{ empty($region_id) ? 'Select Region First' : 'Select Province' }}</option>
+                        @foreach($provinces as $prov)
+                            <option value="{{ $prov->id }}">{{ $prov->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('province_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="municipality">Municipality / City</label>
+                    <select wire:model.live.debounce.300ms="municipality_id" id="municipality" class="form-select-custom" {{ empty($province_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($municipality_id) ? 'hidden' : '' }}>{{ empty($province_id) ? 'Select Province First' : 'Select Municipality / City' }}</option>
+                        @foreach($municipalities as $muni)
+                            <option value="{{ $muni->id }}">{{ $muni->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('municipality_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="col-md-3 form-field-group">
+                    <label for="barangay">Address / Barangay</label>
+                    <select wire:model.live.debounce.300ms="barangay_id" id="barangay" class="form-select-custom" {{ empty($municipality_id) ? 'disabled' : '' }}>
+                        <option value="" disabled {{ !empty($barangay_id) ? 'hidden' : '' }}>{{ empty($municipality_id) ? 'Select Municipality/City First' : 'Select Barangay' }}</option>
+                        @foreach($barangays as $b)
+                            <option value="{{ $b->id }}">{{ $b->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('barangay_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 2: 1 full-width column --}}
+                <div class="col-12 form-field-group">
+                    <label for="home">Block & Lot / Street</label>
+                    <input wire:model="home" type="text" id="home" class="form-control-custom" placeholder="e.g. Block 1, Lot 2, Sobrecarey St.">
+                    @error('home') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Row 3: 4 columns --}}
                 <div class="col-md-3 form-field-group">
                     <label for="birthdate">Birthdate</label>
                     <input wire:model="birthdate" type="date" id="birthdate" class="form-control-custom">
@@ -179,12 +204,12 @@
 
                 <div class="col-md-3 form-field-group">
                     <label for="contact_number">Contact Number</label>
-                    <input wire:model="contact_number" type="text" id="contact_number" class="form-control-custom" placeholder="e.g. 09123456789">
+                    <input wire:model="contact_number" type="text" id="contact_number" class="form-control-custom" placeholder="e.g., 09123456789">
                 </div>
 
                 <div class="col-md-3 form-field-group">
                     <label for="email_address">Email Address</label>
-                    <input wire:model="email_address" type="email" id="email_address" class="form-control-custom" placeholder="e.g. scholar@example.com">
+                    <input wire:model="email_address" type="email" id="email_address" class="form-control-custom" placeholder="e.g., scholar@gmail.com">
                     @error('email_address') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
             </div>
@@ -203,6 +228,7 @@
             </div>
 
             <div class="upload-scanned-stack d-flex flex-column gap-4">
+                {{-- Iterating through the list of file type (as a group) => list of documents in that group (as a collection of documents) --}}
                 @foreach($scannedCategories as $catIndex => $cat)
                     <div class="scanned-file-box" wire:key="scanned-category-{{ $cat['id'] }}">
                         {{-- Category Header with Category Dropdown & Custom Rename Field --}}
@@ -346,8 +372,9 @@
     function populateInitialFiles() {
         const dataEl = document.getElementById('existing-categories-data');
         if (!dataEl) return;
+        
         try {
-            const categories = JSON.parse(dataEl.dataset.categories || '[]');
+            const categories = @json($scannedCategories) || [];
             categories.forEach(cat => {
                 if (!window.__stagedCategoryFiles[cat.id]) {
                     window.__stagedCategoryFiles[cat.id] = (cat.files || []).map(f => ({
@@ -361,7 +388,8 @@
                         isImage: f.is_image,
                         isExisting: true,
                         downloadUrl: f.download_url || f.url,
-                        previewUrl: f.thumbnail_url || (f.is_image ? f.url : null)
+                        previewUrl: f.thumbnail_url || (f.is_image ? f.url : null),
+                        viewUrl: f.view_url
                     }));
                 }
             });
@@ -406,26 +434,26 @@
             icon.className = item.isPdf ? 'ph ph-file-pdf text-danger fs-5' : 'ph ph-image text-primary fs-5';
 
             const nameSpan = document.createElement('span');
-            nameSpan.className = 'file-name text-truncate';
+            nameSpan.className = 'file-name';
             nameSpan.title = item.name;
             nameSpan.textContent = item.name;
 
             const sizeSpan = document.createElement('span');
-            sizeSpan.className = 'text-muted small ms-2';
+            sizeSpan.className = 'file-size ms-2';
             sizeSpan.textContent = `(${item.sizeFormatted})`;
 
             infoDiv.appendChild(icon);
             infoDiv.appendChild(nameSpan);
             infoDiv.appendChild(sizeSpan);
 
-            if (item.isExisting && item.downloadUrl) {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = item.downloadUrl;
-                downloadLink.target = '_blank';
-                downloadLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
-                downloadLink.title = 'View file';
-                downloadLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
-                infoDiv.appendChild(downloadLink);
+            if (item.isExisting && item.viewUrl) {
+                const viewLink = document.createElement('a');
+                viewLink.href = item.viewUrl;
+                viewLink.setAttribute("target", "_blank");
+                viewLink.className = 'btn-link text-primary ms-2 small text-decoration-none';
+                viewLink.title = 'View file';
+                viewLink.innerHTML = '<i class="ph ph-arrow-square-out fs-6"></i>';
+                infoDiv.appendChild(viewLink);
             }
 
             const removeBtn = document.createElement('button');
@@ -470,13 +498,13 @@
                 mediaContainer.appendChild(img);
             } else if (item.isPdf) {
                 const pdfPlaceholder = document.createElement('div');
-                pdfPlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
-                pdfPlaceholder.innerHTML = `<i class="ph ph-file-pdf text-danger fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                pdfPlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center w-100';
+                pdfPlaceholder.innerHTML = `<i class="ph ph-file-pdf text-danger fs-1"></i><span class="preview-filename" title="${item.name}">${item.name}</span>`;
                 mediaContainer.appendChild(pdfPlaceholder);
             } else {
                 const filePlaceholder = document.createElement('div');
-                filePlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center';
-                filePlaceholder.innerHTML = `<i class="ph ph-file text-primary fs-1"></i><span class="small fw-semibold text-muted text-truncate w-100 mt-1" style="font-size: 0.7rem;">${item.name}</span>`;
+                filePlaceholder.className = 'd-flex flex-column align-items-center justify-content-center h-100 p-2 text-center w-100';
+                filePlaceholder.innerHTML = `<i class="ph ph-file text-primary fs-1"></i><span class="preview-filename" title="${item.name}">${item.name}</span>`;
                 mediaContainer.appendChild(filePlaceholder);
             }
 

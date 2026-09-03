@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Document;
-use App\Models\DocumentVersion;
 use App\Models\File;
 use App\Models\FileType;
 use App\Models\Scholar;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DocumentSeeder extends Seeder
 {
@@ -20,56 +20,66 @@ class DocumentSeeder extends Seeder
         $groups = [
             // #[Fillable(['file_type_id', 'file_name', 'file_path', 'file_size', 'uploaded_at', 'updated_at', 'deleted_at', 'mime_type', 'metadata'])]
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 2nd Sem.pdf',  
-                'scholar_id'=>1,
-                'date_issued'=>'2026-01-12',
-                'metadata'=>[
-                    'semester'=> '2nd Semester',
-                    'year'=>2026,
-                ]
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 2nd Sem.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-01-12',
+                'metadata' => [
+                    'semester' => '2nd Semester',
+                    'year' => 2026,
+                ],
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 3rd Sem.pdf', 
-                'scholar_id'=>1, 
-                'date_issued'=>'2026-06-10',      
-                'metadata'=>[
-                    'semester'=> 'Off-Semester',
-                    'year'=>2026,
-                ]  
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 3rd Sem.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-06-10',
+                'metadata' => [
+                    'semester' => 'Off-Semester',
+                    'year' => 2026,
+                ],
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_1st Year 1st Sem.pdf',     
-                'scholar_id'=>1,  
-                'date_issued'=>'2026-07-28' ,
-                'metadata'=>[
-                    'semester'=> '1st Semester',
-                    'year'=>2023,
-                ]       
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_1st Year 1st Sem.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-07-28',
+                'metadata' => [
+                    'semester' => '1st Semester',
+                    'year' => 2023,
+                ],
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_3rd Year 2nd Sem.pdf',
-                'scholar_id'=>1,
-                'date_issued'=>'2026-07-28',
-                'metadata'=>[
-                    'semester'=> '2nd Semester',
-                    'year'=>2026,
-                ]      
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_3rd Year 2nd Sem.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-07-28',
+                'metadata' => [
+                    'semester' => '2nd Semester',
+                    'year' => 2026,
+                ],
             ],
             [
-                'file_path'=>'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',  
-                'scholar_id'=>1,  
-                'date_issued'=>'2026-05-08', 
-                'metadata'=>[
-                    'series_number'=> '20260508',
-                    'subject'=>'Conduct of Special Internal Elections for Clubs and Organizations',
-                    'description'=>'MEMORANDUM No. 02, s. 2026',
-                ]     
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-05-08',
+                'metadata' => [
+                    'series_number' => '20260508',
+                    'subject' => 'Conduct of Special Internal Elections for Clubs and Organizations',
+                    'description' => 'MEMORANDUM No. 02, s. 2026',
+                ],
             ],
+
+            [
+                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\TestToDelete.pdf',
+                'scholar_id' => 1,
+                'date_issued' => '2026-07-28',
+                'metadata' => [
+                    'semester' => '2nd Semester',
+                    'year' => 2026,
+                ],
+            ]
         ];
 
-        foreach($groups as $group){
+        foreach ($groups as $group) {
             $sourcePath = $group['file_path'];
-            if (!file_exists($sourcePath)) {
+            if (! file_exists($sourcePath)) {
                 continue;
             }
 
@@ -85,17 +95,16 @@ class DocumentSeeder extends Seeder
                 $typeName = 'Certificate of Grades';
             }
 
-
             // Store the file in local storage under documents/ using a unique UUID (ADR-005)
             $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-            $uuid = (string) \Illuminate\Support\Str::uuid();
-            $uuidName = $uuid . '.' . $extension;
-            $destinationRelativePath = 'documents/' . str_replace(' ', '_', $typeName) . '/' . $uuidName;
-            $destinationAbsolutePath = \Illuminate\Support\Facades\Storage::disk('local')->path($destinationRelativePath);
+            $uuid = (string) Str::uuid();
+            $uuidName = $uuid.'.'.$extension;
+            $destinationRelativePath = 'documents/'.str_replace(' ', '_', $typeName).'/'.$uuidName;
+            $destinationAbsolutePath = Storage::disk('local')->path($destinationRelativePath);
 
             // Ensure destination directory exists
             $destinationDir = dirname($destinationAbsolutePath);
-            if (!file_exists($destinationDir)) {
+            if (! file_exists($destinationDir)) {
                 mkdir($destinationDir, 0755, true);
             }
 
@@ -104,6 +113,9 @@ class DocumentSeeder extends Seeder
 
             $fileType = FileType::where('name', $typeName)->first();
             $fileTypeId = $fileType ? $fileType->id : 1;
+
+            $user = \App\Models\User::where('email', 'a@a')->first() ?? \App\Models\User::first();
+            $uploaderId = $user ? $user->id : 1;
 
             Document::createWithInitialVersion(
                 [
@@ -121,8 +133,8 @@ class DocumentSeeder extends Seeder
                     'file_path' => $destinationRelativePath,
                     'mime_type' => $mimeType,
                     'file_size_bytes' => $fileSize,
-                    'version_number' => 1, 
-                    'uploaded_by' => 3,
+                    'version_number' => 1,
+                    'uploaded_by' => $uploaderId,
                 ]
             );
         }

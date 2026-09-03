@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\AuditLog;
 use App\Models\Scholar;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Auth;
  */
 class ScholarObserver
 {
+    public bool $afterCommit = true;
+
+    /**
+     * Handle the Scholar "created" event.
+     */
     public function created(Scholar $scholar): void
     {
         $this->writeAudit('created', $scholar, before: null, after: $scholar->toArray());
@@ -31,7 +37,8 @@ class ScholarObserver
         );
     }
 
-    public function saving(Scholar $scholar){
+    public function saving(Scholar $scholar)
+    {
         // Prepares the full text search column
 
         $scholar->loadMissing(['school', 'course', 'scholarshipProgram', 'scholarshipProgramType', 'clearanceStatus']);
@@ -51,7 +58,7 @@ class ScholarObserver
             $scholar->contact_number,
             $scholar->email_address,
             $scholar->clearance_status?->name,      // e.g., "Cleared"
-            $scholar->clearance_date
+            $scholar->clearance_date,
         ]));
 
         $scholar->fts_search_data = $searchData;

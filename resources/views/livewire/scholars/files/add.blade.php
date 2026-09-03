@@ -13,10 +13,10 @@
             <div class="col-lg-8">
                 <div class="file-editor-card">
                     <div class="file-editor-header">
-                        <a href="{{ $return_url }}" class="back-btn" title="Back to previous page" wire:navigate>
+                        <a href="{{ $return_url . "?open_scholar=" . $scholar->id }}" class="back-btn" title="Back to previous page" wire:navigate>
                             <i class="ph ph-arrow-left fs-5"></i>
                         </a>
-                        <h3>Edit Scholar File</h3>
+                        <h3>Add Scholar File</h3>
                     </div>
 
                     <form id="file_upload_form">
@@ -283,39 +283,32 @@
             });
         }
 
-        async function loadSecurePDF() {
-            if (!@js($document?->uuid)){
-                console.error('No document is found.')
-                return;
-            } 
+        // Prevent default browser behavior on file drop
+        window.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        }, false);
 
-            try {
-                const fileId = 'existing_file';
-                const streamUrl = @js(route('documents.view', ['document' => $document->uuid])) + '?v=' + Date.now();
-                const fileName = @js($file_name ?: 'Existing Document.pdf');
+        window.addEventListener('drop', function(e) {
+            e.preventDefault();
+        }, false);
 
-                addFileToListUI(fileName, fileId);
+        function handleDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-                const response = await fetch(streamUrl, {
-                    headers: {
-                        'Accept': 'application/pdf',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status + ': Failed to fetch PDF stream.');
-                }
-
-                const buffer = await response.arrayBuffer();
-                await segmentAndPreviewPDF(buffer, fileId);
-            } catch (error) {
-                console.error("Error loading secure PDF into editor:", error);
+            const dropzone = document.getElementById('dropzone_files');
+            if (dropzone) {
+                dropzone.style.borderColor = '';
             }
-        }
 
-        fileInput.addEventListener('change', function(e) {
-            const files = Array.from(e.target.files);
+            const dt = event.dataTransfer;
+            if (!dt || !dt.files || dt.files.length === 0) return;
+
+            processFiles(Array.from(dt.files));
+        }
+        window.handleDrop = handleDrop;
+
+        function processFiles(files) {
             if (files.length === 0) return;
 
             previewWrapper.style.display = 'block';
@@ -331,7 +324,7 @@
                         createImageCard(event.target.result, fileId);
                     };
                     reader.readAsDataURL(file);
-                } else if (file.type === 'application/pdf') {
+                } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         segmentAndPreviewPDF(event.target.result, fileId);
@@ -339,7 +332,10 @@
                     reader.readAsArrayBuffer(file);
                 }
             });
+        }
 
+        fileInput.addEventListener('change', function(e) {
+            processFiles(Array.from(e.target.files));
             fileInput.value = ''; // Reset to allow re-upload
         });
 
@@ -549,63 +545,6 @@
             return canvas.toDataURL('image/jpeg', quality);
         }
 
-        // Prevent default browser behavior on file drop
-        window.addEventListener('dragover', function(e) {
-            e.preventDefault();
-        }, false);
-
-        window.addEventListener('drop', function(e) {
-            e.preventDefault();
-        }, false);
-
-        function handleDrop(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const dropzone = document.getElementById('dropzone_files');
-            if (dropzone) {
-                dropzone.style.borderColor = '';
-            }
-
-            const dt = event.dataTransfer;
-            if (!dt || !dt.files || dt.files.length === 0) return;
-
-            processFiles(Array.from(dt.files));
-        }
-        window.handleDrop = handleDrop;
-
-        function processFiles(files) {
-            if (files.length === 0) return;
-
-            previewWrapper.style.display = 'block';
-
-            files.forEach(file => {
-                // Generates an ID for the file (file_<date today>_<random numbers and letters as a string>)
-                const fileId = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                
-                addFileToListUI(file.name, fileId);
-
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        createImageCard(event.target.result, fileId);
-                    };
-                    reader.readAsDataURL(file);
-                } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')){
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        segmentAndPreviewPDF(event.target.result, fileId);
-                    };
-                    reader.readAsArrayBuffer(file);
-                }
-            });
-        }
-
-        fileInput.addEventListener('change', function(e) {
-            processFiles(Array.from(e.target.files));
-            fileInput.value = ''; // Reset to allow re-upload
-        });
-
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             if (isCompiling) return;
@@ -733,9 +672,6 @@
                 isCompiling = false;
             }
         });
-
-        // Execute immediately when Livewire mounts the component script
-        loadSecurePDF();
     </script>
     @endscript
 </div>

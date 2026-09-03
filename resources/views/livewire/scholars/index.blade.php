@@ -105,7 +105,7 @@
                                             </div>
 
                                             <div class="scholar-grid-card__spas">
-                                                SPAS ID: {{ $scholar->spas_number ?? $scholar->spas_number }}
+                                                SPAS ID: {{ $scholar->spas_no ?? $scholar->spas_no }}
                                             </div>
 
                                             <div class="scholar-grid-card__meta-grid">

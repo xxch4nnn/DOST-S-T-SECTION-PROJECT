@@ -38,10 +38,10 @@ class ScholarDocumentUploadTest extends TestCase
         $course = Course::firstOrCreate(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
-        
+
         $fileGroup = FileGroup::firstOrCreate([
             'name' => 'Scholarly Documents',
-            'slug' => 'scholarly_documents'
+            'slug' => 'scholarly_documents',
         ]);
         $fileType = FileType::firstOrCreate([
             'name' => 'Notice of Award',

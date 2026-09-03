@@ -7,6 +7,7 @@ use App\Models\AdministrativeRecord;
 use App\Models\ClearanceStatus;
 use App\Models\Course;
 use App\Models\Document;
+use App\Models\FileGroup;
 use App\Models\FileType;
 use App\Models\Region;
 use App\Models\Scholar;
@@ -80,9 +81,9 @@ class ProductionSmokeTest extends TestCase
         $course = Course::firstOrCreate(['name' => 'BS CS', 'abbreviation' => 'BSCS', 'is_available' => true]);
         $region = Region::firstOrCreate(['name' => 'NCR', 'abbreviation' => 'NCR', 'is_available' => true]);
         $status = ClearanceStatus::firstOrCreate(['name' => 'Active', 'is_available' => true]);
+        $file_group = FileGroup::firstOrCreate(['name' => 'Smoke Document', 'is_available' => true]);
         $fileType = FileType::firstOrCreate(
-            ['name' => 'Smoke Award'],
-            ['metadata_template' => null, 'file_group_id' => null]
+            ['name' => 'Smoke Award', 'metadata_template' => [], 'file_group_id' => $file_group->id]
         );
 
         $scholar = Scholar::create([
