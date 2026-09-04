@@ -20,6 +20,18 @@ Required fields on every entry (newest first under the day heading):
 
 Timezone default: **Asia/Manila (+08:00)**. Do not omit Time or User.
 
+## 2026-09-04
+
+- **Date:** 2026-09-04
+- **Time:** 14:27:00 +08:00
+- **User:** Chan (`@xxch4nnn`)
+- **Actor:** Antigravity / Chan
+- **Repo:** `xxch4nnn/DOST-S-T-SECTION-PROJECT` @ `master`
+- **Action:** feat / ui updates
+- **Commit/PR:** N/A (local working tree)
+- **Summary:** Installed sweetalert2 via npm. Created global Livewire listener `swal:confirm` in `app.js` using Bootstrap 5 themes. Redesigned "Add Scholar" button in `scholars.index` to DOST-Main Blue with rounded pills.
+- **Linked:** `resources/js/app.js`, `resources/views/livewire/scholars/index.blade.php`, `CHANGELOG.md`
+
 ## 2026-08-28
 
 - **Date:** 2026-08-28
