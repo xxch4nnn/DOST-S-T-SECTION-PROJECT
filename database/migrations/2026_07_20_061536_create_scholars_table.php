@@ -35,6 +35,7 @@ return new class extends Migration
             $table->foreignId('province_id')->nullable()->constrained('provinces')->restrictOnDelete();
             $table->foreignId('municipality_id')->nullable()->constrained('municipalities')->restrictOnDelete();
             $table->foreignId('barangay_id')->nullable()->constrained('barangays')->restrictOnDelete();
+            $table->string('home_address', 200)->nullable(true)->default(null);
 
             $table->foreignId('clearance_status_id')->nullable(false)->constrained('clearance_statuses')->restrictOnDelete()->default(0);
             $table->date('clearance_date')->nullable();

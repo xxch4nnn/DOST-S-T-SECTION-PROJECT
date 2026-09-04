@@ -40,7 +40,7 @@ class Add extends Component
 
     public $compiledFile;
 
-    public function mount(Scholar $scholar): void
+    public function mount(Scholar $scholar): void   
     {
         // We need to find a way to populate the areas here
         $this->document = null;

@@ -74,6 +74,8 @@ class Edit extends Component
     public $municipality_id = '';
     public $barangay_id = '';
 
+    public $home_address = '';
+
     public $clearance_status_id = '';
 
     public ?string $clearance_date = '';
@@ -425,6 +427,7 @@ class Edit extends Component
                 'municipality_id' => 'nullable|exists:municipalities,id',
                 'province_id' => 'nullable|exists:provinces,id',
                 'region_id' => 'required|exists:regions,id',
+                'home_address' => 'nullable|string|max:200',
                 'clearance_status_id' => 'required|exists:clearance_statuses,id',
                 'clearance_date' => 'sometimes|nullable|date',
                 'for_disposal' => 'boolean',
@@ -438,7 +441,7 @@ class Edit extends Component
                 'year_of_award' => 'required|integer',
                 'scholarship_id' => 'required|exists:scholarships,id',
                 'scholarship_type_id' => 'required|exists:scholarship_types,id',
-                'spas_no' => 'required|string|max:50',
+                'spas_no' => 'nullable|string|max:50',
                 'sex' => 'nullable|string|in:Male,Female',
                 'birthdate' => 'nullable|date',
                 'contact_number' => 'nullable|string|max:11',
@@ -450,10 +453,13 @@ class Edit extends Component
                 'municipality_id' => 'nullable|exists:municipalities,id',
                 'province_id' => 'nullable|exists:provinces,id',
                 'region_id' => 'required|exists:regions,id',
+                'home_address' => 'nullable|string|max:200',
                 'clearance_status_id' => 'required|exists:clearance_statuses,id',
                 'for_disposal' => 'boolean',
             ]);
         }
+
+        // dd($validated);
 
         // Clean up empty optional fields (convert "" or empty strings to null for MySQL)
         foreach ($validated as $key => $value) {

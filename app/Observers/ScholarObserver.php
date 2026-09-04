@@ -25,7 +25,7 @@ class ScholarObserver
 
     public function updated(Scholar $scholar): void
     {
-        if (! $scholar->wasChanged()) {
+        if (!$scholar->wasChanged()) {
             return;
         }
 

@@ -27,7 +27,7 @@
                     wire:model.live.debounce.250ms="search" 
                     type="text" 
                     class="scholars-search-input" 
-                    placeholder="Search Scholar file"
+                    placeholder="Search Scholar"
                 >
             </div>
 

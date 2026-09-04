@@ -35,7 +35,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/scholars/create', Create::class)->name('scholars.create');
     Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');
     Route::get('/scholars/{scholar}/edit', Edit::class)->name('scholars.edit');
-    Route::delete('/scholars/{scholar}/delete', Delete::class)->name('scholars.delete');
     Route::middleware('permission:viewScholars')->group(function () {
         Route::get('/scholars', Index::class)->name('scholars.index');
         Route::get('/scholars/{scholar}', Show::class)->name('scholars.show');

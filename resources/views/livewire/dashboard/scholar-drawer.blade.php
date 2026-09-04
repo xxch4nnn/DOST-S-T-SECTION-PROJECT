@@ -250,6 +250,16 @@ new class extends Component
         ];
     }
 
+    public function deleteScholar(){
+        $scholar = Scholar::find($this->scholarId);
+        
+        if ($scholar){
+            $scholar->delete();
+        }
+        $this->closeDrawer();
+        $this->redirect(route('scholars.index'), navigate:true);
+    }
+
 }; ?>
 
 <div>
@@ -300,7 +310,7 @@ new class extends Component
                                             <i class="ph ph-pencil-simple fs-6 text-secondary"></i>
                                             <span>Edit Scholar</span>
                                         </a>
-                                        <button type="button" class="dropdown-item-btn dropdown-item-btn--danger">
+                                        <button type="button" class="dropdown-item-btn dropdown-item-btn--danger" wire:click="deleteScholar">
                                             <i class="ph ph-trash fs-6 text-danger"></i>
                                             <span>Delete Scholar</span>
                                         </button>
