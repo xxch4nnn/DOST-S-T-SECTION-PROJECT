@@ -5,6 +5,7 @@ use App\Models\Scholar;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Volt\Component;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 new class extends Component
 {
@@ -260,6 +261,21 @@ new class extends Component
         $this->redirect(route('scholars.index'), navigate:true);
     }
 
+    public function downloadScholar(): BinaryFileResponse
+    {
+        // Querying for the scholar and documents information
+        $scholar = Scholar::find($this->scholarId);
+        $groupedDocuments = $scholar->getScholarGroupedDocuments();
+        
+        // Prepares the ZIP File contents
+        $zip = new ZipArchive();
+        $scholarJSON = $scholar->getScholarProfileAsJSON();
+        $scholarTXT = $scholar->getScholarProfileAsTXT();
+
+        dd($scholar, $groupedDocuments, $scholarJSON, $scholarTXT, "Scholar was downloaded");
+        return null;
+    }
+
 }; ?>
 
 <div>
@@ -274,7 +290,7 @@ new class extends Component
             {{-- Gray Header Bar with White Protruding Action Tab --}}
             <div class="scholar-drawer__top-bar">
                 <div class="scholar-drawer__action-tab">
-                    <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none" title="Download">
+                    <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none" title="Download" wire:click="downloadScholar">
                         <i class="ph ph-download-simple fs-5"></i>
                     </button>
                     <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none me-3" title="Print">
