@@ -86,15 +86,13 @@ class Index extends Component
         $this->dispatch('open-scholar-drawer', scholarId: $scholarId, scholarData: $scholarData);
     }
 
+    // Re-rendered to support empty strings
     public function render()
     {
-        $searchTerm = '%'.$this->search.'%';
+        $trimmed = trim($this->search);
 
-        // 2. Create the array of 11 bindings for the WHERE clause
-        $bindings = array_fill(0, 11, $searchTerm);
-
-        // 3. Execute and hydrate the Scholar models
-        $scholars = Scholar::fromQuery('
+        // Base SQL query
+        $sql = '
             SELECT 
                 s.*,
                 clearance_statuses.name as clearance_status,
@@ -110,24 +108,35 @@ class Index extends Component
             INNER JOIN courses ON s.course_id = courses.id
             INNER JOIN regions ON s.region_id = regions.id
             INNER JOIN clearance_statuses ON s.clearance_status_id = clearance_statuses.id
-            WHERE (
-                s.last_name LIKE ? 
-                OR s.first_name LIKE ? 
-                OR s.middle_name LIKE ? 
-                OR s.generational_suffix LIKE ? 
-                OR s.spas_no LIKE ? 
-                OR scholarship_types.name LIKE ? 
-                OR scholarships.name LIKE ? 
-                OR s.contact_number LIKE ? 
-                OR s.email_address LIKE ? 
-                OR schools.name LIKE ? 
-                OR courses.name LIKE ?
-            )
-            ORDER BY year_of_award DESC, last_name ASC
-            LIMIT 10
-        ', $bindings);
+        ';
 
-        // Group scholars by year_of_award for the new Folder UI
+        $bindings = [];
+
+        // Only append the search WHERE clause if actual text was entered
+        if ($trimmed !== '') {
+            $sql .= '
+                WHERE (
+                    s.last_name LIKE ? 
+                    OR s.first_name LIKE ? 
+                    OR s.middle_name LIKE ? 
+                    OR s.generational_suffix LIKE ? 
+                    OR s.spas_no LIKE ? 
+                    OR scholarship_types.name LIKE ? 
+                    OR scholarships.name LIKE ? 
+                    OR s.contact_number LIKE ? 
+                    OR s.email_address LIKE ? 
+                    OR schools.name LIKE ? 
+                    OR courses.name LIKE ?
+                )
+            ';
+            $bindings = array_fill(0, 11, '%'.$trimmed.'%');
+        }
+
+        $sql .= ' ORDER BY year_of_award DESC, last_name ASC';
+
+        $scholars = Scholar::fromQuery($sql, $bindings);
+
+        // Group scholars by year_of_award
         $groupedScholars = $scholars->groupBy(function ($scholar) {
             return (string) ($scholar->year_of_award ?? 'Unknown');
         });

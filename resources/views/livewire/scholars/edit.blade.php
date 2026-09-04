@@ -53,8 +53,8 @@
             <div class="row g-3">
                 {{-- Row 1: 3 equal columns --}}
                 <div class="col-md-4 form-field-group">
-                    <label for="spas_no">SPAS ID No. <span class="text-danger">*</span></label>
-                    <input wire:model="spas_no" type="text" id="spas_no" class="form-control-custom" placeholder="e.g. U-2023-00855-2235" required>
+                    <label for="spas_no">SPAS ID No.</label>
+                    <input wire:model="spas_no" type="text" id="spas_no" class="form-control-custom" placeholder="e.g. U-2023-00855-2235">
                     @error('spas_no') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
@@ -184,8 +184,8 @@
                 {{-- Row 2: 1 full-width column --}}
                 <div class="col-12 form-field-group">
                     <label for="home">Block & Lot / Street</label>
-                    <input wire:model="home" type="text" id="home" class="form-control-custom" placeholder="e.g. Block 1, Lot 2, Sobrecarey St.">
-                    @error('home') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <input wire:model="home_address" type="text" id="home" class="form-control-custom" placeholder="e.g. Block 1, Lot 2, Sobrecarey St.">
+                    @error('home_address') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
                 {{-- Row 3: 4 columns --}}

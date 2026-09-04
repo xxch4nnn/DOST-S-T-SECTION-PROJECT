@@ -1,3 +1,8 @@
+{{-- 
+A spare file to display the information of the scholar.
+Template and was replaced with the views/livewire/dashboard/scholar-drawer.blade.php.
+--}}
+
 <x-slot name="header">
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="h4 mb-0 fw-semibold">

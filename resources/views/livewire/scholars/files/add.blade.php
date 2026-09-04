@@ -94,6 +94,7 @@
         </div>
     </div>
 
+    {{-- Prepares the packages used to split and create of PDFs --}}
     <script type='module' src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -111,6 +112,7 @@
 
         let isCompiling = false;
 
+        // Code to prepare the sortable
         if (previewContainer && typeof window.Sortable !== 'undefined') {
             new window.Sortable(previewContainer, {
                 animation: 300,
@@ -130,7 +132,6 @@
          * 
          * addEventListener('change', generateMetadataFields);
          */
-
         async function getMetadataFields(selectedTypeId = null){
             if (!metadataContainer) return;
             metadataContainer.innerHTML = '';
@@ -292,6 +293,7 @@
             e.preventDefault();
         }, false);
 
+        // Handling the file and drop box logic
         function handleDrop(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -308,6 +310,7 @@
         }
         window.handleDrop = handleDrop;
 
+        // Reads files and renders each page of a PDF or an image to the paper container
         function processFiles(files) {
             if (files.length === 0) return;
 
@@ -339,6 +342,7 @@
             fileInput.value = ''; // Reset to allow re-upload
         });
 
+        // Adds the file to the list with all its properties to the side bar
         function addFileToListUI(fileName, fileId) {
             const container = document.getElementById('added_files_container');
             const list = document.getElementById('added_files_list');
@@ -377,6 +381,7 @@
             list.appendChild(item);
         }
 
+        // Function to generate the card for images in the paper container
         function createImageCard(dataUrl, fileId) {
             const card = document.createElement('div');
             card.className = 'preview-card-item';
@@ -420,6 +425,7 @@
             updatePreviewNumbers();
         }
 
+        // Function to generate the card for PDFs in the paper container
         async function segmentAndPreviewPDF(pdfArrayBuffer, fileId){
             if (typeof window.pdfjsLib !== 'undefined') {
                 window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -477,6 +483,7 @@
             updatePreviewNumbers();
         }
 
+        // Updates the page numbers in the paper container and the file list in the side bar
         function updatePreviewNumbers() {
             const cards = previewContainer.querySelectorAll('.preview-card-item');
             
