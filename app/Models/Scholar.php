@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use ZipArchive;
 
 #[Fillable(['first_name', 'middle_name', 'last_name', 'generational_suffix', 'year_of_award', 'scholarship_id', 'scholarship_type_id', 'spas_no', 'sex', 'birthdate', 'contact_number', 'email_address', 'school_id', 'course_id', 'barangay_id', 'municipality_id', 'province_id', 'region_id', 'clearance_status_id', 'clearance_date', 'for_disposal', 'fts_search_data'])]
 #[ObservedBy(ScholarObserver::class)]
@@ -104,7 +106,7 @@ class Scholar extends Model
         return trim("{$this->last_name}, {$this->first_name} {$this->middle_name} {$this->suffix}");
     }
 
-    public function getScholarGroupedDocuments(): array
+    public function getScholarGroupedDocumentsForDownloading(): array
     {
         // Only get the information needed.
         $documents = DB::select("
@@ -164,7 +166,7 @@ class Scholar extends Model
                 'suffix'      => $this->suffix ?: null,
             ],
             'scholarship_details' => [
-                'spas_number'         => $this->spas_id ?? null,
+                'spas_number'         => $this->spas_no ?? null,
                 'scholarship'         => $this->scholarship->name ?? null,
                 'program_type'        => $this->scholarshipType->name ?? null,
                 'year_of_award'       => $this->year_of_award ?? null,
@@ -198,6 +200,7 @@ class Scholar extends Model
 
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
+    
     public function getScholarProfileAsTXT(): string
     {
         $fullName = $this->getFullName();
@@ -218,7 +221,7 @@ class Scholar extends Model
             "",
             "[ SCHOLARSHIP DETAILS ]",
             "----------------------------------------------------------------------",
-            str_pad("SPAS Number:", 21) . ($this->spas_id ?? 'N/A'),
+            str_pad("SPAS Number:", 21) . ($this->spas_no ?? 'N/A'),
             str_pad("Scholarship", 21) . ($this->scholarship->name ?? 'N/A'),
             str_pad("Program Type:", 21) . ($this->scholarshipType->name ?? 'N/A'),
             str_pad("Year of Award:", 21) . ($this->year_of_award ?? 'N/A'),
@@ -245,5 +248,52 @@ class Scholar extends Model
             "",
             "Note: Scholars on and before the 2010s are prone to have missing entries due to the type of data requested back then."
         ]);
+    }
+
+    public function downloadScholar(){
+        $groupedDocuments = $this->getScholarGroupedDocumentsForDownloading();
+        
+        // Prepares the ZIP File name & path
+        $zip = new ZipArchive();
+        $starting_name = $this->last_name . '_' . $this->first_name;
+        $zipFileName = $starting_name . '.zip';
+
+        // Create a temporary folder for the ZIP File.
+        if (!Storage::disk('local')->exists('temp')) {
+            Storage::disk('local')->makeDirectory('temp');
+        }
+
+        // Creates the temporary path for the zip file
+        $zipPath = Storage::disk('local')->path('temp/' . $zipFileName);
+        
+        $scholarJSON = $this->getScholarProfileAsJSON();
+        $scholarTXT = $this->getScholarProfileAsTXT();
+
+        $result = ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE);
+        if (!$result) {
+            throw new \Exception("Failed to open ZIP archive. Error code: " . $result);
+        }
+        
+        // Insert the Text-related information
+        $zip->addFromString($starting_name . '.json', $scholarJSON);    
+        $zip->addFromString($starting_name . '.txt', $scholarTXT);
+        
+        // Iterate over every file type to generate files.
+        foreach ($groupedDocuments as $key => $value) {
+            foreach ($value as $file) {
+                if (Storage::disk('local')->exists($file['file_path'])){
+                    $absolute_path = Storage::disk('local')->path($file['file_path']);
+                    $fileType = Str::replace(' ', '_', $file['file_type_name']);
+                    $fileName = Str::replace(' ', '_', $file['file_name']);
+                    $zip->addFile($absolute_path, 'documents/' . $fileType . '/' . $fileName);
+                }
+            }
+        }
+
+        $zip->close();
+
+        // dd($this, $groupedDocuments, $scholarJSON, $scholarTXT, $zip, "Scholar was downloaded");
+
+        return $zipPath;
     }
 }

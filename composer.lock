@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d1e52b685d040b17182ff647cd8e2aa",
+    "content-hash": "006d6d3666df44117949d131db641acf",
     "packages": [
         {
             "name": "brick/math",
@@ -2034,16 +2034,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.3.4",
+            "version": "v4.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "e6c8d631e9687fbdd5c2bb7be9d7a5d699cce0e2"
+                "reference": "10aa0b5ee44c99b5bce0f78ad265bbcf0e74abdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/e6c8d631e9687fbdd5c2bb7be9d7a5d699cce0e2",
-                "reference": "e6c8d631e9687fbdd5c2bb7be9d7a5d699cce0e2",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/10aa0b5ee44c99b5bce0f78ad265bbcf0e74abdc",
+                "reference": "10aa0b5ee44c99b5bce0f78ad265bbcf0e74abdc",
                 "shasum": ""
             },
             "require": {
@@ -2098,7 +2098,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.3.4"
+                "source": "https://github.com/livewire/livewire/tree/v4.4.5"
             },
             "funding": [
                 {
@@ -2106,7 +2106,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-31T00:19:18+00:00"
+            "time": "2026-09-14T19:27:16+00:00"
         },
         {
             "name": "livewire/volt",
@@ -7252,16 +7252,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.64.0",
+            "version": "v1.67.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "08cacd3e72d6798df3fa8bd4b5d55d0f7f920625"
+                "reference": "639e03ac12cf23def171770bcab05758045b2642"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/08cacd3e72d6798df3fa8bd4b5d55d0f7f920625",
-                "reference": "08cacd3e72d6798df3fa8bd4b5d55d0f7f920625",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/639e03ac12cf23def171770bcab05758045b2642",
+                "reference": "639e03ac12cf23def171770bcab05758045b2642",
                 "shasum": ""
             },
             "require": {
@@ -7311,7 +7311,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2026-07-17T15:09:35+00:00"
+            "time": "2026-08-12T13:55:56+00:00"
         },
         {
             "name": "mockery/mockery",

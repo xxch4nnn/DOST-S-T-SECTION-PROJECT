@@ -1,0 +1,40 @@
+[INSTANTIATING THE PROJECT]
+
+1. Double check the yaml file's implementation
+2. Install docker.
+3. Download composer, laravel, livewire, and laravel sail.
+
+4. Add laravel sail as a development dependency
+    - "composer require laravel/sail --dev"
+
+5. Install the database using laravel sail
+    - "php artisan sail:install"
+
+6. Setup the file path where your seeders are located. (Find the env file in the root folder for the path)
+
+Head to your .env file and create a key named "SEEDER_FILE_PATH" and paste the respective path heading to "DOST-S-T-SECTION-PROJECT/database/sample_pdfs"
+
+5. Run the following commands in the root directory:
+    - "./vendor/bin/sail up -d"                     # Builds and starts the containers
+    - "./vendor/bin/sail artisan key:generate"      # Generates the application key
+    - "./vendor/bin/sail artisan migrate"           # Runs the database migrations
+    - "./vendor/bin/sail artisan storage:link"      # Creates a symbolic link for storage
+    - "./vendor/bin/sail artisan migrate --seed"    # Runs the database seeders
+    - "./vendor/bin/sail artisan serve"             # Starts the development server
+
+7. Edit your env files to follow the compose.yaml's (in the root folder) configuration.
+8. Setup your database in TablePlus using the credentials in the env file.
+
+Name: DOStorage Sail (or any label you prefer)
+Host / IP: 127.0.0.1 (or localhost)
+Port: 3306 (or whatever FORWARD_DB_PORT is set to in your .env file, default is 3306)
+User: dostorage (matches DB_USERNAME in your .env)
+Password: secret (matches DB_PASSWORD in your .env)
+Database: dostorage (optional, matches DB_DATABASE in your .env)
+
+
+[CLOSING THE PROJECT]
+1. Run "./vendor/bin/sail down -v" (in the root folder)
+
+[RE-OPENING THE PROJECT]
+1. Run "./vendor/bin/sail up -d" (in the root folder)

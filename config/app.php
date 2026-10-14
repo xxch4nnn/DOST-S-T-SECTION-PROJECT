@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Seeder File Path
+    |--------------------------------------------------------------------------
+    |
+    | This configuration options determines the path to the samplepdfs folder.
+    |
+    */
+    'seeder_file_path' => env('SEEDER_FILE_PATH', database_path('sample_pdfs')),
+
 ];

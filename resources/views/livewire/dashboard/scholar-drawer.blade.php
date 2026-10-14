@@ -261,19 +261,14 @@ new class extends Component
         $this->redirect(route('scholars.index'), navigate:true);
     }
 
-    public function downloadScholar(): BinaryFileResponse
-    {
-        // Querying for the scholar and documents information
+    public function downloadScholar(){
         $scholar = Scholar::find($this->scholarId);
-        $groupedDocuments = $scholar->getScholarGroupedDocuments();
-        
-        // Prepares the ZIP File contents
-        $zip = new ZipArchive();
-        $scholarJSON = $scholar->getScholarProfileAsJSON();
-        $scholarTXT = $scholar->getScholarProfileAsTXT();
+        $zipPath = $scholar->downloadScholar();
 
-        dd($scholar, $groupedDocuments, $scholarJSON, $scholarTXT, "Scholar was downloaded");
-        return null;
+        if($zipPath){
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        }
+        return;
     }
 
 }; ?>

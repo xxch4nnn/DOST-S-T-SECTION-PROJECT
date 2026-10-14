@@ -17,10 +17,11 @@ class DocumentSeeder extends Seeder
      */
     public function run(): void
     {
+        $seeder_file_path = database_path('sample_pdfs');
         $groups = [
             // #[Fillable(['file_type_id', 'file_name', 'file_path', 'file_size', 'uploaded_at', 'updated_at', 'deleted_at', 'mime_type', 'metadata'])]
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 2nd Sem.pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Registration/MACLANG_COR 3rd Year 2nd Sem.pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-01-12',
                 'metadata' => [
@@ -29,7 +30,7 @@ class DocumentSeeder extends Seeder
                 ],
             ],
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Registration\MACLANG_COR 3rd Year 3rd Sem.pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Registration/MACLANG_COR 3rd Year 3rd Sem.pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-06-10',
                 'metadata' => [
@@ -38,7 +39,7 @@ class DocumentSeeder extends Seeder
                 ],
             ],
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_1st Year 1st Sem.pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Grades/MACLANG_COG_1st Year 1st Sem.pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-07-28',
                 'metadata' => [
@@ -47,7 +48,7 @@ class DocumentSeeder extends Seeder
                 ],
             ],
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\MACLANG_COG_3rd Year 2nd Sem.pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Grades/MACLANG_COG_3rd Year 2nd Sem.pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-07-28',
                 'metadata' => [
@@ -56,7 +57,7 @@ class DocumentSeeder extends Seeder
                 ],
             ],
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Grades/Memo-20260508-02-Conduct-of-Special-Internal-Elections-for-Clubs-and-Organizations (1).pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-05-08',
                 'metadata' => [
@@ -67,7 +68,7 @@ class DocumentSeeder extends Seeder
             ],
 
             [
-                'file_path' => 'C:\Users\Waks\Downloads\USeP Acads\3rd Year 3rd Sem\OJT\DOST System\DOST-S-T-SECTION-PROJECT\database\sample_pdfs\Certificate_Of_Grades\TestToDelete.pdf',
+                'file_path' => $seeder_file_path.'/Certificate_Of_Grades/TestToDelete.pdf',
                 'scholar_id' => 1,
                 'date_issued' => '2026-07-28',
                 'metadata' => [
@@ -100,16 +101,17 @@ class DocumentSeeder extends Seeder
             $uuid = (string) Str::uuid();
             $uuidName = $uuid.'.'.$extension;
             $destinationRelativePath = 'documents/'.str_replace(' ', '_', $typeName).'/'.$uuidName;
-            $destinationAbsolutePath = Storage::disk('local')->path($destinationRelativePath);
+            Storage::disk('local')->put($destinationRelativePath, file_get_contents($sourcePath));
+            // $destinationAbsolutePath = Storage::disk('local')->path($destinationRelativePath);
 
-            // Ensure destination directory exists
-            $destinationDir = dirname($destinationAbsolutePath);
-            if (! file_exists($destinationDir)) {
-                mkdir($destinationDir, 0755, true);
-            }
+            // // Ensure destination directory exists
+            // $destinationDir = dirname($destinationAbsolutePath);
+            // if (! file_exists($destinationDir)) {
+            //     mkdir($destinationDir, 0755, true);
+            // }
 
-            // Copy file to storage destination
-            copy($sourcePath, $destinationAbsolutePath);
+            // // Copy file to storage destination
+            // copy($sourcePath, $destinationAbsolutePath);
 
             $fileType = FileType::where('name', $typeName)->first();
             $fileTypeId = $fileType ? $fileType->id : 1;
