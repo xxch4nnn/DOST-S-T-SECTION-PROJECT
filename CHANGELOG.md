@@ -20,6 +20,7 @@ Every bullet **must** start with:
 ## [Unreleased]
 
 ### Added
+- **2026-09-04 14:27:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Integrated `sweetalert2` for a global confirmation modal system. Added global Livewire listener `swal:confirm` in `resources/js/app.js`, preconfigured to use the DOST-Main Blue Bootstrap 5 styling and ignore default injected styles.
 - **2026-08-28 16:22:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — AIOps PR diff validation and inference service integration: added `validate-edit-pr` prompt contract and template, `scripts/validate_pr_diff.py` policy checking CLI, 8-case golden evaluation dataset with quality thresholds (`ai/eval/golden.jsonl`), evaluation runner (`scripts/run_eval.py`), inference endpoints (`/health`, `/metrics`, `/predict`, `/v1/validate-pr`), and comprehensive reviewer summary (`planning/REVIEWER_SUMMARY.md`).
 
 ### Fixed
@@ -33,6 +34,7 @@ Every bullet **must** start with:
 
 ### Changed
 ### Changed
+- **2026-09-04 14:27:00 +08:00** · **Chan** (`@xxch4nnn` / Antigravity) — Updated "Add Scholar" button UI in `scholars.index` to match DOST-Main Blue aesthetic (`btn-info text-white rounded-pill`) instead of the heavy dark blue, and added spacing/icons.
 - **2026-08-13 23:50:00 +08:00** · **Chan** (`@xxch4nnn`) — PR #86 / #93: rebase onto post-#81 master; clear mock recent-search PII; fix Alpine `--has-dropdown` binding; wire recent rows to `selectScholar`; rename clear control to “clear history”.
 - **2026-08-12 11:15:00 +08:00** · **Chan** (`@xxch4nnn`) — Fixed layout feedback from PR #81: single scroll container (`.main-canvas` `overflow: hidden`, `<main>` scroll), reverted silent background shift (`#f4f6fa`), and extracted remaining layout inlines to utility classes.
 - **2026-08-10 15:05:00 +08:00** · **Rui** (`@Mushimuche`) — Dashboard search UI refactor: fixed visual jump on dropdown expansion by stabilizing wrapper padding/borders, added Alpine.js fade animations, and Recent Searches UI (see PR #86 / issue #93).

@@ -3,8 +3,8 @@
         <h2 class="h4 mb-0 fw-semibold">
             {{ __('Scholars Directory') }}
         </h2>
-        <a href="{{ route('scholars.create') }}" class="btn btn-primary btn-sm">
-            Add Scholar
+        <a href="{{ route('scholars.create') }}" class="btn btn-info text-white px-4 py-2 rounded-pill fw-semibold shadow-sm d-inline-flex align-items-center">
+            <i class="ph ph-user-plus me-2 fs-5"></i> Add Scholar
         </a>
     </div>
 </x-slot>
@@ -12,10 +12,10 @@
 <div class="container py-4">
     <div class="scholars-page">
         {{-- Page Header --}}
-        <div class="scholars-page__header d-flex justify-content-between align-items-center">
+        <div class="scholars-page__header d-flex justify-content-between align-items-center mb-4">
             <h1>{{ __('Scholars File List') }}</h1>
-            <a href="{{ route('scholars.create') }}" class="btn btn-primary btn-sm">
-                Add Scholar
+            <a href="{{ route('scholars.create') }}" class="btn btn-info text-white px-4 py-2 rounded-pill fw-semibold shadow-sm d-inline-flex align-items-center">
+                <i class="ph ph-user-plus me-2 fs-5"></i> Add Scholar
             </a>
         </div>
 
