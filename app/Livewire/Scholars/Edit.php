@@ -67,14 +67,13 @@ class Edit extends Component
 
     public string $province = '';
     
-    public string $home = '';
+    public $home_address = '';
 
     public $region_id = '';
     public $province_id = '';
     public $municipality_id = '';
     public $barangay_id = '';
 
-    public $home_address = '';
 
     public $clearance_status_id = '';
 
@@ -468,6 +467,7 @@ class Edit extends Component
             }
         }
 
+        // Updates the information of a scholar
         if ($this->scholar->exists) {
             $this->scholar->update($validated);
         } else {
@@ -610,6 +610,91 @@ class Edit extends Component
     public function save()
     {
         return $this->saveScholarWithStagedFiles([]);
+    }
+
+    // Function that only saves the information of the scholar. DOESN'T include their associated files.
+    public function saveScholarInformation(){
+        if ($this->birthdate === '' || (is_string($this->birthdate) && trim($this->birthdate) === '')) {
+            $this->birthdate = null;
+        }
+        if ($this->clearance_date === '' || (is_string($this->clearance_date) && trim($this->clearance_date) === '')) {
+            $this->clearance_date = null;
+        }
+
+        if ($this->clearance_status_id == 2){
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'required|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'home_address' => 'nullable|string|max:200',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'clearance_date' => 'sometimes|nullable|date',
+                'for_disposal' => 'boolean',
+            ]);
+        } else {
+            $validated = $this->validate([
+                'first_name' => 'required|string|max:50',
+                'middle_name' => 'nullable|string|max:50',
+                'last_name' => 'required|string|max:50',
+                'generational_suffix' => 'nullable|string|max:5',
+                'year_of_award' => 'required|integer',
+                'scholarship_id' => 'required|exists:scholarships,id',
+                'scholarship_type_id' => 'required|exists:scholarship_types,id',
+                'spas_no' => 'nullable|string|max:50',
+                'sex' => 'nullable|string|in:Male,Female',
+                'birthdate' => 'nullable|date',
+                'contact_number' => 'nullable|string|max:11',
+                'email_address' => 'nullable|email|max:70|unique:scholars,email_address,'.($this->scholar->id ?? 'NULL'),
+                'school_id' => 'required|exists:schools,id',
+                'course_id' => 'nullable|exists:courses,id',
+                'program' => 'nullable|string|max:150',
+                'barangay_id' => 'nullable|exists:barangays,id',
+                'municipality_id' => 'nullable|exists:municipalities,id',
+                'province_id' => 'nullable|exists:provinces,id',
+                'region_id' => 'required|exists:regions,id',
+                'home_address' => 'nullable|string|max:200',
+                'clearance_status_id' => 'required|exists:clearance_statuses,id',
+                'for_disposal' => 'boolean',
+            ]);
+        }
+
+        // dd($validated);
+
+        // Clean up empty optional fields (convert "" or empty strings to null for MySQL)
+        foreach ($validated as $key => $value) {
+            if ($value === '' || (is_string($value) && trim($value) === '')) {
+                $validated[$key] = null;
+            }
+        }
+
+        // Updates the information of a scholar
+        if ($this->scholar->exists) {
+            $this->scholar->update($validated);
+        } else {
+            $this->scholar = Scholar::create($validated);
+        }
+
+        session()->flash('status', 'Scholar updated successfully.');
+
+        // dd($this->scholar);
+
+        return $this->redirect(route('scholars.index', ['open_scholar' => $this->scholar->id]), navigate: true);
     }
 
     public function render()

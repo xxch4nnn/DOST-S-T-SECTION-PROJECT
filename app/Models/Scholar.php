@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
 
-#[Fillable(['first_name', 'middle_name', 'last_name', 'generational_suffix', 'year_of_award', 'scholarship_id', 'scholarship_type_id', 'spas_no', 'sex', 'birthdate', 'contact_number', 'email_address', 'school_id', 'course_id', 'barangay_id', 'municipality_id', 'province_id', 'region_id', 'clearance_status_id', 'clearance_date', 'for_disposal', 'fts_search_data'])]
+#[Fillable(['first_name', 'middle_name', 'last_name', 'generational_suffix', 'year_of_award', 'scholarship_id', 'scholarship_type_id', 'spas_no', 'sex', 'birthdate', 'contact_number', 'email_address', 'school_id', 'course_id', 'home_address', 'barangay_id', 'municipality_id', 'province_id', 'region_id', 'clearance_status_id', 'clearance_date', 'for_disposal', 'fts_search_data'])]
 #[ObservedBy(ScholarObserver::class)]
 class Scholar extends Model
 {
@@ -104,6 +104,30 @@ class Scholar extends Model
     public function getFullName(): string
     {
         return trim("{$this->last_name}, {$this->first_name} {$this->middle_name} {$this->suffix}");
+    }
+
+    // Function to delete the scholar
+    public function deleteScholar(){
+        
+        if ($this->scholar){
+            $this->scholar->delete();
+        }
+    }
+
+    public function getNumberOfFilesLinkedToScholar(): int{
+        $num_count = DB::select("
+            SELECT
+                COUNT(*) AS 'count'
+            FROM documents as d 
+            WHERE
+                d.documentable_type = :documentable_type AND
+                d.documentable_id = :scholarId;
+        ", [
+            'documentable_type' => 'App\Models\Scholar',
+            'scholarId' => $this->id
+        ])[0]->count;
+
+        return ($num_count < 0) ? $num_count : 0;
     }
 
     public function getScholarGroupedDocumentsForDownloading(): array

@@ -253,10 +253,12 @@ new class extends Component
 
     public function deleteScholar(){
         $scholar = Scholar::find($this->scholarId);
+        $num_files = $scholar->getNumberOfFilesLinkedToScholar();
         
-        if ($scholar){
-            $scholar->delete();
-        }
+        // Explore the sweetalert2 to add an if-else statement for each. (https://sweetalert2.github.io/)
+
+        dd($num_files);
+
         $this->closeDrawer();
         $this->redirect(route('scholars.index'), navigate:true);
     }
