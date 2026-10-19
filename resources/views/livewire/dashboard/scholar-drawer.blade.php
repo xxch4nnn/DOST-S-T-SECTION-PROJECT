@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 new class extends Component
 {
     public bool $isOpen = false;
+    public bool $listenersPrepared = false;
     public ?int $scholarId = null;
 
     public string $activeFolderTab = 'Amendatory Agreement';
@@ -251,16 +252,19 @@ new class extends Component
         ];
     }
 
+    public function getNumberOfFilesLinkedToScholar(){
+        return Scholar::find($this->scholarId)->getNumberOfFilesLinkedToScholar();
+    }
+
     public function deleteScholar(){
-        $scholar = Scholar::find($this->scholarId);
-        $num_files = $scholar->getNumberOfFilesLinkedToScholar();
-        
-        // Explore the sweetalert2 to add an if-else statement for each. (https://sweetalert2.github.io/)
-
-        dd($num_files);
-
-        $this->closeDrawer();
-        $this->redirect(route('scholars.index'), navigate:true);
+        try{
+            Scholar::deleteScholar($this->scholarId);    
+            session()->flash('swal_success', 'The scholar and their associated files were deleted successfully!');
+            $this->closeDrawer();
+            $this->redirect(route('scholars.index'), navigate:true);
+        } catch(Exception $e){
+            $this->dispatch('swal:error', 'Failed to delete scholar. Error: ' . $e->getMessage());
+        }
     }
 
     public function downloadScholar(){
@@ -323,7 +327,7 @@ new class extends Component
                                             <i class="ph ph-pencil-simple fs-6 text-secondary"></i>
                                             <span>Edit Scholar</span>
                                         </a>
-                                        <button type="button" class="dropdown-item-btn dropdown-item-btn--danger" wire:click="deleteScholar">
+                                        <button type="button" class="dropdown-item-btn dropdown-item-btn--danger" id="deleteScholar">
                                             <i class="ph ph-trash fs-6 text-danger"></i>
                                             <span>Delete Scholar</span>
                                         </button>
@@ -487,3 +491,68 @@ new class extends Component
         </div>
     @endif
 </div>
+
+@script
+<script>
+    document.addEventListener('click', async (event) => {
+        // Find if the clicked element (or anything inside it) matches our delete button selector
+        const deleteButton = event.target.closest('#deleteScholar');
+
+        if (deleteButton) { 
+            event.preventDefault(); // Stop default button actions
+            handleDeleteScholar();
+        }
+    });
+
+    async function handleDeleteScholar(){
+        // 1. Fetch file count asynchronously from your Livewire backend
+        let numOfFiles = await $wire.getNumberOfFilesLinkedToScholar();
+
+        // 2. Trigger SweetAlert2
+        Swal.fire({
+            title: 'Are you sure to delete this scholar?',
+            html: 'The scholar has <strong style="color: #e3342f; font-size: 1.2em; text-decoration: underline;">' + numOfFiles + ' files</strong> linked to them. By deleting this scholar, all associated files will also be deleted.',
+            icon: 'warning',
+            draggable: true,
+            showCancelButton: true,
+            confirmButtonText: 'Delete Scholar',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d3342f',
+            cancelButtonColor: '#3085d6',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 3. Trigger your backend Livewire deletion method
+                $wire.deleteScholar();
+            }
+        });
+    }
+
+    // Listen for the success event dispatched from PHP
+    window.addEventListener('swal:success', event => {
+        // In Livewire v3, event data is passed inside event.detail
+        const message = event.detail.message || 'Operation successful!';
+
+        Swal.fire({
+            title: 'Success!',
+            text: message,
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonText: "Close"
+        });
+    });
+
+    // Listen for the error event dispatched from PHP
+    window.addEventListener('swal:error', event => {
+        const message = event.detail.message || 'An error occurred!';
+
+        Swal.fire({
+            title: 'Error!',
+            text: message,
+            icon: 'error',
+            showConfirmButton: true,
+            confirmButtonText: "Close"
+        });
+    });
+
+</script>
+@endscript

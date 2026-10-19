@@ -111,13 +111,14 @@
                 </div>
 
                 <div class="col-md-4 form-field-group">
-                    <label for="course_id">Course / Degree Program</label>
-                    <select wire:model="course_id" id="course_id" class="form-select-custom">
+                    <label for="course_id">Course / Degree Program <span class="text-danger">*</span></label>
+                    <select wire:model="course_id" id="course_id" class="form-select-custom" required>
                         <option value="">Select Course</option>
                         @foreach($courses as $course)
                             <option value="{{ $course->id }}">{{ $course->name }}</option>
                         @endforeach
                     </select>
+                    @error('course_id') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
 
                 {{-- Row 3: 2 equal columns --}}

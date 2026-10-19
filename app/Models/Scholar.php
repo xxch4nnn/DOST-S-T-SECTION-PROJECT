@@ -107,10 +107,33 @@ class Scholar extends Model
     }
 
     // Function to delete the scholar
-    public function deleteScholar(){
-        
-        if ($this->scholar){
-            $this->scholar->delete();
+    public static function deleteScholar($scholarID): bool{
+        $scholar = Scholar::findOrFail($scholarID);
+        if ($scholar){
+            $scholar->delete();
+            return true;
+        } else {
+            throw new \Exception('Unable to find scholar. (ID: ' . $scholarID . ')');
+            return false;
+        }
+    }
+
+    /**
+     * Deletes the set of 
+     * @param int[] $scholarIds
+     * @return bool
+     */
+    public static function deleteSelectedScholars(array $scholarIds): bool{
+        $total = count($scholarIds);
+        $deleted = 0;
+        try {
+            foreach($scholarIds as $scholarId){
+                Scholar::deleteScholar($scholarId);
+                $deleted++;
+            }
+            return true;
+        } catch(\Exception $e){
+            throw new \Exception('Unable to delete all scholars.' .  " \n Deleted: " . $deleted . "/" . $total . ". Error: " . $e->getMessage());
         }
     }
 
@@ -127,7 +150,7 @@ class Scholar extends Model
             'scholarId' => $this->id
         ])[0]->count;
 
-        return ($num_count < 0) ? $num_count : 0;
+        return ($num_count < 0) ? 0 : $num_count;
     }
 
     public function getScholarGroupedDocumentsForDownloading(): array

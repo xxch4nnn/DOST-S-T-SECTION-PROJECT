@@ -40,6 +40,7 @@ return new class extends Migration
             $table->foreignId('clearance_status_id')->nullable(false)->constrained('clearance_statuses')->restrictOnDelete()->default(0);
             $table->date('clearance_date')->nullable();
             $table->boolean('for_disposal')->nullable(false)->default(false);
+            $table->softDeletes();
 
             // Flattened Column for Full-Text Search
             $table->text('fts_search_data')->nullable();

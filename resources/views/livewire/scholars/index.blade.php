@@ -101,7 +101,7 @@
 
                                         openScholar: Calls on to the scholar-drawer.blade file's openDrawer() function to display the side panel of the scholar's information.
                                         --}}
-                                        <div class="scholar-grid-card" data-scholar_selected="false" wire:click="openScholar({{ $scholar->id }})">
+                                        <div class="scholar-grid-card" data-scholar-id="{{ $scholar->id }}" data-scholar_selected="false" wire:click="openScholar({{ $scholar->id }})">
                                             <div class="scholar-grid-card__header">
                                                 <h3 class="scholar-name">
                                                     {{ $scholar->last_name }}, {{ $scholar->first_name }} {{ $scholar->middle_name ? substr($scholar->middle_name, 0, 1) . '.' : '' }} {{ $scholar->generational_suffix }}
