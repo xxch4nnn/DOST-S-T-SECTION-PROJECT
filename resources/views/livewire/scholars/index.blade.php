@@ -50,17 +50,23 @@
         </div>
 
         {{-- Batch Selection Toolbar --}}
-        @if(count($selectedYears) > 0)
+        @if(count($selectedYears) > 0 || count($selectedScholarIds) > 0)
             <div class="scholars-batch-bar">
-                <button type="button" class="batch-deselect-btn" wire:click="deselectAllYears" title="Deselect All">
+                <button type="button" class="batch-deselect-btn" wire:click="deselectAll" title="Deselect All">
                     <i class="ph ph-x"></i>
                 </button>
-                <span class="batch-count-label">{{ count($selectedYears) }} Selected</span>
+                <span class="batch-count-label">{{ count($selectedScholarIds) }} 
+                    @if(count($selectedScholarIds) === 1)
+                        Scholar selected
+                    @else
+                        Scholars selected
+                    @endif
+                </span>
                 <div class="batch-action-icons">
-                    <button type="button" class="batch-icon-btn" title="Print Selected"><i class="ph ph-printer"></i></button>
-                    <button type="button" class="batch-icon-btn" title="Download Selected"><i class="ph ph-download-simple"></i></button>
-                    <button type="button" class="batch-icon-btn" title="Export Selected"><i class="ph ph-file-arrow-up"></i></button>
-                    <button type="button" class="batch-icon-btn batch-icon-btn--danger" title="Delete Selected"><i class="ph ph-trash"></i></button>
+                    {{-- <button type="button" class="batch-icon-btn" title="Print Scholar(s)"><i class="ph ph-printer"></i></button> --}}
+                    <button type="button" class="batch-icon-btn" title="Download Scholar(s)" wire:click="downloadScholars"><i class="ph ph-download-simple"></i></button>
+                    <button type="button" class="batch-icon-btn" title="Move Scholar(s)"><i class="ph ph-file-arrow-up"></i></button>
+                    <button type="button" class="batch-icon-btn" title="Delete Scholar(s)"><i class="ph ph-trash"></i></button>
                 </div>
             </div>
         @endif
@@ -78,7 +84,7 @@
                         <div class="year-folder-tab">
                             <span class="year-folder-title">{{ $year }}</span>
                         </div>
-                        <input type="checkbox" class="year-folder-checkbox" wire:click.stop="toggleSelectYear('{{ $year }}')" @checked($isSelected)>
+                        <input type="checkbox" class="year-folder-checkbox" wire:click.stop="toggleSelectYear('{{ $year }}', {{ $scholarsInYear }})" @checked($isSelected)>
                     </div>
 
                     @if($isExpanded)
@@ -101,7 +107,13 @@
 
                                         openScholar: Calls on to the scholar-drawer.blade file's openDrawer() function to display the side panel of the scholar's information.
                                         --}}
-                                        <div class="scholar-grid-card" data-scholar-id="{{ $scholar->id }}" data-scholar_selected="false" wire:click="openScholar({{ $scholar->id }})">
+                                        <div class="scholar-grid-card 
+                                            @if(in_array($scholar->id, $selectedScholarIds)) 
+                                                border-2 border-accent 
+                                            @endif"
+                                            data-scholar_id="{{ $scholar->id }}"
+                                            data-scholar_selected="{{ in_array($scholar->id, $selectedScholarIds) ? 'true' : 'false' }}"
+                                            wire:click="openScholar({{ $scholar->id }})">
                                             <div class="scholar-grid-card__header">
                                                 <h3 class="scholar-name">
                                                     {{ $scholar->last_name }}, {{ $scholar->first_name }} {{ $scholar->middle_name ? substr($scholar->middle_name, 0, 1) . '.' : '' }} {{ $scholar->generational_suffix }}
@@ -138,3 +150,48 @@
         <livewire:dashboard.document-viewer />
     </div>
 </div>
+
+@script
+<script>
+    let debounceTimer = null;
+
+    await document.addEventListener('contextmenu', async function (event) {
+        const scholar = event.target.closest('.scholar-grid-card');
+        if (!scholar) return; // If it's not a scholar card, ignore
+
+        event.preventDefault(); // Stop the native browser right-click menu
+
+        const scholarId = scholar.getAttribute('data-scholar_id');
+        
+        // Fetch current array from Livewire
+        let selectedIds = await $wire.get('selectedScholarIds') || [];
+
+        if (scholar.getAttribute('data-scholar_selected') === 'true') {
+            // Deselect
+            scholar.setAttribute('data-scholar_selected', 'false');
+            scholar.classList.remove('border-2', 'border-accent');
+            
+            // Reassign a filtered array (Safe for Livewire proxy tracking)
+            selectedIds = selectedIds.filter(id => id !== scholarId);
+        } else {
+            // Select
+            scholar.setAttribute('data-scholar_selected', 'true');
+            scholar.classList.add('border-2', 'border-accent');
+            
+            // Push and reassign
+            if (!selectedIds.includes(scholarId)) {
+                selectedIds.push(scholarId);
+            }
+        }
+
+        if (debounceTimer != null)
+            clearTimeout(debounceTimer);
+
+        // Sync the brand new array back to Livewire securely
+        debounceTimer = setTimeout(async () => {
+            await $wire.set('selectedScholarIds', selectedIds);
+            console.log('Synced final set of IDs: ' + selectedIds);
+        }, 300)
+    });
+</script>
+@endscript

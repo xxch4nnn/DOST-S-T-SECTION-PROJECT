@@ -17,6 +17,8 @@ class Index extends Component
     public array $expandedYears = [];
 
     public array $selectedYears = [];
+    
+    public array $selectedScholarIds = [];
 
     public function mount(): void
     {
@@ -35,12 +37,14 @@ class Index extends Component
         }
     }
 
-    public function toggleSelectYear(string $year): void
+    public function toggleSelectYear(string $year, array $scholarSelectYear): void
     {
         if (in_array($year, $this->selectedYears, true)) {
             $this->selectedYears = array_values(array_diff($this->selectedYears, [$year]));
+            $this->selectedScholarIds = array_values(array_diff($this->selectedScholarIds, $scholarSelectYear));
         } else {
             $this->selectedYears[] = $year;
+            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $scholarSelectYear);
         }
     }
 
@@ -49,9 +53,14 @@ class Index extends Component
         $this->selectedYears = array_map('strval', $years);
     }
 
-    public function deselectAllYears(): void
+    public function deselectAll(): void
     {
         $this->selectedYears = [];
+        $this->selectedScholarIds = [];
+    }
+
+    public function downloadScholars(): void{
+        dd('downloaded ' . count($this->selectedScholarIds) . " scholars!");
     }
 
     public function openScholar($scholarId): void
