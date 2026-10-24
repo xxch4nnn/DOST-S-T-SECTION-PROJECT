@@ -8,10 +8,13 @@ use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Index extends Component
 {
+    public bool $hasEventListener = false;
+
     public string $search = '';
 
     public array $expandedYears = [];
@@ -34,23 +37,41 @@ class Index extends Component
             $this->expandedYears = array_values(array_diff($this->expandedYears, [$year]));
         } else {
             $this->expandedYears[] = $year;
+
         }
     }
 
-    public function toggleSelectYear(string $year, array $scholarSelectYear): void
+    public function toggleSelectYear(string $year): void
     {
+        $newlySelectedIDs = [];
+        $scholars = json_decode(json_encode(Scholar::where('year_of_award', $year)
+            ->select(['id'])
+            ->get()));
+        foreach ($scholars as $scholar){
+            $scholarId = $scholar['id'];
+            if (!in_array($scholarId, $this->selectedScholarIds)) {
+                $newlySelectedIDs[] = $scholarId;
+            }
+        }
+
         if (in_array($year, $this->selectedYears, true)) {
             $this->selectedYears = array_values(array_diff($this->selectedYears, [$year]));
-            $this->selectedScholarIds = array_values(array_diff($this->selectedScholarIds, $scholarSelectYear));
+            $this->selectedScholarIds = array_values(array_diff($this->selectedScholarIds, $newlySelectedIDs));
         } else {
             $this->selectedYears[] = $year;
-            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $scholarSelectYear);
+            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
         }
     }
 
-    public function selectAllYears(array $years): void
+    public function selectAllYears(): void
     {
-        $this->selectedYears = array_map('strval', $years);
+        $groupedScholars = json_decode(json_encode(Scholar::select(['id'])
+            ->get()));
+        foreach ($this->groupedScholars as $year => $scholars){
+            $newlySelectedIDs = array_map(fn($scholar) => $scholar['id'], $scholars);
+            $this->selectedYears = array_merge($this->selectedYears, [$year]);
+            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
+        }
     }
 
     public function deselectAll(): void
@@ -153,6 +174,9 @@ class Index extends Component
         if ($groupedScholars->isEmpty()) {
             $groupedScholars = collect(['2023' => collect([])]);
         }
+
+        $this->groupedScholars = json_decode(json_encode($groupedScholars), true);
+        // dd($this->groupedScholars);
 
         return view('livewire.scholars.index', [
             'groupedScholars' => $groupedScholars,

@@ -39,7 +39,7 @@
                 type="button" 
                 class="scholars-select-all-btn {{ $allSelected ? 'scholars-select-all-btn--checked' : '' }}" 
                 title="{{ $allSelected ? 'Deselect All Years' : 'Select All Years' }}"
-                wire:click="{{ $allSelected ? 'deselectAllYears' : 'selectAllYears('.json_encode($allYears).')' }}"
+                wire:click="{{ $allSelected ? 'deselectAll()' : 'selectAllYears()' }}"
             >
                 @if($allSelected)
                     <i class="ph-fill ph-check-square"></i>
@@ -84,7 +84,7 @@
                         <div class="year-folder-tab">
                             <span class="year-folder-title">{{ $year }}</span>
                         </div>
-                        <input type="checkbox" class="year-folder-checkbox" wire:click.stop="toggleSelectYear('{{ $year }}', {{ $scholarsInYear }})" @checked($isSelected)>
+                        <input type="checkbox" class="year-folder-checkbox" wire:click.stop="toggleSelectYear('{{ $year }}')" @checked($isSelected)>
                     </div>
 
                     @if($isExpanded)
@@ -155,43 +155,49 @@
 <script>
     let debounceTimer = null;
 
-    await document.addEventListener('contextmenu', async function (event) {
-        const scholar = event.target.closest('.scholar-grid-card');
-        if (!scholar) return; // If it's not a scholar card, ignore
+    if (!$wire.hasEventListener){
+        await document.addEventListener('contextmenu', async function (event) {
+            const scholar = event.target.closest('.scholar-grid-card');
+            if (!scholar) return; // If it's not a scholar card, ignore
 
-        event.preventDefault(); // Stop the native browser right-click menu
+            event.preventDefault(); // Stop the native browser right-click menu
 
-        const scholarId = scholar.getAttribute('data-scholar_id');
-        
-        // Fetch current array from Livewire
-        let selectedIds = await $wire.get('selectedScholarIds') || [];
-
-        if (scholar.getAttribute('data-scholar_selected') === 'true') {
-            // Deselect
-            scholar.setAttribute('data-scholar_selected', 'false');
-            scholar.classList.remove('border-2', 'border-accent');
+            const scholarId = scholar.getAttribute('data-scholar_id');
             
-            // Reassign a filtered array (Safe for Livewire proxy tracking)
-            selectedIds = selectedIds.filter(id => id !== scholarId);
-        } else {
-            // Select
-            scholar.setAttribute('data-scholar_selected', 'true');
-            scholar.classList.add('border-2', 'border-accent');
-            
-            // Push and reassign
-            if (!selectedIds.includes(scholarId)) {
-                selectedIds.push(scholarId);
+            // Fetch current array from Livewire
+            let selectedIds = await $wire.get('selectedScholarIds') || [];
+
+            if (scholar.getAttribute('data-scholar_selected') === 'true') {
+                // Deselect
+                scholar.setAttribute('data-scholar_selected', 'false');
+                scholar.classList.remove('border-2', 'border-accent');
+                
+                // Reassign a filtered array (Safe for Livewire proxy tracking)
+                selectedIds = selectedIds.filter(id => id !== scholarId);
+            } else {
+                // Select
+                scholar.setAttribute('data-scholar_selected', 'true');
+                scholar.classList.add('border-2', 'border-accent');
+                
+                // Push and reassign
+                if (!selectedIds.includes(scholarId)) {
+                    selectedIds.push(scholarId);
+                }
             }
-        }
 
-        if (debounceTimer != null)
-            clearTimeout(debounceTimer);
+            if (debounceTimer != null)
+                clearTimeout(debounceTimer);
 
-        // Sync the brand new array back to Livewire securely
-        debounceTimer = setTimeout(async () => {
-            await $wire.set('selectedScholarIds', selectedIds);
-            console.log('Synced final set of IDs: ' + selectedIds);
-        }, 300)
-    });
+            // Sync the brand new array back to Livewire securely
+            debounceTimer = setTimeout(async () => {
+                await $wire.set('selectedScholarIds', selectedIds);
+                console.log('Synced final set of IDs: ' + selectedIds);
+            }, 300)
+        });
+
+        $wire.hasEventListener = true;
+    } else {
+        console.log('Document event listener for the scholar selection already exists.');
+    }
 </script>
 @endscript
