@@ -8,7 +8,6 @@ use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Index extends Component
@@ -65,12 +64,17 @@ class Index extends Component
 
     public function selectAllYears(): void
     {
-        $groupedScholars = json_decode(json_encode(Scholar::select(['id'])
-            ->get()));
-        foreach ($this->groupedScholars as $year => $scholars){
-            $newlySelectedIDs = array_map(fn($scholar) => $scholar['id'], $scholars);
-            $this->selectedYears = array_merge($this->selectedYears, [$year]);
-            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
+        $groupedScholars = json_decode(json_encode(Scholar::select(['id', 'year_of_award'])
+            ->get()
+            ->groupBy(function ($scholar) {
+                return (string) ($scholar->year_of_award ?? 'Unknown');
+            })));
+        dd($groupedScholars);
+        foreach ($groupedScholars as $year => $scholars){
+            // dd($year, $scholars);
+            // $newlySelectedIDs = array_map(fn($scholar) => $scholar['id'], $scholars);
+            // $this->selectedYears = array_merge($this->selectedYears, [$year]);
+            // $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
         }
     }
 
@@ -175,7 +179,7 @@ class Index extends Component
             $groupedScholars = collect(['2023' => collect([])]);
         }
 
-        $this->groupedScholars = json_decode(json_encode($groupedScholars), true);
+        // $this->groupedScholars = json_decode(json_encode($groupedScholars), true);
         // dd($this->groupedScholars);
 
         return view('livewire.scholars.index', [

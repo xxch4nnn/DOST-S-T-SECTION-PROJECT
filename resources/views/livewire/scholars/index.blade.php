@@ -39,7 +39,7 @@
                 type="button" 
                 class="scholars-select-all-btn {{ $allSelected ? 'scholars-select-all-btn--checked' : '' }}" 
                 title="{{ $allSelected ? 'Deselect All Years' : 'Select All Years' }}"
-                wire:click="{{ $allSelected ? 'deselectAll()' : 'selectAllYears()' }}"
+                onclick="{{ $allSelected }} ? 'deselectAll()' : 'selectAll()' "
             >
                 @if($allSelected)
                     <i class="ph-fill ph-check-square"></i>
@@ -50,26 +50,18 @@
         </div>
 
         {{-- Batch Selection Toolbar --}}
-        @if(count($selectedYears) > 0 || count($selectedScholarIds) > 0)
-            <div class="scholars-batch-bar">
-                <button type="button" class="batch-deselect-btn" wire:click="deselectAll" title="Deselect All">
-                    <i class="ph ph-x"></i>
-                </button>
-                <span class="batch-count-label">{{ count($selectedScholarIds) }} 
-                    @if(count($selectedScholarIds) === 1)
-                        Scholar selected
-                    @else
-                        Scholars selected
-                    @endif
-                </span>
-                <div class="batch-action-icons">
-                    {{-- <button type="button" class="batch-icon-btn" title="Print Scholar(s)"><i class="ph ph-printer"></i></button> --}}
-                    <button type="button" class="batch-icon-btn" title="Download Scholar(s)" wire:click="downloadScholars"><i class="ph ph-download-simple"></i></button>
-                    <button type="button" class="batch-icon-btn" title="Move Scholar(s)"><i class="ph ph-file-arrow-up"></i></button>
-                    <button type="button" class="batch-icon-btn" title="Delete Scholar(s)"><i class="ph ph-trash"></i></button>
-                </div>
+        <div class="scholars-batch-bar" hidden>
+            <button type="button" class="batch-deselect-btn" onclick="deselectAll()" title="Deselect All">
+                <i class="ph ph-x"></i>
+            </button>
+            <span class="batch-count-label"></span>
+            <div class="batch-action-icons">
+                {{-- <button type="button" class="batch-icon-btn" title="Print Scholar(s)"><i class="ph ph-printer"></i></button> --}}
+                <button type="button" class="batch-icon-btn" title="Download Scholar(s)" wire:click="downloadScholars"><i class="ph ph-download-simple"></i></button>
+                <button type="button" class="batch-icon-btn" title="Move Scholar(s)"><i class="ph ph-file-arrow-up"></i></button>
+                <button type="button" class="batch-icon-btn" title="Delete Scholar(s)"><i class="ph ph-trash"></i></button>
             </div>
-        @endif
+        </div>
 
         {{-- Year Folders Stack --}}
         <div class="year-folders-stack">
@@ -80,11 +72,23 @@
                 @endphp
 
                 <div class="year-folder-item">
-                    <div class="year-folder-header {{ $isSelected ? 'year-folder-header--selected' : '' }} {{ $isExpanded ? 'year-folder-header--expanded' : '' }}" wire:click="toggleYear('{{ $year }}')">
+                    {{-- <div class="year-folder-header {{ $isSelected ? 'year-folder-header--selected' : '' }} {{ $isExpanded ? 'year-folder-header--expanded' : '' }}" wire:click="toggleYear('{{ $year }}')">
                         <div class="year-folder-tab">
                             <span class="year-folder-title">{{ $year }}</span>
                         </div>
-                        <input type="checkbox" class="year-folder-checkbox" wire:click.stop="toggleSelectYear('{{ $year }}')" @checked($isSelected)>
+                        <input type="checkbox" class="year-folder-checkbox" onclick="appendScholarYear('{{ $year }}', true)" @checked($isSelected)>
+                    </div>  --}}
+                
+                    <div class="year-folder-header {{ $isExpanded ? 'year-folder-header--expanded' : '' }}" wire:click="toggleYear('{{ $year }}')" data-year-header="{{ $year }}">
+                        <div class="year-folder-tab">
+                            <span class="year-folder-title">{{ $year }}</span>
+                        </div>
+
+                        <!-- Added a matching data attribute to the checkbox -->
+                        <input type="checkbox" 
+                            class="year-folder-checkbox" 
+                            data-year-checkbox="{{ $year }}"
+                            onchange="appendScholarYear('{{ $year }}', this.checked)">
                     </div>
 
                     @if($isExpanded)
@@ -153,51 +157,246 @@
 
 @script
 <script>
+    let groupedScholars = @js($groupedScholars);
+    let selectedAllScholars = false;
+
+    let totalScholarsLoaded = 0;
+    let totalScholarsSelected = 0;
+
+    console.log(groupedScholars);
+    console.log("Hello world");
+
+    // Values that represent variables that are selected.
+    let selectedScholars = {};
+
+    // HELPER FUNCTIONS TO HANDLE THE SELECTION LOGIC
+    // ==============================================
+    function appendScholarId(year, scholarId, willCache = false) {
+        if (!selectedScholars[year].includes(scholarId)){
+            selectedScholars[year].push(scholarId);
+            if (willCache === false) 
+                return;
+            localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+            if (groupedScholars[year].length === selectedScholars[year].length)
+                helpYearSelectedState(year, true);
+            updateScholarBatchBar();
+            return true;
+        } else
+            return false;
+    }
+
+    function removeScholarId(year, scholarId) {
+        if (selectedScholars[year].includes(scholarId)){
+            selectedScholars[year].splice(selectedScholars[year].indexOf(scholarId), 1);
+            localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+            helpYearSelectedState(year, false);
+            updateScholarBatchBar();
+            return true;
+        } else
+            return false;
+    }
+
+    /**
+     * Appends all the scholars in the current scholar year.
+     * Calls the appendScholarYear() helper function for each scholar year.
+     */
+    function appendScholarYear(scholarYear, willCache) {
+        if (selectedScholars[scholarYear]){
+            let scholarsInYear = groupedScholars[scholarYear];
+            
+            for (const scholar in scholarsInYear)
+                appendScholarId(scholarYear, scholar.id, false);
+
+            helpYearSelectedState(scholarYear, true);
+            updateScholarRelatedHTMLElements(willCache);
+            return true;
+        } else
+            return false;
+    }
+
+    /**
+     * Removes all the scholars in the current scholar year.
+     * Calls the removeScholarYear() helper function for each scholar year.
+     */
+    function removeScholarYear(scholarYear, willCache) {
+        if (selectedScholars[scholarYear]){
+            selectedScholars[scholarYear] = [];
+
+            if (willCache)
+                localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+
+            updateScholarBatchBar();
+            return true;
+        } else
+            return false;
+    }
+
+    /**
+     * Selects all the scholars in the current scholar year.
+     * Calls the appendScholarYear() helper function for each scholar year.
+     */
+    function selectAll() {
+        for (const [key, value] of Object.entries[groupedScholars])
+            appendScholarYear(key, false);
+        localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+        updateScholarBatchBar();
+    }
+
+    function deselectAll() {
+        for (const [key, value] of Object.entries[groupedScholars])
+            removeScholarYear(key, false);
+        localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+        updateScholarBatchBar();
+    }
+
+    function helpYearSelectedState(year, isChecked){
+        let folderHeader = document.querySelector(`.year-folder-header[data-year-header="${year}"]`);
+        console.log(folderHeader)
+        let checkboxElement = folderHeader.querySelector(`.year-folder-checkbox[data-year-checkbox="${year}"]`);
+        console.log(checkboxElement)
+
+        if (!folderHeader || !checkboxElement){
+            console.error('Unable to find the folder element or checkbox.', folderHeader, checkboxElement);
+            return;
+        }
+
+        if (isChecked === true) {
+            folderHeader.classList.add("year-folder-header--selected");
+            checkboxElement.checked = true;
+        } else {
+            folderHeader.classList.remove("year-folder-header--selected");
+            checkboxElement.checked = false;
+        }
+    }
+
+    function updateScholarBatchBar(){
+        const batchBar = document.querySelector('.scholars-batch-bar');
+        const batchCountLabel = batchBar.querySelector('.batch-count-label'); 
+        
+        if (!batchBar || !batchCountLabel){
+            console.error('Unable to find scholar batch bar or scholar batch label.', batchBar, batchCountLabel);
+            return;
+        }
+
+        let scholarCount = 0;
+        for (const [year, scholarIds] of Object.entries(selectedScholars)){
+            scholarCount += scholarIds.length
+        }
+
+        if (scholarCount > 1){
+            batchBar.hidden = false;
+            batchCountLabel.textContent = `${scholarCount} scholars selected.`;
+        } else if (scholarCount === 1){
+            batchBar.hidden = false;
+            batchCountLabel.textContent = '1 scholar selected.';
+        } else if (scholarCount === 0){
+            batchBar.hidden = true;
+            batchCountLabel.textContent = 'No scholars selected.';
+        }
+    }
+
+    /**
+     * Function that will (FINISH THIS)
+     */
+    function updateScholarRelatedHTMLElements(willCache){
+        if (willCache)
+            localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+
+        updateScholarBatchBar();
+
+        for (const [year, scholarIds] of Object.entries(selectedScholars)){
+            totalScholarsSelected += selectedScholars[year].length;
+            totalScholarsLoaded += groupedScholars[year].length;
+        }
+
+        selectedAllScholars = (totalScholarsSelected === totalScholarsLoaded) ? true : false;
+    }
+
+    // END OF HELPER FUNCTIONS TO HANDLE THE SELECTION LOGIC
+    // ==============================================
+    
     let debounceTimer = null;
 
     if (!$wire.hasEventListener){
         await document.addEventListener('contextmenu', async function (event) {
             const scholar = event.target.closest('.scholar-grid-card');
+            const yearFolder = event.target.closest('.year-folder-item');
             if (!scholar) return; // If it's not a scholar card, ignore
 
             event.preventDefault(); // Stop the native browser right-click menu
 
+            // Gets the information linked to the scholar card selected.
             const scholarId = scholar.getAttribute('data-scholar_id');
-            
-            // Fetch current array from Livewire
-            let selectedIds = await $wire.get('selectedScholarIds') || [];
+            const scholarYear = String(yearFolder.querySelector('.year-folder-title').textContent);
+            // console.log(scholarId, scholarYear);
 
             if (scholar.getAttribute('data-scholar_selected') === 'true') {
-                // Deselect
+                result = removeScholarId(scholarYear, scholarId);
+                if (result === false){
+                    console.error(`Unable to remove scholar ID ${scholarId} from the list of ${scholarYear} scholars.`);
+                    return;
+                }
+
                 scholar.setAttribute('data-scholar_selected', 'false');
                 scholar.classList.remove('border-2', 'border-accent');
-                
-                // Reassign a filtered array (Safe for Livewire proxy tracking)
-                selectedIds = selectedIds.filter(id => id !== scholarId);
             } else {
-                // Select
+                result = appendScholarId(scholarYear, scholarId, true)
+                if (result === false){
+                    console.error(`Error in appending the scholar ID ${scholarId} to the list of ${scholarYear} scholars.`);
+                    return;
+                }
+
                 scholar.setAttribute('data-scholar_selected', 'true');
                 scholar.classList.add('border-2', 'border-accent');
-                
-                // Push and reassign
-                if (!selectedIds.includes(scholarId)) {
-                    selectedIds.push(scholarId);
-                }
+                console.log(selectedScholars);
             }
-
-            if (debounceTimer != null)
-                clearTimeout(debounceTimer);
-
-            // Sync the brand new array back to Livewire securely
-            debounceTimer = setTimeout(async () => {
-                await $wire.set('selectedScholarIds', selectedIds);
-                console.log('Synced final set of IDs: ' + selectedIds);
-            }, 300)
         });
 
         $wire.hasEventListener = true;
     } else {
         console.log('Document event listener for the scholar selection already exists.');
     }
+
+    function loadSelectedScholars(){
+        const cachedSelectedScholars = JSON.parse(localStorage.getItem('selectedScholars'));
+        if (cachedSelectedScholars && Object.keys(cachedSelectedScholars).length == Object.keys(groupedScholars).length) {
+            selectedScholars = cachedSelectedScholars;
+        } else {
+            for (const [key, value] of Object.entries(groupedScholars)){
+                selectedScholars[key] = [];
+            }
+            localStorage.setItem('selectedScholars', JSON.stringify(selectedScholars));
+        }
+
+        console.log('Loaded cache of the scholars successfully!');
+        console.log("Cached Scholars: \n", localStorage.getItem('selectedScholars'));
+    }
+
+    function updateUIOfSelectedScholarCards(){
+        for (const [year, scholarIds] of Object.entries(selectedScholars)){
+            if (scholarIds.length === 0)
+                continue;
+
+            for (const scholarId of scholarIds){
+                const scholarCard = document.querySelector(`.scholar-grid-card[data-scholar_id="${scholarId}"]`);
+                if (!scholarCard){
+                    console.warn(`Unable to find the scholar card for scholar ID ${scholarId}.`);
+                    continue;
+                }
+
+                scholarCard.setAttribute('data-scholar_selected', 'true');
+                scholarCard.classList.add('border-2', 'border-accent');
+            }
+        }
+    }
+
+    function instantiateElementsAndVariables(){
+        loadSelectedScholars();
+        updateUIOfSelectedScholarCards();
+        updateScholarRelatedHTMLElements(false);
+    }
+
+    document.addEventListener('livewire:init', instantiateElementsAndVariables);
+    document.addEventListener('livewire:navigated', instantiateElementsAndVariables);
 </script>
 @endscript
