@@ -8,7 +8,9 @@ use App\Models\Scholar;
 use App\Models\Scholarship;
 use App\Models\ScholarshipType;
 use App\Models\School;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
+use ZipArchive;
 
 class Index extends Component
 {
@@ -40,52 +42,22 @@ class Index extends Component
         }
     }
 
-    public function toggleSelectYear(string $year): void
-    {
-        $newlySelectedIDs = [];
-        $scholars = json_decode(json_encode(Scholar::where('year_of_award', $year)
-            ->select(['id'])
-            ->get()));
-        foreach ($scholars as $scholar){
-            $scholarId = $scholar['id'];
-            if (!in_array($scholarId, $this->selectedScholarIds)) {
-                $newlySelectedIDs[] = $scholarId;
-            }
-        }
-
-        if (in_array($year, $this->selectedYears, true)) {
-            $this->selectedYears = array_values(array_diff($this->selectedYears, [$year]));
-            $this->selectedScholarIds = array_values(array_diff($this->selectedScholarIds, $newlySelectedIDs));
-        } else {
-            $this->selectedYears[] = $year;
-            $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
-        }
+    public function printScholars(): void{
+        
     }
 
-    public function selectAllYears(): void
-    {
-        $groupedScholars = json_decode(json_encode(Scholar::select(['id', 'year_of_award'])
-            ->get()
-            ->groupBy(function ($scholar) {
-                return (string) ($scholar->year_of_award ?? 'Unknown');
-            })));
-        dd($groupedScholars);
-        foreach ($groupedScholars as $year => $scholars){
-            // dd($year, $scholars);
-            // $newlySelectedIDs = array_map(fn($scholar) => $scholar['id'], $scholars);
-            // $this->selectedYears = array_merge($this->selectedYears, [$year]);
-            // $this->selectedScholarIds = array_merge($this->selectedScholarIds, $newlySelectedIDs);
-        }
+    public function downloadScholars(array $scholarIds){
+        $zipPath = Scholar::downloadScholars($scholarIds);
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
-    public function deselectAll(): void
-    {
-        $this->selectedYears = [];
-        $this->selectedScholarIds = [];
+    public function moveScholars(array $scholarIds): void {
+
     }
 
-    public function downloadScholars(): void{
-        dd('downloaded ' . count($this->selectedScholarIds) . " scholars!");
+    public function deleteScholars(array $scholarIds): void{
+
     }
 
     public function openScholar($scholarId): void

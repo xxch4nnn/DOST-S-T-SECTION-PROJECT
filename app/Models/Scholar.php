@@ -106,6 +106,24 @@ class Scholar extends Model
         return trim("{$this->last_name}, {$this->first_name} {$this->middle_name} {$this->suffix}");
     }
 
+    public function hasInfoSheet(): bool
+    {
+        $hasDocument = Document::where('documentable_type', Scholar::class)
+            ->where('documentable_id', $this->id)
+            ->whereHas('versions', function ($query) {
+                $query->where('file_type_id', 3);
+            })
+            ->exists();
+
+        // dd($hasDocument);
+        
+        return $hasDocument;    
+    }
+
+    public function printInfoSheet(){
+        
+    }
+
     // Function to delete the scholar
     public static function deleteScholar($scholarID): bool{
         $scholar = Scholar::findOrFail($scholarID);
@@ -340,6 +358,69 @@ class Scholar extends Model
         $zip->close();
 
         // dd($this, $groupedDocuments, $scholarJSON, $scholarTXT, $zip, "Scholar was downloaded");
+
+        return $zipPath;
+    }
+
+    public static function downloadScholars(array $scholarIds){
+        $selectedScholars = Scholar::whereIn('id', $scholarIds)
+            ->orderBy('last_name', 'asc')
+            ->get()
+            ->groupBy(function ($scholar) {
+            return (string) ($scholar->year_of_award ?? 'Unknown');
+        });
+
+        // Prepares the ZIP File name & path
+        $zip = new ZipArchive();
+        $zipFileName = "Scholar_Information.zip";
+
+        // Create a temporary folder for the ZIP File.
+        if (!Storage::disk('local')->exists('temp')) {
+            Storage::disk('local')->makeDirectory('temp');
+        }
+
+        // Creates the temporary path for the zip file
+        $zipPath = Storage::disk('local')->path('temp/' . $zipFileName);
+        $result = ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE);
+        if (!$result) {
+            throw new \Exception("Failed to open ZIP archive. Error code: " . $result);
+        }
+
+        foreach ($selectedScholars as $year => $scholars){
+            foreach($scholars as $scholar){
+                $groupedDocuments = $scholar->getScholarGroupedDocumentsForDownloading();
+
+                // Define the year and scholar naming convention
+                $year = $scholar->year_of_award ?? 'Unknown_Year';
+                $starting_name = $scholar->last_name . '_' . $scholar->first_name;
+
+                // Define the internal path prefix inside the zip
+                $internalFolderPrefix = $year . '/' . $starting_name . '/';
+
+                $scholarJSON = $scholar->getScholarProfileAsJSON();
+                $scholarTXT = $scholar->getScholarProfileAsTXT();
+
+                $zip->addFromString($internalFolderPrefix . $starting_name . '.json', $scholarJSON);
+                $zip->addFromString($internalFolderPrefix . $starting_name . '.txt', $scholarTXT);
+
+                foreach ($groupedDocuments as $key => $value) {
+                    foreach ($value as $file) {
+                        if (Storage::disk('local')->exists($file['file_path'])) {
+                            $absolute_path = Storage::disk('local')->path($file['file_path']);
+                            $fileType = Str::replace(' ', '_', $file['file_type_name']);
+                            $fileName = Str::replace(' ', '_', $file['file_name']);
+
+                            $zip->addFile(
+                                $absolute_path, 
+                                $internalFolderPrefix . 'documents/' . $fileType . '/' . $fileName
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        $zip->close();
 
         return $zipPath;
     }

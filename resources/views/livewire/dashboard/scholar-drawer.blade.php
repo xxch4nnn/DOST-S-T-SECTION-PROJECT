@@ -255,6 +255,16 @@ new class extends Component
     public function getNumberOfFilesLinkedToScholar(){
         return Scholar::find($this->scholarId)->getNumberOfFilesLinkedToScholar();
     }
+    
+    public function doesScholarHaveInfoSheet(){
+        return Scholar::find($this->scholarId)
+            ->hasInfoSheet();
+    }
+
+    public function printScholar(){
+        Scholar::find($this->scholarId)
+        ->printInfoSheet();
+    }
 
     public function deleteScholar(){
         try{
@@ -294,7 +304,7 @@ new class extends Component
                     <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none" title="Download" wire:click="downloadScholar">
                         <i class="ph ph-download-simple fs-5"></i>
                     </button>
-                    <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none me-3" title="Print">
+                    <button type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none me-3" title="Print" id="printScholar">
                         <i class="ph ph-printer fs-5"></i>
                     </button>
                     <button wire:click="closeDrawer" type="button" class="btn btn-link text-muted p-1 border-0 shadow-none text-decoration-none" title="Close">
@@ -501,8 +511,40 @@ new class extends Component
         if (deleteButton) { 
             event.preventDefault(); // Stop default button actions
             handleDeleteScholar();
+            return;
+        }
+
+        const printButton = event.target.closest('#printScholar');
+        if (printButton){
+            event.preventDefault();
+            handlePrintScholar();
+            return;
         }
     });
+
+    // function initializeButtonListeners(){
+    //     const dropdownWrapper = document.querySelector('.scholar-action-dropdown-wrapper');
+    //     const dropdownButton = document.querySelector('#scholarDropdownButton');
+
+    //     if (!dropdownWrapper || !dropdownButton){
+    //         console.error('Unable to find scholar action dropdown and dropdown wrapper.', dropdownWrapper, dropdownButton);
+    //     } else {
+    //         dropdownButton.addEventListener('click', (e) => {
+    //             e.stopPropagation();
+    //             dropdownWrapper.hidden = !dropdownWrapper.hidden
+    //         });
+    //     }
+        
+    //     const deleteButton = document.querySelector('#deleteScholar');
+    //     if (!deleteButton){
+    //         console.error('Unable to find delete button for scholars.')
+    //     } else {
+    //         deleteButton.addEventListener('click', (e) => {
+    //             e.preventDefault();
+    //             handleDeleteScholar();
+    //         }); 
+    //     }
+    // }
 
     async function handleDeleteScholar(){
         // 1. Fetch file count asynchronously from your Livewire backend
@@ -525,6 +567,22 @@ new class extends Component
                 $wire.deleteScholar();
             }
         });
+    }
+
+    async function handlePrintScholar(){
+        let hasInfoSheet = await $wire.doesScholarHaveInfoSheet();
+        
+        if (!hasInfoSheet){
+            Swal.fire({
+                title: 'Printing Scholar',
+                html: 'The scholar does not have an Info Sheet. Please upload an Info Sheet before printing.',
+                icon: 'warning',
+                draggable: true,
+                confirmButtonText: 'Okay'
+            });   
+        } else {
+            $wire.printScholar();
+        }
     }
 
     // Listen for the success event dispatched from PHP
