@@ -43,7 +43,11 @@ class Index extends Component
     }
 
     public function printScholars(): void{
-        
+        /**
+         * Get recent info sheet version id of a scholar
+         * Call out the route to get file URL with that id
+         * Use the file URL to print it instead.
+         */
     }
 
     public function downloadScholars(array $scholarIds){
